@@ -8,7 +8,7 @@ import com.packagenemo.scrabble_plus.R;
 
 public class JeuActivity extends AppCompatActivity {
 
-    JeuView mJeuView;
+    private JeuView mJeuView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

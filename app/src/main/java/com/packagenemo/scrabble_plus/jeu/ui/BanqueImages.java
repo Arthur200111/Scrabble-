@@ -12,8 +12,8 @@ import com.packagenemo.scrabble_plus.jeu.model.Lettre;
  */
 public class BanqueImages {
 
-    String path;
-    Resources mRessource;
+    private String path;
+    private Resources mRessource;
 
     /**
      * Initialise l'instance avec le chemin contenant les images
