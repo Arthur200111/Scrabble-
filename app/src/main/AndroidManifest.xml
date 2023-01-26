@@ -12,6 +12,9 @@
         android:theme="@style/Theme.Scrabble_plus"
         tools:targetApi="31">
         <activity
+            android:name=".register.RegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".jeu.ui.JeuActivity"
             android:exported="false" />
         <activity
