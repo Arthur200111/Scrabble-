@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 
 import com.packagenemo.scrabble_plus.jeu.model.MainJoueur;
-import com.packagenemo.scrabble_plus.jeu.model.Position;
 
 // FIXME : Faire une classe mère pour les "vues secondaires comme PlateauView et MainjoueurView
 /**
@@ -46,7 +45,7 @@ public class MainJoueurView {
         }
 
         // On converti l'event en coordonnées plateau
-        Position position = convertisseurCoordonneesMain(event);
+        int[] position = convertisseurCoordonneesMain(event);
 
         // On envoie la position touchée sur le plateau à la partie
         transmissionDeLaCommande(position);
@@ -67,20 +66,20 @@ public class MainJoueurView {
      * @param event
      * @return
      */
-    private Position convertisseurCoordonneesMain(MotionEvent event){
+    private int[] convertisseurCoordonneesMain(MotionEvent event){
 
         // TODO
 
-        return new Position();
+        return new int[2];
     }
 
     /**
      * Transmet la commande que le joueur vient d'effectuer au jeu
      */
-    private void transmissionDeLaCommande(Position position){
+    private void transmissionDeLaCommande(int[] position){
         // TODO : Transmet à la partie que le plateau vient d'être touché et où il a été touché
 
-        mJeuView.getPartie().interractionPlateau(position);
+        mJeuView.getPartie().giveInputJoueurMain(position);
     }
 
     /**

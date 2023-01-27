@@ -1,8 +1,5 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
-import java.sql.Connection;
-import java.util.LinkedList;
-
 /**
  * Classe qui gère toute la partie.
  * Cette classe sera initialisée différemment selon le joueur présent sur l'interface courante
@@ -19,11 +16,10 @@ public class Partie {
 
     /**
      * Initialise la partie pour chaque joueur
-     * @param connection : connexion à la base de données
      * @param idPartieBDD : ID de la partie pour la BDD
      * @param loginJoueurCourant : login du joueur utilisant l'interface
      */
-    public Partie(Connection connection, Integer idPartieBDD, String loginJoueurCourant) {
+    public Partie(String idPartieBDD, String loginJoueurCourant) {
         // TODO : Initialiser la partie avec les informations contenues sur la BDD
         // L'initialisation de la partie devra pouvoir se faire à tout moment du jeu (jeu en cours)
     }
@@ -67,35 +63,64 @@ public class Partie {
      * Gère le clic sur le plateau du joueur courant
      * @param position : Coordonnées du plateau où le joueur a appuyé
      */
-    public void interractionPlateau(Position position){
+    public void giveInputJoueurPlateau(int[] position){
         // TODO : Cette méthode est appelée notamment lorsque le joueur appuie sur l'image du plateau dans l'app
+    }
+
+    /**
+     * Gère le clic sur la main du joueur courant
+     * @param position : Coordonnées du plateau où le joueur a appuyé
+     */
+    public void giveInputJoueurMain(int[] position){
+        // TODO : Cette méthode est appelée notamment lorsque le joueur appuie sur l'image de la main dans l'app
+    }
+
+    /**
+     * Lorsque le joueur appuie sur le bouton défausser
+     * @return
+     */
+    public void giveInputJoueurDefausser(){
+        // TODO
+    }
+
+    /**
+     * Lorsque le joueur appuie sur le bouton "fin de tour"
+     * @return
+     */
+    public void giveInputJoueurFinTour(){
+        // TODO
     }
 
     /**
      * Méthode appelée par l'interface graphique pour obtenir les informations d'affichage
      * @return
      */
-    public Plateau getPlateau(){
+    public String getStringPlateau(){
         // TODO
 
         return null;
     }
 
     /**
-     * Gère le clic sur le plateau du joueur courant
-     * @param position : Coordonnées du plateau où le joueur a appuyé
+     * Méthode appelée par l'interface graphique pour obtenir les informations
+     * d'affichage de la main du joueur courant
+     * @return
      */
-    public void interractionJoueur(Position position){
-        // TODO : Cette méthode est appelée notamment lorsque le joueur appuie sur l'image de sa main dans l'app
+    public String getStringMainJoueur(){
+        // TODO
+
+        return null;
     }
 
     /**
-     * Retourne l'instance de la classe du joueur local pour l'affichage graphique
+     * Méthode appelée par l'interface graphique pour obtenir les messages adressés au joueur
      * @return
      */
-    public Joueur getCurrentJoueur(){
-
+    public String getStringMessageAuJoueur(){
         // TODO
-        return new Joueur();
+
+        return null;
     }
+
+
 }
