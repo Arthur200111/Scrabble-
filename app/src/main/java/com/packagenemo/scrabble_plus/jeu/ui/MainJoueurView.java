@@ -83,6 +83,13 @@ public class MainJoueurView {
     }
 
     /**
+     * Update de la position de tous les éléments de la main
+     */
+    public void update() {
+
+    }
+
+    /**
      * Met à jour le dessin du plateau sur la SurfaceView
      */
     public void draw(Canvas canvas){

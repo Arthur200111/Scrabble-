@@ -2,7 +2,9 @@ package com.packagenemo.scrabble_plus.jeu.ui;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import com.packagenemo.scrabble_plus.R;
 import com.packagenemo.scrabble_plus.jeu.model.Case;
 import com.packagenemo.scrabble_plus.jeu.model.Lettre;
 
@@ -19,26 +21,27 @@ public class BanqueImages {
      * Initialise l'instance avec le chemin contenant les images
      * @param path
      */
-    public BanqueImages(Resources mResources, String path){
+    public BanqueImages(Resources resources, String path){
         // TODO : Je ne sais pas si Android fonctionne avec des chemins, à voir
+
+        mRessource = resources;
     }
 
     /**
      * Converti une instance de case en image
      *
-     * @param cas
+     * @param stringCase
      * @param dslWidth
      * @param dstHeight
      * @return
      */
-    public Bitmap convertCaseToBitmap(Case cas, int dslWidth, int dstHeight){
+     public Bitmap convertCaseToBitmap(String stringCase, int dslWidth, int dstHeight){
         // TODO
 
         // Le truc qu'on veut :
-        // Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image_test);
-        // bitmap = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
+        Bitmap bitmap = BitmapFactory.decodeResource(mRessource, R.drawable.image_test);
 
-        return null;
+        return Bitmap.createScaledBitmap(bitmap, dslWidth, dstHeight, false);
     }
 
     /**

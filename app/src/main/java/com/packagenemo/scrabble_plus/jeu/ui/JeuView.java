@@ -20,8 +20,8 @@ import com.packagenemo.scrabble_plus.jeu.model.Partie;
  * Gère la fenêtre de jeu
  */
 public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Callback {
+
     private Thread thread;
-    private BanqueImages mBanqueImages;
     private boolean isPlaying;
     private Partie mPartie;
     private PlateauView mPlateauView;
@@ -36,10 +36,14 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         super(context, attributeSet);
         getHolder().addCallback(this);
 
+        // TODO : Récupérer les infos pour la co BDD
+        this.mPartie = new Partie("idPartieBDD","loginJoueurCourant");
+
         mPlateauView = new PlateauView(
                 this, 10, 10, 1060, 1060);
         mMainJoueurView = new MainJoueurView(
                 this, 10, 1060, 1060, 1300);
+
 
         isPlaying = true;
 
@@ -70,6 +74,9 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
      * Update de la position de tous les éléments du jeu
      */
     private void update () {
+
+        mPlateauView.update();
+        mMainJoueurView.update();
 
         if (mPosX +500 > this.getWidth()){
             mDeltaX = - Math.abs(mDeltaX);
@@ -187,8 +194,6 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         paint.setColor(Color.BLUE);
         canvas.drawRect(0, 0, this.getWidth()/2, this.getHeight()/2, paint);
 
-        mPlateauView.draw(canvas);
-        draw(canvas);
         getHolder().unlockCanvasAndPost(canvas);
     }
 
@@ -202,9 +207,6 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         // Normalement, on s'est fiche de ça
     }
 
-    public BanqueImages getBanqueImages() {
-        return mBanqueImages;
-    }
 
     public Partie getPartie() {
         return mPartie;
