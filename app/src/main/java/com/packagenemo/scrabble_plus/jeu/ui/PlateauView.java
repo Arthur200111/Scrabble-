@@ -18,12 +18,12 @@ import java.util.List;
  * interractions avec celui ci
  */
 public class PlateauView {
-
     private JeuView mJeuView;
     private List<String> mArrayPlateauSplitted;
     private int mNbCaseLargeurPlateau;
     private int mNbCaseHauteurPlateau;
     private CollectionCases mCollectionCases;
+    private BanqueImages mBanqueImages;
 
     // Limites du plateau sur le jeuView
     private int mLeft, mTop, mRight, mBottom;
@@ -42,8 +42,11 @@ public class PlateauView {
         // On récupère une première fois le string du plateau pour connaitre ses dimensions et set les cases
         metAJourStringJeu();
 
+        // On crée une banque d'images qui contient les images de tous les éléments du jeu
+        mBanqueImages = new BanqueImages(jeuView.getContext());
+
         // On set la collection de cases qui répertorie la position de toutes les cases et leur image associée
-        mCollectionCases = new CollectionCases(mJeuView.getResources(),
+        mCollectionCases = new CollectionCases(mBanqueImages,
                 mNbCaseLargeurPlateau, mNbCaseHauteurPlateau, mLeft, mTop, mRight, mBottom);
 
     }
@@ -113,12 +116,14 @@ public class PlateauView {
     public void draw(Canvas canvas){
         Paint paint = new Paint();
 
-        paint.setColor(Color.YELLOW);
+        // On dessine le fond
+        paint.setColor(Color.BLACK);
         canvas.drawRect(mLeft, mTop, mRight, mBottom, paint);
 
+        // On dessine toutes les cases présentes
         for (Case uneCase : mCollectionCases.getCaseList()){
             Bitmap imageCase = uneCase.getImageContenu();
-            canvas.drawBitmap(imageCase, uneCase.mX, uneCase.mY, paint);
+            canvas.drawBitmap(imageCase, uneCase.getX(), uneCase.getY(), paint);
         }
     }
 

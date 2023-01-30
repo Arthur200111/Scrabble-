@@ -45,4 +45,12 @@ public class Case {
     public Bitmap getImageContenu() {
         return mImageContenu;
     }
+
+    public int getX() {
+        return mX;
+    }
+
+    public int getY() {
+        return mY;
+    }
 }

@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class CollectionCases {
 
+    private final int LARGEUR_BORDURE_ELEMENTS = 4;
     private int mNbCaseLargeur;
     private int mNbCaseHauteur;
 
@@ -19,7 +20,7 @@ public class CollectionCases {
     private BanqueImages mBanqueImages;
 
 
-    public CollectionCases(Resources resources, int nbCaseLargeur, int nbCaseHauteur, int left, int top, int right, int bottom) {
+    public CollectionCases(BanqueImages banqueImages, int nbCaseLargeur, int nbCaseHauteur, int left, int top, int right, int bottom) {
         mNbCaseLargeur = nbCaseLargeur;
         mNbCaseHauteur = nbCaseHauteur;
         mLeft = left;
@@ -27,7 +28,7 @@ public class CollectionCases {
         mRight = right;
         mBottom = bottom;
 
-        mBanqueImages = new BanqueImages(resources, "path");
+        mBanqueImages = banqueImages;
 
         mCaseList = new ArrayList<>();
 
@@ -44,17 +45,17 @@ public class CollectionCases {
 
         Case caseTemp;
 
-        for (int i = 0; i < mNbCaseHauteur ; i++){
-            for (int y = 0; y < mNbCaseLargeur ; y++){
-                caseTemp = new Case(mBanqueImages,
-                        mLeft + y*largeurCase, mTop + i*hauteurCase, largeurCase, hauteurCase);
-                mCaseList.add(caseTemp);
+        int x, y, largeur, hauteur;
 
-                System.out.println(y*largeurCase);
-                System.out.println(i*hauteurCase);
-                System.out.println(largeurCase);
-                System.out.println(hauteurCase);
-                System.out.println("blanc");
+        for (int i = 0; i < mNbCaseHauteur ; i++){
+            for (int h = 0; h < mNbCaseLargeur ; h++){
+                x = mLeft + h*largeurCase + LARGEUR_BORDURE_ELEMENTS;
+                y = mTop + i*hauteurCase + LARGEUR_BORDURE_ELEMENTS;
+                largeur = largeurCase - 2*LARGEUR_BORDURE_ELEMENTS;
+                hauteur = hauteurCase - 2*LARGEUR_BORDURE_ELEMENTS;
+
+                caseTemp = new Case(mBanqueImages, x, y, largeur, hauteur);
+                mCaseList.add(caseTemp);
             }
         }
     }

@@ -36,6 +36,7 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         super(context, attributeSet);
         getHolder().addCallback(this);
 
+
         // TODO : Récupérer les infos pour la co BDD
         this.mPartie = new Partie("idPartieBDD","loginJoueurCourant");
 
