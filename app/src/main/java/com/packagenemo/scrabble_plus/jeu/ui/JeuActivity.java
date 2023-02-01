@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.widget.ImageView;
 
 import com.packagenemo.scrabble_plus.R;
 
@@ -21,7 +22,6 @@ public class JeuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_jeu);
 
         mJeuView = findViewById(R.id.jeu_zone_jeu);
-        new Thread(mJeuView).start();
     }
 
 

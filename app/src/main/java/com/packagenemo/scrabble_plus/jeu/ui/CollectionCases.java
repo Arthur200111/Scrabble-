@@ -1,9 +1,8 @@
 package com.packagenemo.scrabble_plus.jeu.ui;
 
-import android.content.res.Resources;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Collection de cases
@@ -14,11 +13,15 @@ public class CollectionCases {
     private int mNbCaseLargeur;
     private int mNbCaseHauteur;
 
+    private int mLargeurCase;
+    private int mHauteurcase;
+
     private int mLeft, mTop, mRight, mBottom;
 
     private List<Case> mCaseList;
     private BanqueImages mBanqueImages;
 
+    private static Logger logger = Logger.getLogger(String.valueOf(CollectionCases.class));
 
     public CollectionCases(BanqueImages banqueImages, int nbCaseLargeur, int nbCaseHauteur, int left, int top, int right, int bottom) {
         mNbCaseLargeur = nbCaseLargeur;
@@ -40,8 +43,8 @@ public class CollectionCases {
      */
     private void miseAJourAllocationCases(){
 
-        int largeurCase = getLargeurAffichage() / mNbCaseLargeur;
-        int hauteurCase = getHauteurAffichage() / mNbCaseHauteur;
+        mLargeurCase = getLargeurAffichage() / mNbCaseLargeur;
+        mHauteurcase = getHauteurAffichage() / mNbCaseHauteur;
 
         Case caseTemp;
 
@@ -49,15 +52,36 @@ public class CollectionCases {
 
         for (int i = 0; i < mNbCaseHauteur ; i++){
             for (int h = 0; h < mNbCaseLargeur ; h++){
-                x = mLeft + h*largeurCase + LARGEUR_BORDURE_ELEMENTS;
-                y = mTop + i*hauteurCase + LARGEUR_BORDURE_ELEMENTS;
-                largeur = largeurCase - 2*LARGEUR_BORDURE_ELEMENTS;
-                hauteur = hauteurCase - 2*LARGEUR_BORDURE_ELEMENTS;
+                x = mLeft + h* mLargeurCase + LARGEUR_BORDURE_ELEMENTS;
+                y = mTop + i* mHauteurcase + LARGEUR_BORDURE_ELEMENTS;
+                largeur = mLargeurCase - 2*LARGEUR_BORDURE_ELEMENTS;
+                hauteur = mHauteurcase - 2*LARGEUR_BORDURE_ELEMENTS;
 
                 caseTemp = new Case(mBanqueImages, x, y, largeur, hauteur);
                 mCaseList.add(caseTemp);
             }
         }
+    }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    public int[] coordonneesAbsoluesEnCoordonneesCases(int x, int y){
+        int[] coordonneeCase = new int[2];
+
+        coordonneeCase[0] = (x - mLeft)/mLargeurCase;
+        coordonneeCase[1] = (y - mTop)/mHauteurcase;
+
+        if ((x < mLeft || x > mRight) ||
+                (y < mTop || y > mBottom)){
+            logger.warning("coordonneesAbsoluesEnRelatives a renvoyé une position en dehors de" +
+                    "son périmètre de définition" + mLeft + " " + mRight + " " + mTop + " " +mBottom);
+        }
+
+        return coordonneeCase;
     }
 
     public void majContenuCases(List<String> contenuCases){

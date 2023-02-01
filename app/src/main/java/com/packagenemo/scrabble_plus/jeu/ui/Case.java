@@ -2,6 +2,8 @@ package com.packagenemo.scrabble_plus.jeu.ui;
 
 import android.graphics.Bitmap;
 
+import java.util.logging.Logger;
+
 /**
  * Classe qui représente
  */
@@ -18,6 +20,8 @@ public class Case {
 
     private Bitmap mImageContenu;
 
+    private static Logger logger = Logger.getLogger(String.valueOf(Case.class));
+
     public Case(BanqueImages banqueImages, int x, int y, int largeur, int hauteur) {
         mX = x;
         mY = y;
@@ -25,6 +29,7 @@ public class Case {
         mHauteur = hauteur;
         mBanqueImages = banqueImages;
     }
+
 
     public void setContenuCase(String contenuCase){
 
