@@ -6,6 +6,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Xml;
@@ -33,10 +36,17 @@ import java.util.logging.Logger;
  */
 public class BanqueImages {
 
+    // Représente la luminosité des cases en surbrillance. Entre -255 et 255
+    private int BRIGHTNESS_HIGHLIGHT = 40;
+    private int LIMITE_IMAGES_CHARGEES = 500;
+
     private String mDossierImages;
     private String mCheminImagesLettres;
     private String mCheminImagesPlateau;
     private String mCheminImagesMain;
+
+    // Map qui stoque toutes les images déjà chargées
+    private Map<String, Bitmap> mImagesChargees;
 
     // Map qui stocke toutes les variables du chemin de config
     private Map<String, String[]> mMapConfig;
@@ -52,9 +62,9 @@ public class BanqueImages {
 
         mContext = context;
 
+        mImagesChargees = new HashMap<>();
+
         chargerCheminsImages();
-
-
     }
 
     /**
@@ -67,12 +77,19 @@ public class BanqueImages {
      */
      public Bitmap convertCaseToBitmap(String stringCase, int dslWidth, int dstHeight){
 
-         // TODO : Mettre en place la bibliothèque des images déjà chargées
+         Bitmap imageCase;
 
-         String[] arrayString = stringCaseToArray(stringCase);
+         // On commence par chercher si une occurence de l'image qui doit être créée n'a pas été déjà chargée
+         imageCase = chercheDansImagesChargees(stringCase, dslWidth, dstHeight);
+         if (imageCase != null){
+             return imageCase;
+         }
+         // Sinon, on va devoir en créer une nouvelle.
 
          // liste des bitmaps qui devront s'assembler pour représenter la case
          List<Bitmap> listBitmap = new ArrayList<>();
+
+         String[] arrayString = stringCase.split(",");
 
          // La première lettre de notre String nous indique quel est le type de la case traitee
          switch (arrayString[0]){
@@ -90,9 +107,35 @@ public class BanqueImages {
                  break;
          }
 
-         // TODO : Traiter le HighLight
+         // On combine toutes les images qui composent le bitmap pour n'en avoir plus qu'une
+         imageCase = combinerBitmaps(listBitmap);
 
-         return combinerBitmaps(listBitmap);
+         // Le 4 ème caractère nous indique si la case doit être en surbrillance
+         if (arrayString[3].equals("1")){
+             imageCase = changeBitmapContrastBrightness(imageCase, 1,
+                     BRIGHTNESS_HIGHLIGHT);
+         }
+
+         // On enregiste l'image dans nos images chargées pour ne pas avoir à répéter le processus
+         // lorsque l'on aura à charger exactement la même image
+         enregistrerImage(stringCase, imageCase);
+
+         return imageCase;
+    }
+
+    private Bitmap chercheDansImagesChargees(String stringCase, int dslWidth, int dstHeight){
+        Bitmap imageChargee = mImagesChargees.get(stringCase);
+        if (imageChargee == null){
+            return null;
+        }
+        return imageChargee.copy(imageChargee.getConfig(), imageChargee.isMutable());
+    }
+
+    private void enregistrerImage(String stringCase, Bitmap imageCase){
+        mImagesChargees.put(stringCase, imageCase);
+         if (mImagesChargees.size() > LIMITE_IMAGES_CHARGEES){
+             logger.warning("Attention, le nombre max d'images chargées a été atteint");
+         }
     }
 
 
@@ -159,14 +202,6 @@ public class BanqueImages {
         }
     }
 
-    public String[] stringCaseToArray(String stringCase){
-        stringCase = (stringCase == null || stringCase.length() == 0)
-                ? null
-                : (stringCase.substring(0, stringCase.length() - 1));
-
-        return stringCase.split(",");
-    }
-
     /**
      * Combiner les images Bitmap en un seul Bitmap
      * @param bitmap
@@ -187,6 +222,34 @@ public class BanqueImages {
             canvas.drawBitmap(bitmap.get(i), 0f, 0f, null);
         }
         return temp;
+    }
+
+    /**
+     *
+     * @param bmp input bitmap
+     * @param contrast 0..10 1 is default
+     * @param brightness -255..255 0 is default
+     * @return new bitmap
+     */
+    private Bitmap changeBitmapContrastBrightness(Bitmap bmp, float contrast, float brightness)
+    {
+        ColorMatrix cm = new ColorMatrix(new float[]
+                {
+                        contrast, 0, 0, 0, brightness,
+                        0, contrast, 0, 0, brightness,
+                        0, 0, contrast, 0, brightness,
+                        0, 0, 0, 1, 0
+                });
+
+        Bitmap ret = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), bmp.getConfig());
+
+        Canvas canvas = new Canvas(ret);
+
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        canvas.drawBitmap(bmp, 0, 0, paint);
+
+        return ret;
     }
 
     private Bitmap chargeBitmap(String nomImage, int dslWidth, int dstHeight){
