@@ -43,28 +43,18 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
     private long mFramerate;
 
     // Constantes
-    private int FPS_VOULU = 35;
-    private long TIME_OUT_MILLIS = 1000;
-    private int ECART_IMAGES_FRAMERATE = 100;
+    private final int FPS_VOULU = 35;
+    private final long TIME_OUT_MILLIS = 1000;
+    private final int ECART_IMAGES_FRAMERATE = 100;
 
     private static Logger logger = Logger.getLogger(String.valueOf(JeuView.class));
-
-    // FIXME: Ces variables ci dessous seront à supprimer
-    int mPosX,mPosY;
-    int mDeltaX, mDeltaY;
 
     public JeuView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         getHolder().addCallback(this);
 
-
         // TODO : Récupérer les infos pour la co BDD
         this.mPartie = new Partie("idPartieBDD","loginJoueurCourant");
-
-        mPosX = 0;
-        mPosY = 0;
-        mDeltaX = 5;
-        mDeltaY = 5;
 
     }
 
@@ -147,21 +137,6 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
 
         mEncartPlateau.update();
         mEncartMainJoueur.update();
-
-        // TODO : supprimer ci dessous et eventuellement update les icones
-        if (mPosX +200 > this.getWidth()){
-            mDeltaX = - Math.abs(mDeltaX);
-        } else if (mPosX < 0){
-            mDeltaX = Math.abs(mDeltaX);
-        }
-        if (mPosY +200 > getHeight()){
-            mDeltaY = - Math.abs(mDeltaY);
-        } else if (mPosY < 0){
-            mDeltaY = Math.abs(mDeltaY);
-        }
-
-        mPosX += mDeltaX;
-        mPosY += mDeltaY;
     }
 
     /**
@@ -182,14 +157,6 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         mBoutonPoubelle.draw(canvas);
         mBoutonFinTour.draw(canvas);
 
-        // Image qui bouge pour le fun
-        // TODO : Les supprimer à terme
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image_test);
-        bitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
-
-        canvas.drawBitmap(bitmap, mPosX, mPosY, paint);
-
-        // ça, on garde
         getHolder().unlockCanvasAndPost(canvas);
     }
 

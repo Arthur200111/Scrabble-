@@ -3,6 +3,7 @@ package com.packagenemo.scrabble_plus.jeu.ui;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,5 +57,12 @@ public class EncartMainJoueur extends Encart {
         // en Largeur seulement
         mNbCaseLargeurEncart = Integer.parseInt(mArrayEncartSplitted.remove(0));
         mNbCaseHauteurEncart = 1;
+    }
+
+    @Override
+    public void onTouchEvent(MotionEvent event){
+        super.onTouchEvent(event);
+
+
     }
 }

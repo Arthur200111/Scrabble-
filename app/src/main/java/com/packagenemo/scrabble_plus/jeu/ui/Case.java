@@ -14,13 +14,13 @@ public class Case {
     public int mLargeur;
     public int mHauteur;
 
+    public boolean mEstLettre;
+
     private BanqueImages mBanqueImages;
 
     private String mContenuCase;
 
     private Bitmap mImageContenu;
-
-    private static Logger logger = Logger.getLogger(String.valueOf(Case.class));
 
     public Case(BanqueImages banqueImages, int x, int y, int largeur, int hauteur) {
         mX = x;
@@ -34,17 +34,25 @@ public class Case {
     public void setContenuCase(String contenuCase){
 
         // Si le contenu de la case n'a pas changé, on ne fait rien
-        if(contenuCase.equals(mContenuCase)){
-            return;
-        } else {
+        if(!contenuCase.equals(mContenuCase)){
             mContenuCase = contenuCase;
 
             majImageCase();
+
+            isCaseLettre();
         }
     }
 
     private void majImageCase(){
         mImageContenu = mBanqueImages.convertCaseToBitmap(mContenuCase, mLargeur, mHauteur);
+    }
+
+    private void isCaseLettre(){
+        if (mContenuCase.split(",")[0].equals("2")) {
+            mEstLettre = true;
+        } else {
+            mEstLettre = false;
+        }
     }
 
     public Bitmap getImageContenu() {
