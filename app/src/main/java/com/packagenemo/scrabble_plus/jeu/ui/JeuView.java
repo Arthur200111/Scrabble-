@@ -34,6 +34,8 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
     private BoutonPoubelle mBoutonPoubelle;
     private BoutonFinTour mBoutonFinTour;
 
+    private Curseur mCurseur;
+
     private long mTempsDerniereFrame;
 
     // Nombre de frames depuis le début du lancement de l'instance
@@ -137,6 +139,7 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
 
         mEncartPlateau.update();
         mEncartMainJoueur.update();
+        mCurseur.update();
     }
 
     /**
@@ -156,6 +159,7 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         mEncartMainJoueur.draw(canvas);
         mBoutonPoubelle.draw(canvas);
         mBoutonFinTour.draw(canvas);
+        mCurseur.draw(canvas);
 
         getHolder().unlockCanvasAndPost(canvas);
     }
@@ -204,10 +208,12 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        mEncartPlateau.onTouchEvent(event);
-        mEncartMainJoueur.onTouchEvent(event);
-        mBoutonPoubelle.onTouchEvent(event);
-        mBoutonFinTour.onTouchEvent(event);
+        mCurseur.onTouchEvent(event);
+
+        mEncartPlateau.onTouchEvent(mCurseur);
+        mEncartMainJoueur.onTouchEvent(mCurseur);
+        mBoutonPoubelle.onTouchEvent(mCurseur);
+        mBoutonFinTour.onTouchEvent(mCurseur);
 
         return true;
     }

@@ -3,7 +3,6 @@ package com.packagenemo.scrabble_plus.jeu.ui;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.view.MotionEvent;
 
 import java.util.List;
 
@@ -66,18 +65,23 @@ public abstract class Encart {
 
     /**
      * Appelé lorsque l'utilisateur touche l'écran
-     * @param event
+     * @param curseur
      */
-    public void onTouchEvent(MotionEvent event){
+    public void onTouchEvent(Curseur curseur){
 
         // On vérifie que le clic est sur la vue et que c'est un premier appui,
         // sinon, on ne prend pas en compte l'interraction
-        if (!touchIsOnView(event) || event.getAction() != MotionEvent.ACTION_DOWN){
+        if (!touchIsOnView(curseur)){
+            return;
+        }
+
+        // Le curseur nous indique si une action a été effectuée
+        if (!curseur.isEventHappened()){
             return;
         }
 
         // On converti l'event en coordonnées cases
-        int[] position = convertisseurCoordonneesCases(event);
+        int[] position = convertisseurCoordonneesCases(curseur);
 
         // On envoie la position touchée sur le Encart à la partie
         transmissionDeLaCommande(position);
@@ -87,9 +91,9 @@ public abstract class Encart {
      * Informe si l'interraction est sur le Encart
      * @return
      */
-    private boolean touchIsOnView(MotionEvent event){
-        if ((event.getX() < mLeft || event.getX() > mRight) ||
-                (event.getY() < mTop || event.getY() > mBottom)){
+    private boolean touchIsOnView(Curseur curseur){
+        if ((curseur.getX() < mLeft || curseur.getX() > mRight) ||
+                (curseur.getY() < mTop || curseur.getY() > mBottom)){
             return false;
         }
         return true;
@@ -97,12 +101,12 @@ public abstract class Encart {
 
     /**
      * Converti les informations d'un event en position sur le Encart
-     * @param event
+     * @param curseur
      * @return
      */
-    private int[] convertisseurCoordonneesCases(MotionEvent event){
+    private int[] convertisseurCoordonneesCases(Curseur curseur){
         int[] coordonnees = mCollectionCases.coordonneesAbsoluesEnCoordonneesCases(
-                (int) event.getX(0), (int) event.getY(0));
+                (int) curseur.getX(), (int) curseur.getY());
 
         return coordonnees;
     }

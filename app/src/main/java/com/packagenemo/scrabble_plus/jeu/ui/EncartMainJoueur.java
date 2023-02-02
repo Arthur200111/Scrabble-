@@ -60,8 +60,8 @@ public class EncartMainJoueur extends Encart {
     }
 
     @Override
-    public void onTouchEvent(MotionEvent event){
-        super.onTouchEvent(event);
+    public void onTouchEvent(Curseur curseur){
+        super.onTouchEvent(curseur);
 
 
     }

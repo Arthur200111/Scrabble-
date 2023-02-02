@@ -37,17 +37,17 @@ public abstract class Bouton {
 
     /**
      * Appelé lorsque l'utilisateur touche l'écran
-     * @param event
+     * @param curseur
      */
-    public abstract void onTouchEvent(MotionEvent event);
+    public abstract void onTouchEvent(Curseur curseur);
 
     /**
      * Informe si l'interraction est sur le Encart
      * @return
      */
-    protected boolean touchIsOnView(MotionEvent event){
-        if ((event.getX() < mLeft || event.getX() > mRight) ||
-                (event.getY() < mTop || event.getY() > mBottom)){
+    protected boolean touchIsOnView(Curseur curseur){
+        if ((curseur.getX() < mLeft || curseur.getX() > mRight) ||
+                (curseur.getY() < mTop || curseur.getY() > mBottom)){
             return false;
         }
         return true;
