@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 
+import java.util.logging.Logger;
+
 public class Curseur {
 
     private Case mCaseAttrapee;
@@ -26,9 +28,30 @@ public class Curseur {
     // drop une case (up + caseAttrapee)
     private boolean mEventHappened;
 
+    // Si ce booleen est en true, cela signifie que l'action est une action drag
+    public boolean isDrag;
+    public boolean isMooving;
+    public boolean isDrop;
+
+    private static Logger logger = Logger.getLogger(String.valueOf(Curseur.class));
+
     public Curseur(){
+        // Les paramètres sont réglés à -1 pour être en dehors de l'écran
+        mXDepartDrag = -1;
+        mYDepartDrag = -1;
+
+        mXActuel = -1;
+        mYActuel = -1;
+
+        clear();
+    }
+
+    private void clear(){
         mEventHappened = false;
         mSticky = false;
+        isDrag = false;
+        isDrop = false;
+        isMooving = false;
     }
 
     public void onTouchEvent(MotionEvent event){
@@ -38,14 +61,30 @@ public class Curseur {
         if (action == MotionEvent.ACTION_DOWN){
             mSticky = true;
             mEventHappened = true;
-        } else if (action == MotionEvent.ACTION_MOVE) {
+
+            isDrag = true;
+            isDrop = false;
+            isMooving = false;
+
+        } else if (action == MotionEvent.ACTION_MOVE && mCaseAttrapee != null) {
             mSticky = false;
             mEventHappened = false;
-        } else if (action == MotionEvent.ACTION_UP){
+
+            isDrag = false;
+            isDrop = false;
+            isMooving = true;
+
+        } else if (action == MotionEvent.ACTION_UP && mCaseAttrapee != null){
             mSticky = false;
             mEventHappened = true;
 
+            isDrag = false;
+            isDrop = true;
+            isMooving = false;
+
             drop();
+        } else {
+            clear();
         }
     }
 
@@ -59,6 +98,10 @@ public class Curseur {
     }
 
     public void draw(Canvas canvas){
+        if (mCaseAttrapee == null){
+            return;
+        }
+
         Paint paint = new Paint();
 
         // On dessine la case sélectionnée
@@ -68,6 +111,12 @@ public class Curseur {
     }
 
     public void drag(Case caseAttrapee){
+        if (!caseAttrapee.mEstLettre){
+            logger.info("La case que l'utilisateur essaie d'attraper n'est pas déplaçable");
+            clear();
+            return;
+        }
+
         mCaseAttrapee = caseAttrapee;
 
         mXInitialCase = mCaseAttrapee.mX;
@@ -80,23 +129,10 @@ public class Curseur {
     }
 
     private void drop(){
-
-        if (mCaseAttrapee == null){
-            return;
-        }
-
-        mEventHappened = true;
-
         mCaseAttrapee.mX = mXInitialCase;
         mCaseAttrapee.mY = mYInitialCase;
 
         mCaseAttrapee = null;
-
-        mXDepartDrag = Integer.parseInt(null);
-        mYDepartDrag = Integer.parseInt(null);
-
-        mXActuel = Integer.parseInt(null);
-        mYActuel = Integer.parseInt(null);
     }
 
     private void enregisterCoordonnees(MotionEvent event){
@@ -109,7 +145,7 @@ public class Curseur {
         return mSticky;
     }
 
-    public boolean isEventHappened(){
+    public boolean getEventHappened(){
         return mEventHappened;
     }
 

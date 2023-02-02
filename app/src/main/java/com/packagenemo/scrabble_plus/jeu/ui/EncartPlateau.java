@@ -34,8 +34,8 @@ public class EncartPlateau extends Encart {
     /**
      * Transmet la commande que le joueur vient d'effectuer au jeu
      */
-    protected void transmissionDeLaCommande(int[] position){
-        mJeuView.getPartie().giveInputJoueurPlateau(position);
+    protected void transmissionDeLaCommande(int[] position, String typeAction){
+        mJeuView.getPartie().giveInputJoueurPlateau(position, typeAction);
     }
 
     /**

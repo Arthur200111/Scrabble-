@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class Encart {
     protected JeuView mJeuView;
@@ -16,7 +17,8 @@ public abstract class Encart {
 
     // Limites du Encart sur le jeuView
     protected int mLeft, mTop, mRight, mBottom;
-    private List<Case> mCoordonneesPixelsCases;
+
+    private static Logger logger = Logger.getLogger(String.valueOf(Encart.class));
 
     /**
      * Constructeur, prend en entrée la view et les limites du Encart
@@ -76,15 +78,28 @@ public abstract class Encart {
         }
 
         // Le curseur nous indique si une action a été effectuée
-        if (!curseur.isEventHappened()){
-            return;
+        // Si oui, on "prend son action" dans l'encart concerné par cette commande
+        if (curseur.getEventHappened()){
+            int[] position;
+            if (curseur.isDrag){
+                Case caseConcernee = getCaseAtPos(curseur.getX(), curseur.getY());
+
+                boolean laCaseEstAttrapable = caseConcernee.mEstLettre;
+                if (laCaseEstAttrapable){
+                    curseur.drag(caseConcernee);
+
+                    // On converti l'event en coordonnées cases
+                    position = convertisseurCoordonneesCases(curseur);
+                    // On envoie la position touchée sur l'Encart à la partie
+                    transmissionDeLaCommande(position, "drag");
+                }
+            } else if (curseur.isDrop) {
+                position = convertisseurCoordonneesCases(curseur);
+                transmissionDeLaCommande(position, "drop");
+            } else {
+                logger.warning("L'action enregistrée dans l'encart est de type inconnu");
+            }
         }
-
-        // On converti l'event en coordonnées cases
-        int[] position = convertisseurCoordonneesCases(curseur);
-
-        // On envoie la position touchée sur le Encart à la partie
-        transmissionDeLaCommande(position);
     }
 
     /**
@@ -111,10 +126,14 @@ public abstract class Encart {
         return coordonnees;
     }
 
+    private Case getCaseAtPos(int x, int y){
+        return mCollectionCases.getCaseAtCoordonneesAbsolues(x, y);
+    }
+
     /**
      * Transmet la commande que le joueur vient d'effectuer au jeu
      */
-    protected abstract void transmissionDeLaCommande(int[] position);
+    protected abstract void transmissionDeLaCommande(int[] position, String typeAction);
 
     /**
      * Demande à la partie le dernier état du Encart

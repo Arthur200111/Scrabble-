@@ -23,6 +23,8 @@ public class BoutonPoubelle extends Bouton {
             return;
         }
 
-        mJeuView.getPartie().giveInputJoueurDefausser();
+        if (curseur.isDrop){
+            mJeuView.getPartie().giveInputJoueurDefausser();
+        }
     }
 }

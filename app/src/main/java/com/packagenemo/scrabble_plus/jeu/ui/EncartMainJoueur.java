@@ -36,10 +36,10 @@ public class EncartMainJoueur extends Encart {
      * Transmet la commande que le joueur vient d'effectuer au jeu
      */
     @Override
-    protected void transmissionDeLaCommande(int[] position) {
+    protected void transmissionDeLaCommande(int[] position, String typeAction) {
         // On ne transmet que le premier élément du fait que la main est affichée sur
         // une seule dimension
-        mJeuView.getPartie().giveInputJoueurMain(position[0]);
+        mJeuView.getPartie().giveInputJoueurMain(position[0], typeAction);
     }
 
     /**

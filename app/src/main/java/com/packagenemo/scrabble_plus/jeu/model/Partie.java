@@ -7,6 +7,7 @@ package com.packagenemo.scrabble_plus.jeu.model;
  * Les caractéristiques d'initialisation (nb de joueurs, parametres,.. se feront directement grace à la BDD)
  */
 public class Partie {
+    private boolean alternateur;
 
     // Code de la dernière mise à jour, sert à déterminer si le plateau est à jour
     private int codeLastUpdate;
@@ -22,6 +23,8 @@ public class Partie {
     public Partie(String idPartieBDD, String loginJoueurCourant) {
         // TODO : Initialiser la partie avec les informations contenues sur la BDD
         // L'initialisation de la partie devra pouvoir se faire à tout moment du jeu (jeu en cours)
+
+        alternateur = true;
     }
 
     /**
@@ -63,16 +66,20 @@ public class Partie {
      * Gère le clic sur le plateau du joueur courant
      * @param position : Coordonnées du plateau où le joueur a appuyé
      */
-    public void giveInputJoueurPlateau(int[] position){
+    public void giveInputJoueurPlateau(int[] position, String typeAction){
         // TODO : Cette méthode est appelée notamment lorsque le joueur appuie sur l'image du plateau dans l'app
+
+        System.out.println(typeAction + "  " +position[0] + " " + position[1]);
     }
 
     /**
      * Gère le clic sur la main du joueur courant
      * @param position : Coordonnées du plateau où le joueur a appuyé
      */
-    public void giveInputJoueurMain(int[] position){
+    public void giveInputJoueurMain(int position, String typeAction){
         // TODO : Cette méthode est appelée notamment lorsque le joueur appuie sur l'image de la main dans l'app
+
+        System.out.println(typeAction + "  " +position);
     }
 
     /**
@@ -81,6 +88,7 @@ public class Partie {
      */
     public void giveInputJoueurDefausser(){
         // TODO
+        System.out.println("Défausse");
     }
 
     /**
@@ -89,6 +97,7 @@ public class Partie {
      */
     public void giveInputJoueurFinTour(){
         // TODO
+        System.out.println("Fin de tour");
     }
 
     /**
@@ -97,8 +106,21 @@ public class Partie {
      */
     public String getStringPlateau(){
         // TODO
+        String string1 = "4;6;0,1,0,1;0,2,0,0;0,3,0,0;0,4,0,0;0,5,0,0;0,0,0,0;0,0,0,1;0,0,0,0;0,0,0,0;" +
+                "2,E,4,0;2,D,2,0;2,F,3,1;0,0,0,0;0,0,0,0;0,4,0,0;0,2,0,0;2,D,2,0;0,0,0,0;0,0,0,0;" +
+                "0,0,0,0;0,4,0,0;0,2,0,0;2,D,2,1;0,0,0,0;";
 
-        return null;
+        String string2 = "4;6;0,1,0,1;0,2,0,0;0,3,0,0;2,D,2,0;0,0,0,0;0,0,0,0;" +
+                "0,0,0,0;0,4,0,0;0,2,0,0;2,D,2,1;0,0,0,0;0,4,0,0;0,5,0,0;0,0,0,0;0,0,0,1;0,0,0,0;0,0,0,0;" +
+                "2,E,4,0;2,D,2,0;2,F,3,1;0,0,0,0;0,0,0,0;0,4,0,0;0,2,0,0;";
+
+        if (alternateur){
+            alternateur = !alternateur;
+            return string1;
+        } else {
+            alternateur = !alternateur;
+            return string1;
+        }
     }
 
     /**
@@ -109,7 +131,7 @@ public class Partie {
     public String getStringMainJoueur(){
         // TODO
 
-        return null;
+        return "7;2,A,1,0;2,I,1,0;2,G,2,0;2,A,1,1;2,P,3,0;1,0,0,0;1,0,0,0;";
     }
 
     /**

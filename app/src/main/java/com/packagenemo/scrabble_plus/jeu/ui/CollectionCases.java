@@ -63,6 +63,12 @@ public class CollectionCases {
         }
     }
 
+    public Case getCaseAtCoordonneesAbsolues(int x, int y){
+        int[] coord = coordonneesAbsoluesEnCoordonneesCases(x, y);
+
+        return mCaseList.get(coord[1]*mNbCaseLargeur + coord[0]);
+    }
+
     /**
      *
      * @param x

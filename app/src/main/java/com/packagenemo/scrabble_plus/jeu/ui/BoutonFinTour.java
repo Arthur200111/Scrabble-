@@ -24,7 +24,9 @@ public class BoutonFinTour extends Bouton {
             return;
         }
 
-        mJeuView.getPartie().giveInputJoueurFinTour();
+        if (curseur.isDrag){
+            mJeuView.getPartie().giveInputJoueurFinTour();
+        }
     }
 }
 

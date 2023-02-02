@@ -58,6 +58,7 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         // TODO : Récupérer les infos pour la co BDD
         this.mPartie = new Partie("idPartieBDD","loginJoueurCourant");
 
+        mCurseur = new Curseur();
     }
 
     private void creationDesElementsDeJeu(){
@@ -136,7 +137,6 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
      * Update de la position de tous les éléments du jeu
      */
     private void update () {
-
         mEncartPlateau.update();
         mEncartMainJoueur.update();
         mCurseur.update();
