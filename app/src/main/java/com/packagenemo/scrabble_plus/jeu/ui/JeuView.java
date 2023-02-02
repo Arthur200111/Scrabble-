@@ -33,6 +33,8 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
     private EncartMainJoueur mEncartMainJoueur;
     private BoutonPoubelle mBoutonPoubelle;
     private BoutonFinTour mBoutonFinTour;
+    private AffichageTextePoints mAffichageTextePoints;
+    private AffichageTexteMessageAuJoueur mAffichageTexteMessageAuJoueur;
 
     private Curseur mCurseur;
 
@@ -65,16 +67,20 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         // Nombre de cases en horizontal dans la main
         int tailleMain = 7;
 
-        // Paramètres de taille de tous les éléments de la fenêtre de jeu
-        int largeurFenetre = getWidth();
-        int milieuFenetre = largeurFenetre/2;
+        // Paramètres modifiables de taille de tous les éléments de la fenêtre de jeu
         int margeEntreEncartsEtEcran = 10;
-        int basEncartMain = largeurFenetre + margeEntreEncartsEtEcran +
-                (largeurFenetre - 2*margeEntreEncartsEtEcran)/tailleMain;
         int distanceIconesMain = 30;
         double ratioIcones = 1.4;
         int largeurIcones = 100;
         int ecartIconesEntreElles = 100;
+
+        // Paramètres fixes de taille de tous les éléments de la fenêtre de jeu
+        int largeurFenetre = getWidth();
+        int milieuFenetre = largeurFenetre/2;
+        int basEncartMain = largeurFenetre + margeEntreEncartsEtEcran +
+                (largeurFenetre - 2*margeEntreEncartsEtEcran)/tailleMain;
+
+        int basBoutons = basEncartMain + distanceIconesMain + (int) (largeurIcones * ratioIcones);
 
         mEncartPlateau = new EncartPlateau(
                 this, margeEntreEncartsEtEcran,
@@ -94,14 +100,29 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
                 milieuFenetre + ecartIconesEntreElles,
                 basEncartMain + distanceIconesMain,
                 milieuFenetre + ecartIconesEntreElles + largeurIcones,
-                basEncartMain + distanceIconesMain + (int) (largeurIcones * ratioIcones));
+                basBoutons);
 
         mBoutonPoubelle = new BoutonPoubelle(
                 this,
                 milieuFenetre - ecartIconesEntreElles - largeurIcones,
                 basEncartMain + distanceIconesMain,
                 milieuFenetre - ecartIconesEntreElles,
-                basEncartMain + distanceIconesMain + (int) (largeurIcones * ratioIcones));
+                basBoutons);
+
+        mAffichageTextePoints = new AffichageTextePoints(
+                this,
+                margeEntreEncartsEtEcran,
+                basBoutons + 120,
+                0,
+                0);
+
+        mAffichageTexteMessageAuJoueur = new AffichageTexteMessageAuJoueur(
+                this,
+                margeEntreEncartsEtEcran,
+                basBoutons + 320,
+                0,
+                0
+        );
     }
 
     /**
@@ -139,6 +160,10 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
     private void update () {
         mEncartPlateau.update();
         mEncartMainJoueur.update();
+
+        mAffichageTextePoints.update();
+        mAffichageTexteMessageAuJoueur.update();
+
         mCurseur.update();
     }
 
@@ -159,6 +184,10 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         mEncartMainJoueur.draw(canvas);
         mBoutonPoubelle.draw(canvas);
         mBoutonFinTour.draw(canvas);
+
+        mAffichageTextePoints.draw(canvas);
+        mAffichageTexteMessageAuJoueur.draw(canvas);
+
         mCurseur.draw(canvas);
 
         getHolder().unlockCanvasAndPost(canvas);

@@ -134,6 +134,10 @@ public class Partie {
         return "7;2,A,1,0;2,I,1,0;2,G,2,0;2,A,1,1;2,P,3,0;1,0,0,0;1,0,0,0;";
     }
 
+    public int getPointsDuJoueur(){
+        return 12;
+    }
+
     /**
      * Méthode appelée par l'interface graphique pour obtenir les messages adressés au joueur
      * @return

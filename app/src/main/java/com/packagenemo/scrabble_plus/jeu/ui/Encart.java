@@ -115,7 +115,7 @@ public abstract class Encart {
     }
 
     /**
-     * Converti les informations d'un event en position sur le Encart
+     * Converti les informations d'un event en position sur l'Encart
      * @param curseur
      * @return
      */
