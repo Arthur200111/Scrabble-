@@ -16,20 +16,38 @@ import androidx.annotation.NonNull;
 import com.packagenemo.scrabble_plus.R;
 import com.packagenemo.scrabble_plus.jeu.model.Partie;
 
+import java.util.logging.Logger;
+
 /**
  * Gère la fenêtre de jeu
  */
 public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Callback {
 
+    private Partie mPartie;
+
     private Thread thread;
     private boolean isPlaying;
-    private Partie mPartie;
+
+    // Elements affichés sur la View
     private EncartPlateau mEncartPlateau;
     private EncartMainJoueur mEncartMainJoueur;
     private BoutonPoubelle mBoutonPoubelle;
     private BoutonFinTour mBoutonFinTour;
-    private static int TEMPS_REFRESH = 17;
-    private static long TIME_OUT_MILLIS = 1000;
+
+    private long mTempsDerniereFrame;
+
+    // Nombre de frames depuis le début du lancement de l'instance
+    private int mNombreDeFrames;
+    // Variable qui va stocker un temps pour le mesure du nombre d'images par secondes
+    private long mMesureTempsFramerate;
+    private long mFramerate;
+
+    // Constantes
+    private int FPS_VOULU = 35;
+    private long TIME_OUT_MILLIS = 1000;
+    private int ECART_IMAGES_FRAMERATE = 100;
+
+    private static Logger logger = Logger.getLogger(String.valueOf(JeuView.class));
 
     // FIXME: Ces variables ci dessous seront à supprimer
     int mPosX,mPosY;
@@ -111,10 +129,14 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
 
         creationDesElementsDeJeu();
 
+        // Boucle principale qui update l'affichage
         while (isPlaying) {
             update ();
             draw ();
             sleep ();
+
+            // Doit être appelé à chaque boucle
+            calculeFrameRate();
         }
     }
 
@@ -176,11 +198,20 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
      * Pause entre chaque mise à jour de l'écran
      */
     private void sleep () {
-        try {
-            Thread.sleep(TEMPS_REFRESH);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        long intervalle = System.currentTimeMillis() - mTempsDerniereFrame;
+
+
+        while (intervalle < 1000/FPS_VOULU){
+            try {
+                Thread.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            intervalle = System.currentTimeMillis() - mTempsDerniereFrame;
         }
+
+        mTempsDerniereFrame = System.currentTimeMillis();
     }
 
     /**
@@ -237,8 +268,31 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {}
 
+    private void calculeFrameRate(){
+        mNombreDeFrames ++;
+        if (mNombreDeFrames < ECART_IMAGES_FRAMERATE){
+            return;
+        }
+
+        mNombreDeFrames = 0;
+
+        mFramerate = (ECART_IMAGES_FRAMERATE * 1000) /
+                (System.currentTimeMillis() - mMesureTempsFramerate);
+
+        mMesureTempsFramerate = System.currentTimeMillis();
+
+        if (mFramerate != 0 && mFramerate < FPS_VOULU*0.9){
+            logger.info("La fenêtre de jeu ne peut pas satisfaire " +
+                    "les exigences données par FPS_VOULU");
+        }
+    }
+
 
     public Partie getPartie() {
         return mPartie;
+    }
+
+    public long getFramerate() {
+        return mFramerate;
     }
 }
