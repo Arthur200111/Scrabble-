@@ -77,29 +77,29 @@ public abstract class Encart {
             return;
         }
 
-        // Le curseur nous indique si une action a été effectuée
-        // Si oui, on "prend son action" dans l'encart concerné par cette commande
-        if (curseur.getEventHappened()){
-            int[] position;
-            if (curseur.isDrag){
-                Case caseConcernee = getCaseAtPos(curseur.getX(), curseur.getY());
 
-                boolean laCaseEstAttrapable = caseConcernee.mEstLettre;
-                if (laCaseEstAttrapable){
-                    curseur.drag(caseConcernee);
+        int[] position;
+        if (curseur.isDrag){
+            Case caseConcernee = getCaseAtPos(curseur.getX(), curseur.getY());
 
-                    // On converti l'event en coordonnées cases
-                    position = convertisseurCoordonneesCases(curseur);
-                    // On envoie la position touchée sur l'Encart à la partie
-                    transmissionDeLaCommande(position, "drag");
-                }
-            } else if (curseur.isDrop) {
+            boolean laCaseEstAttrapable = caseConcernee.estAttrapable();
+            if (laCaseEstAttrapable && curseur.isSticky()){
+                curseur.drag(caseConcernee);
+
+                // On converti l'event en coordonnées cases
                 position = convertisseurCoordonneesCases(curseur);
-                transmissionDeLaCommande(position, "drop");
-            } else {
-                logger.warning("L'action enregistrée dans l'encart est de type inconnu");
+                // On envoie la position touchée sur l'Encart à la partie
+                transmissionDeLaCommande(position, "drag");
             }
+        } else if (curseur.isDrop) {
+            position = convertisseurCoordonneesCases(curseur);
+            transmissionDeLaCommande(position, "drop");
+        } else if (curseur.isMooving){
+            // TODO : faire le hoovering
+        } else {
+            logger.warning("L'action enregistrée dans l'encart est de type inconnu");
         }
+
     }
 
     /**

@@ -55,6 +55,10 @@ public class Case {
         }
     }
 
+    public boolean estAttrapable(){
+        return this.mEstLettre;
+    }
+
     public Bitmap getImageContenu() {
         return mImageContenu;
     }

@@ -23,10 +23,6 @@ public class Curseur {
 
     // Quand ce boolean est en true, le curseur sera "collant" pour les cases qui seront sur son chemin
     private boolean mSticky;
-    // Boolean qui indique quand une action s'est déroulée. Pour le besoin du jeu,
-    // on considère qu'une action s'est déroulée si je joueur appuie initialement (Down) ou
-    // drop une case (up + caseAttrapee)
-    private boolean mEventHappened;
 
     // Si ce booleen est en true, cela signifie que l'action est une action drag
     public boolean isDrag;
@@ -47,11 +43,16 @@ public class Curseur {
     }
 
     private void clear(){
-        mEventHappened = false;
         mSticky = false;
         isDrag = false;
         isDrop = false;
         isMooving = false;
+
+        mXDepartDrag = -1;
+        mYDepartDrag = -1;
+
+        mXActuel = -1;
+        mYActuel = -1;
     }
 
     public void onTouchEvent(MotionEvent event){
@@ -60,7 +61,6 @@ public class Curseur {
 
         if (action == MotionEvent.ACTION_DOWN){
             mSticky = true;
-            mEventHappened = true;
 
             isDrag = true;
             isDrop = false;
@@ -68,7 +68,6 @@ public class Curseur {
 
         } else if (action == MotionEvent.ACTION_MOVE && mCaseAttrapee != null) {
             mSticky = false;
-            mEventHappened = false;
 
             isDrag = false;
             isDrop = false;
@@ -76,7 +75,6 @@ public class Curseur {
 
         } else if (action == MotionEvent.ACTION_UP && mCaseAttrapee != null){
             mSticky = false;
-            mEventHappened = true;
 
             isDrag = false;
             isDrop = true;
@@ -143,10 +141,6 @@ public class Curseur {
 
     public boolean isSticky(){
         return mSticky;
-    }
-
-    public boolean getEventHappened(){
-        return mEventHappened;
     }
 
     public int getX() {
