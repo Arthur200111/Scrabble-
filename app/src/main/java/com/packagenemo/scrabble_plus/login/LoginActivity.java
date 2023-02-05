@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import com.packagenemo.scrabble_plus.R;
 import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
+import com.packagenemo.scrabble_plus.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -28,6 +29,13 @@ public class LoginActivity extends AppCompatActivity {
         mButtonConnexion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {verifLogin();
+            }
+        });
+        findViewById(R.id.login_bouton_inscription).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent toPageMenuIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(toPageMenuIntent);
             }
         });
 

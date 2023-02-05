@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">Scrabble_plus</string>
+    <string name="app_name">Scrabble +</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Mot de passe</string>
+    <string name="hint_name">Pseudo</string>
+    <string name="login">Connexion</string>
+    <string name="register">Inscription</string>
+    <string name="btn_link_to_register">Tu n\'as pas de compte? Inscris toi !</string>
+    <string name="btn_link_to_login">Déjà inscrit! Connecte toi.</string>
+    <string name="welcome">Bienvenue</string>
+    <string name="logout">Se déconnecter</string>
+    <string name="change_password">Changer de mot de passe</string>
+    <string name="old_password">Ancien mot de passe</string>
+    <string name="new_password">Nouveau mot de passe</string>
+    <string name="register_form">Formulaire d\'inscritpion</string>
 </resources>
