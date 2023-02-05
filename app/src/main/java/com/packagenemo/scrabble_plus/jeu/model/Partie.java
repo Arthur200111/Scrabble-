@@ -188,6 +188,4 @@ public class Partie {
 
         return null;
     }
-
-
 }
