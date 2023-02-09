@@ -9,14 +9,21 @@ import android.view.MotionEvent;
 
 import com.packagenemo.scrabble_plus.jeu.ui.JeuView;
 
+/**
+ * Classe abstraite représentant un bouton sur une SurfaceView
+ */
 public abstract class Bouton {
     protected JeuView mJeuView;
+
+    // Limites du bouton
     protected int mLeft, mTop, mRight, mBottom;
+
+    // Image du bouton
     protected Bitmap mBitmap;
 
 
     /**
-     * Constructeur, prend en entrée la view et les limites du Encart
+     * Constructeur, prend en entrée la view et les limites du Bouton
      */
     public Bouton(JeuView jeuView, int left, int top, int right, int bottom) {
         mJeuView = jeuView;
@@ -37,13 +44,13 @@ public abstract class Bouton {
 
     /**
      * Appelé lorsque l'utilisateur touche l'écran
-     * @param curseur
+     * @param curseur : curseur de la SurfaceView
      */
     public abstract void onTouchEvent(Curseur curseur);
 
     /**
-     * Informe si l'interraction est sur le Encart
-     * @return
+     * Informe si l'interraction est sur le Bouton
+     * @return true si sur le bouton, false sinon
      */
     protected boolean touchIsOnView(Curseur curseur){
         if ((curseur.getX() < mLeft || curseur.getX() > mRight) ||
@@ -53,6 +60,10 @@ public abstract class Bouton {
         return true;
     }
 
+    /**
+     * Charge l'image du Bouton
+     * @param nomImage : nom de l'image dans Drawable
+     */
     protected void chargeBitmap(String nomImage){
         int dslWidth = mRight - mLeft;
         int dstHeight = mBottom - mTop;

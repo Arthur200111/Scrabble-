@@ -99,12 +99,13 @@ public class BanqueImages {
      * @param dstHeight : Hauteur de l'image générée
      * @return : Un Bitmap aux dimensions précisés
      */
-     public Bitmap convertCaseToBitmap(String stringCase, int dslWidth, int dstHeight){
+     public Bitmap convertCaseToBitmap(
+             String stringCase, boolean transparence, int dslWidth, int dstHeight){
 
          Bitmap imageCase;
 
          // On commence par chercher si une occurence de l'image qui doit être créée n'a pas été déjà chargée
-         imageCase = chercheDansImagesChargees(stringCase, dslWidth, dstHeight);
+         imageCase = chercheDansImagesChargees(stringCase);
          if (imageCase != null){
              return imageCase;
          }
@@ -140,6 +141,10 @@ public class BanqueImages {
                      BRIGHTNESS_HIGHLIGHT);
          }
 
+         if (transparence){
+             imageCase = makeTransparent(imageCase, 128);
+         }
+
          // On enregiste l'image dans nos images chargées pour ne pas avoir à répéter le processus
          // lorsque l'on aura à charger exactement la même image
          enregistrerImage(stringCase, imageCase);
@@ -151,11 +156,9 @@ public class BanqueImages {
      * La classe stocke toutes les images qu'elle crée.
      * Si une même image est demandée deux fois, on la copie plutôt que de la charger deux fois.
      * @param stringCase : 4 caractères séparés par des virgules "*,*,*,*" : type,caractère,points,hightlight
-     * @param dslWidth : Largeur de l'image générée
-     * @param dstHeight : Hauteur de l'image générée
      * @return : Un Bitmap aux dimensions précisés
      */
-    private Bitmap chercheDansImagesChargees(String stringCase, int dslWidth, int dstHeight){
+    private Bitmap chercheDansImagesChargees(String stringCase){
         Bitmap imageChargee = mImagesChargees.get(stringCase);
         if (imageChargee == null){
             return null;
@@ -288,6 +291,21 @@ public class BanqueImages {
         canvas.drawBitmap(bmp, 0, 0, paint);
 
         return ret;
+    }
+
+    /**
+     * Permet de rendre le Bitmap transparent
+     * @param bitmap : input bitmap
+     * @param alpha : 0 à 255, 0 totalement transparent, 255 pas de transparence
+     * @return : Un bitmap à la transparence altérée
+     */
+    private Bitmap makeTransparent(Bitmap bitmap, int alpha) {
+        Bitmap transBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+        Canvas canvas = new Canvas(transBitmap);
+        Paint paint = new Paint();
+        paint.setAlpha(alpha);
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+        return transBitmap;
     }
 
     /**

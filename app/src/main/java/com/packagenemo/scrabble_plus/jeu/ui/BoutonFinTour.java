@@ -1,5 +1,8 @@
 package com.packagenemo.scrabble_plus.jeu.ui;
 
+/**
+ * Bouton de fin de tour
+ */
 public class BoutonFinTour extends Bouton {
 
     /**
