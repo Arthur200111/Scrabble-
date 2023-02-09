@@ -34,12 +34,15 @@ public class EncartPlateau extends Encart {
     /**
      * Transmet la commande que le joueur vient d'effectuer au jeu
      */
+    @Override
     protected void transmissionDeLaCommande(int[] position, String typeAction){
         mJeuView.getPartie().giveInputJoueurPlateau(position, typeAction);
     }
 
     /**
-     * Demande à la partie le dernier état du plateau
+     * Demande à la partie le dernier état du plateau grâce à la méthode getStringPlateau
+     *
+     * Met en forme le string récupéré pour pouvoir l'exploiter
      */
     @Override
     protected void metAJourStringJeu(){

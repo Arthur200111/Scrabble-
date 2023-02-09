@@ -6,7 +6,7 @@ package com.packagenemo.scrabble_plus.jeu.model;
  *
  * Les caractéristiques d'initialisation (nb de joueurs, parametres,.. se feront directement grace à la BDD)
  */
-public class Partie {
+public class Partie implements Runnable {
     private boolean alternateur;
 
     // Code de la dernière mise à jour, sert à déterminer si le plateau est à jour
@@ -25,6 +25,11 @@ public class Partie {
         // L'initialisation de la partie devra pouvoir se faire à tout moment du jeu (jeu en cours)
 
         alternateur = true;
+    }
+
+    @Override
+    public void run() {
+        // TODO : transformer la classe partie en runnable pour pouvoir la lacer sur un thread à part
     }
 
     /**
@@ -188,4 +193,6 @@ public class Partie {
 
         return null;
     }
+
+
 }

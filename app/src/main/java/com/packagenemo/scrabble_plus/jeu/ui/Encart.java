@@ -7,12 +7,25 @@ import android.graphics.Paint;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Représente un Encart sur la fenêtre de jeu.
+ *
+ * Cet encart a une taille, une position, des graphismes, réagit à un appui sur l'écran par l'utilisateur
+ */
 public abstract class Encart {
+    // JeuView dans lequel est instancié la classe
     protected JeuView mJeuView;
+
+    // Liste qui contient les informations d'affichage données par la partie
     protected List<String> mArrayEncartSplitted;
+
     protected int mNbCaseLargeurEncart;
     protected int mNbCaseHauteurEncart;
+
+    // Collection de case
     private CollectionCases mCollectionCases;
+
+    // Contient les images utilisées dans l'encart
     private BanqueImages mBanqueImages;
 
     // Limites du Encart sur le jeuView
@@ -46,10 +59,9 @@ public abstract class Encart {
      * Update de la position de tous les éléments du Encart
      */
     public void update () {
-
         metAJourStringJeu();
 
-        mCollectionCases.majContenuCases(mArrayEncartSplitted);
+        mCollectionCases.majCases(mArrayEncartSplitted);
     }
 
     /**
@@ -72,8 +84,9 @@ public abstract class Encart {
     public void onTouchEvent(Curseur curseur){
 
         // On vérifie que le clic est sur la vue et que c'est un premier appui,
-        // sinon, on ne prend pas en compte l'interraction
+        // sinon, on ne prend pas en compte l'interraction et on supprime les highlights
         if (!touchIsOnView(curseur)){
+            mCollectionCases.supprimerHighlights();
             return;
         }
 
@@ -94,8 +107,10 @@ public abstract class Encart {
         } else if (curseur.isDrop) {
             position = convertisseurCoordonneesCases(curseur);
             transmissionDeLaCommande(position, "drop");
+
+            mCollectionCases.supprimerHighlights();
         } else if (curseur.isMooving){
-            // TODO : faire le hoovering
+            mCollectionCases.highlightCaseAtCoordonnees(curseur.getX(), curseur.getY());
         } else {
             logger.warning("L'action enregistrée dans l'encart est de type inconnu");
         }

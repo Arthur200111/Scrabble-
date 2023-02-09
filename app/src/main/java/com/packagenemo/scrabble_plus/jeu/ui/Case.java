@@ -2,21 +2,19 @@ package com.packagenemo.scrabble_plus.jeu.ui;
 
 import android.graphics.Bitmap;
 
-import java.util.logging.Logger;
-
 /**
  * Classe qui représente
  */
 public class Case {
-
     public int mX;
     public int mY;
     public int mLargeur;
     public int mHauteur;
 
     public boolean mEstLettre;
+    private boolean mHighlight;
 
-    private BanqueImages mBanqueImages;
+    private final BanqueImages mBanqueImages;
 
     private String mContenuCase;
 
@@ -27,11 +25,23 @@ public class Case {
         mY = y;
         mLargeur = largeur;
         mHauteur = hauteur;
+
+        mHighlight = false;
+
         mBanqueImages = banqueImages;
     }
 
 
-    public void setContenuCase(String contenuCase){
+    public void update(String contenuCase){
+
+        // Si la case est en hightlight, on modifie son string pour le prendre en compte
+        if (mHighlight) {
+            // On modifie artificiellement le status "highlight" du string de la case envoyé par la partie
+            String[] arrayContenu = contenuCase.split(",");
+            arrayContenu[arrayContenu.length - 1] = "1";
+
+            contenuCase = String.join(",", arrayContenu);
+        }
 
         // Si le contenu de la case n'a pas changé, on ne fait rien
         if(!contenuCase.equals(mContenuCase)){
@@ -39,8 +49,16 @@ public class Case {
 
             majImageCase();
 
+            // On met à jour le statut de la classe
             isCaseLettre();
         }
+    }
+
+    /**
+     * Défini le status de la case en Highlight pendant un nombre de tours défini
+     */
+    public void setHighlight(boolean highlight){
+        mHighlight = highlight;
     }
 
     private void majImageCase(){

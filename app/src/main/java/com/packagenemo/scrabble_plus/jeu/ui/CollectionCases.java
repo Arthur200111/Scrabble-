@@ -21,6 +21,8 @@ public class CollectionCases {
     private List<Case> mCaseList;
     private BanqueImages mBanqueImages;
 
+    private Case mDerniereCaseHighlight;
+
     private static Logger logger = Logger.getLogger(String.valueOf(CollectionCases.class));
 
     public CollectionCases(BanqueImages banqueImages, int nbCaseLargeur, int nbCaseHauteur, int left, int top, int right, int bottom) {
@@ -70,7 +72,7 @@ public class CollectionCases {
     }
 
     /**
-     *
+     * sex
      * @param x
      * @param y
      * @return
@@ -81,22 +83,54 @@ public class CollectionCases {
         coordonneeCase[0] = (x - mLeft)/mLargeurCase;
         coordonneeCase[1] = (y - mTop)/mHauteurcase;
 
+        // Ces cas se produisent au bord du plateau.
+        // L'arrondissement à l'int de la taille de chaque case crée une petite marge
+        if (coordonneeCase[0] >= mNbCaseLargeur){
+            coordonneeCase[0] = mNbCaseLargeur - 1;
+        }
+        if (coordonneeCase[1] >= mNbCaseHauteur){
+            coordonneeCase[1] = mNbCaseHauteur - 1;
+        }
+
         if ((x < mLeft || x > mRight) ||
                 (y < mTop || y > mBottom)){
             logger.warning("coordonneesAbsoluesEnRelatives a renvoyé une position en dehors de" +
                     "son périmètre de définition" + mLeft + " " + mRight + " " + mTop + " " +mBottom);
         }
 
+
+
         return coordonneeCase;
     }
 
-    public void majContenuCases(List<String> contenuCases){
+    public void majCases(List<String> contenuCases){
 
         int index = 0;
         for (String contenu : contenuCases){
-            mCaseList.get(index).setContenuCase(contenu);
+            mCaseList.get(index).update(contenu);
 
             index++;
+        }
+    }
+
+    public void highlightCaseAtCoordonnees(int x, int y){
+        Case caseAHighlight = getCaseAtCoordonneesAbsolues(x, y);
+
+        if (caseAHighlight != mDerniereCaseHighlight){
+            if (mDerniereCaseHighlight == null){
+                mDerniereCaseHighlight = caseAHighlight;
+                mDerniereCaseHighlight.setHighlight(true);
+            } else {
+                mDerniereCaseHighlight.setHighlight(false);
+                caseAHighlight.setHighlight(true);
+                mDerniereCaseHighlight = caseAHighlight;
+            }
+        }
+    }
+
+    public void supprimerHighlights(){
+        if (mDerniereCaseHighlight != null){
+            mDerniereCaseHighlight.setHighlight(false);
         }
     }
 
