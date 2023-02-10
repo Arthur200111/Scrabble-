@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,12 +17,12 @@
         android:layout_marginBottom="16dp"
         android:textSize="32sp"
         android:textColor="@color/colorPrimary"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintBottom_toTopOf="@+id/RegisterConstraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/RegisterConstraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
@@ -37,7 +38,7 @@
             android:id="@+id/registerText"
             android:text="@string/register_form"
             android:textColor="@color/colorPrimaryVariant"
-            app:layout_constraintBottom_toTopOf="@+id/edit_name"
+            app:layout_constraintBottom_toTopOf="@+id/registerInputPseudo"
             app:layout_constraintEnd_toEndOf="parent"
             android:padding="8dp"
             android:textSize="20sp"
@@ -45,7 +46,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/edit_name"
+            android:id="@+id/registerInputPseudo"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,14 +66,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/edit_email"
+            android:id="@+id/registerInputMail"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit_name">
+            app:layout_constraintTop_toBottomOf="@id/registerInputPseudo">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -91,7 +92,7 @@
             android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit_email"
+            app:layout_constraintTop_toBottomOf="@id/registerInputMail"
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -104,7 +105,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/button_register"
+            android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -115,7 +116,7 @@
             app:layout_constraintTop_toBottomOf="@id/edit_password" />
 
         <Button
-            android:id="@+id/button_login"
+            android:id="@+id/registerButtonLogin"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -124,7 +125,7 @@
             android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_register" />
+            app:layout_constraintTop_toBottomOf="@id/registerButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
