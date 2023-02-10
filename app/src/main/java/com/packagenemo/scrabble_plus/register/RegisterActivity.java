@@ -17,7 +17,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        findViewById(R.id.button_login).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.registerButtonLogin).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent toPageMenuIntent = new Intent(RegisterActivity.this, LoginActivity.class);
