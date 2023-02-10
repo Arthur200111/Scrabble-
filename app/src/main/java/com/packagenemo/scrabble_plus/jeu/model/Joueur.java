@@ -56,4 +56,28 @@ public class Joueur {
         }
         this.score = this.score + score;
     }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public MainJoueur getMainJ() {
+        return mainJ;
+    }
+
+    public void setMainJ(MainJoueur mainJ) {
+        this.mainJ = mainJ;
+    }
 }

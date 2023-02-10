@@ -2,6 +2,7 @@ package com.packagenemo.scrabble_plus.jeu.model;
 
 import java.sql.Connection;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Classe qui gère toute la partie.
@@ -16,6 +17,15 @@ public class Partie {
 
     // Boolean qui indique si la partie sur cette machine a subit des changements depuis le dernier download BDD
     private boolean desChangementsSeSontProduits;
+
+
+    private List<Joueur> listJoueur;
+    private int joueurActuel;
+    private Pioche pioche;
+    private Plateau plateau;
+    // Indique la lettre selectionné, vaut null si aucune ne l'est
+    private Lettre focused_lettre;
+    private boolean defausse;
 
     /**
      * Initialise la partie pour chaque joueur
@@ -69,6 +79,34 @@ public class Partie {
      */
     public void interractionPlateau(Position position){
         // TODO : Cette méthode est appelée notamment lorsque le joueur appuie sur l'image du plateau dans l'app
+
+        // Besoin de ces infos
+        boolean estDansLaMain = false;
+        boolean estDansLePlateau = true;
+
+        if (focused_lettre != null) {
+            if (estDansLaMain) {
+                if (plateau.getCaseFocused() != null) {
+                    listJoueur.get(joueurActuel).getMainJ().getCartes().add(focused_lettre);
+                    plateau.getCaseFocused().setLettre(null);
+                    plateau.setCaseFocused(null);
+                }
+                focused_lettre.setFocused(false);
+                focused_lettre = listJoueur.get(joueurActuel).getMainJ().newFocus(position);
+            } else if (estDansLePlateau && !defausse) {
+                if (plateau.getCaseFocused() != null) {
+                    plateau.getCaseFocused().setLettre(null);
+                    plateau.setCaseFocused(null);
+                }
+                focused_lettre = plateau.caseLibre(position, listJoueur.get(joueurActuel).getMainJ(), focused_lettre, pioche);
+            }
+        } else {
+            if (estDansLaMain) {
+                focused_lettre = listJoueur.get(joueurActuel).getMainJ().newFocus(position);
+            } else if (estDansLePlateau) {
+                focused_lettre = plateau.caseOccupee(position, listJoueur.get(joueurActuel).getMainJ());
+            }
+        }
     }
 
     /**

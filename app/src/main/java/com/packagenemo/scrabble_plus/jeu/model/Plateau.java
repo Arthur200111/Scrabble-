@@ -9,6 +9,10 @@ public class Plateau {
     private int longueur;
     private ArrayList<ArrayList<Case>> listCase;
 
+    private List<Case> lettresJouees;
+
+    private Case caseFocused;
+
     public Plateau(){
         this(0,0);
     }
@@ -65,5 +69,62 @@ public class Plateau {
             }
         }
         return info;
+    }
+
+    public Case getCaseFocused() {
+        return caseFocused;
+    }
+
+    public void setCaseFocused(Case c) {
+        this.caseFocused = c;
+    }
+
+    /**
+     * Fonction vérifiant que la case sur laquelle l'utilisateur a cliqué est libre,
+     * si la case l'est la fonction renvoie la valeur null
+     * autrement la fonction renvoie la lettre que l'utilisateur voulait placer
+     *
+     * @param p position
+     * @param mainJ
+     * @param focused_letter
+     * @param pioche
+     * @return Lettre
+     */
+    public Lettre caseLibre(Position p, MainJoueur mainJ, Lettre focused_letter, Pioche pioche) {
+        Case c = listCase.get(p.getY()).get(p.getX());
+        if (c.getLettre() == null) {
+            c.setLettre(focused_letter);
+            mainJ.supprLettre(focused_letter);
+            lettresJouees.add(c);
+            return null;
+        }
+        return focused_letter;
+    }
+
+
+    /**
+     * Fonction vérifiant si la case sur laquelle l'utilisateur a cliqué est occupée,
+     * si la case l'est la fonction renvoie la lettre contenu sur cette case (si cela respecte les règles du Scrabble)
+     * autrement la fonction renvoie la valeur null
+     *
+     * @param p position
+     * @param mainJ
+     * @return Lettre
+     */
+    public Lettre caseOccupee(Position p, MainJoueur mainJ){
+        Case c = listCase.get(p.getY()).get(p.getX());
+        Lettre l = c.getLettre();
+        if (getLettresJouees().contains(c) && l!=null) {
+            //c.setLettre(null);
+            l.setFocused(true);
+            lettresJouees.remove(c);
+            setCaseFocused(c);
+            return l;
+        }
+        return null;
+    }
+
+    public List<Case> getLettresJouees() {
+        return lettresJouees;
     }
 }

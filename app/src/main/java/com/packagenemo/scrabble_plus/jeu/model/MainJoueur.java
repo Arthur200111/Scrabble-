@@ -37,4 +37,30 @@ public class MainJoueur {
         }
         return info;
     }
+
+    /**
+     * permet de supprimer la lettre dans la main du joueur
+     *
+     * @param focused_letter lettre à supprimer
+     */
+    public void supprLettre(Lettre focused_letter) {
+        focused_letter.setFocused(false);
+        cartes.remove(focused_letter);
+    }
+
+    /**
+     * permet de focus une lettre
+     *
+     * @param p position de la lettre à focus
+     * @return Lettre lettre focus
+     */
+    public Lettre newFocus(Position p) {
+        int i = p.getY();
+        if (cartes.size() > i) {
+            cartes.get(i).setFocused(true);
+            return cartes.get(i);
+        }
+        return null;
+    }
+
 }
