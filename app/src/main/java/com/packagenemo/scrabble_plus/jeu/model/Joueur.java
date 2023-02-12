@@ -40,12 +40,12 @@ public class Joueur {
         return info;
     }
 
-    public void ajoutScore(List<List<Case>> motsJouees){
+    public void ajoutScore(List<Mot> motsJouees){
         int score = 0;
-        for (List<Case> mot : motsJouees){
+        for (Mot mot : motsJouees){
             int scoremot = 0;
             int multiM = 1;
-            for (Case c : mot){
+            for (Case c : mot.getCasesMot()){
                 scoremot = scoremot + c.getLettre().getScore() * c.getMultiplL();
                 multiM = multiM * c.getMultiplM();
                 c.setMultiplL(1);

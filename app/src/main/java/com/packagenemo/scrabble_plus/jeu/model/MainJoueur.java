@@ -51,16 +51,40 @@ public class MainJoueur {
     /**
      * permet de focus une lettre
      *
-     * @param p position de la lettre à focus
+     * @param i position de la lettre à focus
      * @return Lettre lettre focus
      */
-    public Lettre newFocus(Position p) {
-        int i = p.getY();
+    public Lettre newFocus(int i) {
         if (cartes.size() > i) {
             cartes.get(i).setFocused(true);
             return cartes.get(i);
         }
         return null;
+    }
+
+    /**
+     * permet de compléter la main avec les cartes de la pioche
+     *
+     * @param pioche pioche
+     */
+    public void complete(Pioche pioche) {
+        int l = cartes.size();
+        if (7 - l > 0) {
+            pioche.piocher(7 - l, cartes);
+        }
+    }
+
+    /**
+     * permet de récupérer les lettres qui ont été jouées pendant le tour si les
+     * lettres qui ont été posées ne respectent pas les règles du Scrabble
+     *
+     * @param lettresJouees
+     */
+    public void recup(List<Case> lettresJouees) {
+        for (Case c : lettresJouees) {
+            cartes.add(c.getLettre());
+            c.setLettre(null);
+        }
     }
 
 }

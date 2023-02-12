@@ -1,6 +1,7 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,7 +11,8 @@ import java.util.List;
  *
  * Les caractéristiques d'initialisation (nb de joueurs, parametres,.. se feront directement grace à la BDD)
  */
-public class Partie {
+public class Partie implements Runnable{
+    private boolean alternateur;
 
     // Code de la dernière mise à jour, sert à déterminer si le plateau est à jour
     private int codeLastUpdate;
@@ -25,6 +27,7 @@ public class Partie {
     private Plateau plateau;
     // Indique la lettre selectionné, vaut null si aucune ne l'est
     private Lettre focused_lettre;
+    private GestionMots gestionM;
     private boolean defausse;
 
     /**
@@ -77,54 +80,168 @@ public class Partie {
      * Gère le clic sur le plateau du joueur courant
      * @param position : Coordonnées du plateau où le joueur a appuyé
      */
-    public void interractionPlateau(Position position){
-        // TODO : Cette méthode est appelée notamment lorsque le joueur appuie sur l'image du plateau dans l'app
-
-        // Besoin de ces infos
-        boolean estDansLaMain = false;
-        boolean estDansLePlateau = true;
-
-        if (focused_lettre != null) {
-            if (estDansLaMain) {
-                if (plateau.getCaseFocused() != null) {
-                    listJoueur.get(joueurActuel).getMainJ().getCartes().add(focused_lettre);
-                    plateau.getCaseFocused().setLettre(null);
-                    plateau.setCaseFocused(null);
-                }
-                focused_lettre.setFocused(false);
-                focused_lettre = listJoueur.get(joueurActuel).getMainJ().newFocus(position);
-            } else if (estDansLePlateau && !defausse) {
-                if (plateau.getCaseFocused() != null) {
-                    plateau.getCaseFocused().setLettre(null);
-                    plateau.setCaseFocused(null);
-                }
-                focused_lettre = plateau.caseLibre(position, listJoueur.get(joueurActuel).getMainJ(), focused_lettre, pioche);
+    public void giveInputJoueurPlateau(int[] position, String typeAction){
+        Position position1 = new Position(position[0],position[1]);
+        if (focused_lettre != null && !defausse) {
+            if (plateau.getCaseFocused() != null) {
+                plateau.getCaseFocused().setLettre(null);
+                plateau.setCaseFocused(null);
             }
+            focused_lettre = plateau.caseLibre(position1, listJoueur.get(joueurActuel).getMainJ(), focused_lettre, pioche);
+        }
+        else{
+            focused_lettre = plateau.caseOccupee(position1, listJoueur.get(joueurActuel).getMainJ());
+        }
+    }
+
+    /**
+     * Gère le clic sur la main du joueur courant
+     * @param position : Coordonnées du plateau où le joueur a appuyé
+     */
+    public void giveInputJoueurMain(int position, String typeAction){
+        if (focused_lettre != null) {
+            if (plateau.getCaseFocused() != null) {
+                listJoueur.get(joueurActuel).getMainJ().getCartes().add(focused_lettre);
+                plateau.getCaseFocused().setLettre(null);
+                plateau.setCaseFocused(null);
+            }
+            focused_lettre.setFocused(false);
+            focused_lettre = listJoueur.get(joueurActuel).getMainJ().newFocus(position);
+        }
+        else{
+            focused_lettre = listJoueur.get(joueurActuel).getMainJ().newFocus(position);
+        }
+    }
+
+    /**
+     * Lorsque le joueur appuie sur le bouton défausser
+     * @return
+     */
+    public void giveInputJoueurDefausser(){
+        if (focused_lettre != null) {
+            if (plateau.getCaseFocused() != null) {
+                plateau.getCaseFocused().setLettre(null);
+                plateau.setCaseFocused(null);
+            } else {
+                listJoueur.get(0).getMainJ().supprLettre(focused_lettre);
+            }
+            focused_lettre = null;
+            defausse = true;
+        }
+    }
+
+    /**
+     * Lorsque le joueur appuie sur le bouton "fin de tour"
+     * @return
+     */
+    public void giveInputJoueurFinTour(){
+        if (defausse) {
+            for (Case c : plateau.getLettresJouees()) {
+                listJoueur.get(0).getMainJ().getCartes().add(c.getLettre());
+                c.setLettre(null);
+            }
+            listJoueur.get(0).getMainJ().complete(pioche);
+            defausse = false;
         } else {
-            if (estDansLaMain) {
-                focused_lettre = listJoueur.get(joueurActuel).getMainJ().newFocus(position);
-            } else if (estDansLePlateau) {
-                focused_lettre = plateau.caseOccupee(position, listJoueur.get(joueurActuel).getMainJ());
+            List<Mot> nouveauxMots = gestionM.ajoutMot(plateau.getLettresJouees(), plateau);
+            if (nouveauxMots != null) {
+                listJoueur.get(0).getMainJ().complete(pioche);
+                listJoueur.get(0).ajoutScore(nouveauxMots);
+                // listJoueur.get(0).affiche();
+            } else {
+                listJoueur.get(0).getMainJ().recup(plateau.getLettresJouees());
             }
         }
+        plateau.setLettresJouees(new ArrayList<>());
     }
 
     /**
      * Méthode appelée par l'interface graphique pour obtenir les informations d'affichage
      * @return
      */
-    public Plateau getPlateau(){
+    public String getStringPlateau(){
         // TODO
+        String string1 = "15;15;2,C,8,0;2,B,1,0;1,4,10,0;0,4,1,0;2,A,6,0;1,4,8,0;0,4,7,0;2,E,8,0;" +
+                "2,A,1,0;0,1,1,0;1,0,5,0;0,4,6,0;0,5,1,0;1,1,3,0;2,A,4,0;0,5,1,0;0,3,3,0;1,2,10,0;" +
+                "1,2,7,0;2,A,4,0;1,5,6,0;1,4,3,0;1,5,8,0;1,2,5,0;2,B,8,0;1,1,2,0;1,1,7,0;1,3,1,0;" +
+                "1,3,4,0;2,D,7,0;2,C,1,0;2,B,5,0;0,4,7,0;2,C,5,0;2,E,8,0;2,D,4,0;2,E,7,0;2,E,4,0;" +
+                "0,5,9,0;2,B,10,0;1,0,1,0;1,5,10,0;2,A,1,0;0,2,2,0;0,4,8,0;2,C,1,0;2,D,4,0;0,4,2,0;" +
+                "1,2,10,0;2,B,6,0;2,E,9,0;1,2,1,0;2,C,4,0;2,C,7,0;2,C,3,0;2,F,2,0;0,0,3,0;1,0,5,0;" +
+                "0,1,6,0;1,5,10,0;2,B,8,0;2,B,7,0;1,4,10,0;1,5,7,0;1,0,2,0;1,2,6,0;2,D,4,0;0,5,6,0;" +
+                "1,0,5,0;2,C,2,0;0,4,4,0;2,C,4,0;2,D,9,0;1,4,10,0;2,C,9,0;1,2,10,0;1,5,5,0;2,F,2,0;" +
+                "1,1,9,0;0,5,6,0;1,0,10,0;1,1,7,0;2,B,5,0;1,2,7,0;2,B,10,0;2,A,7,0;1,4,3,0;0,4,4,0;" +
+                "0,3,2,0;2,D,10,0;0,0,6,0;1,5,6,0;2,D,6,0;2,C,5,0;2,B,4,0;2,B,8,0;1,4,8,0;1,1,8,0;" +
+                "0,4,3,0;2,B,9,0;0,3,3,0;1,1,1,0;0,1,3,0;2,F,1,0;0,2,1,0;0,2,5,0;2,D,4,0;2,C,4,0;" +
+                "2,D,6,0;2,B,4,0;1,5,2,0;2,B,5,0;1,3,6,0;1,4,3,0;1,1,3,0;2,F,9,0;0,0,8,0;2,F,9,0;" +
+                "0,2,8,0;1,2,9,0;0,0,1,0;0,0,10,0;0,4,6,0;0,2,2,0;1,1,8,0;0,2,5,0;0,3,6,0;1,1,9,0;" +
+                "2,D,9,0;2,D,5,0;1,4,1,0;0,2,10,0;1,1,5,0;2,E,4,0;0,0,7,0;0,4,7,0;1,1,8,0;2,E,2,0;" +
+                "2,F,10,0;1,5,1,0;0,1,4,0;1,2,2,0;1,1,1,0;2,A,9,0;1,3,3,0;0,0,6,0;2,D,10,0;0,3,8,0;" +
+                "0,3,3,0;1,3,6,0;1,4,8,0;1,1,7,0;0,0,6,0;0,4,2,0;0,0,4,0;2,D,3,0;0,3,5,0;1,0,3,0;" +
+                "1,2,4,0;0,5,2,0;2,B,9,0;1,2,5,0;1,4,1,0;2,B,3,0;1,1,5,0;0,3,5,0;2,B,10,0;2,D,8,0;" +
+                "2,B,9,0;2,C,9,0;2,A,7,0;2,A,6,0;1,0,9,0;2,E,2,0;2,E,2,0;2,F,6,0;1,1,8,0;1,5,3,0;" +
+                "2,E,7,0;1,4,4,0;1,1,4,0;1,1,3,0;2,F,10,0;1,1,6,0;2,A,6,0;2,B,8,0;1,4,4,0;2,D,5,0;" +
+                "2,A,3,0;2,B,9,0;0,1,6,0;1,3,3,0;2,C,6,0;0,1,1,0;2,F,1,0;2,A,1,0;2,F,4,0;2,B,6,0;" +
+                "0,4,4,0;0,3,7,0;1,4,4,0;2,F,5,0;1,0,4,0;1,4,9,0;2,A,2,0;2,C,9,0;1,3,7,0;0,4,6,0;" +
+                "2,C,9,0;2,D,10,0;2,D,9,0;1,5,1,0;0,0,3,0;1,4,10,0;1,4,2,0;0,3,9,0;1,1,3,0;1,1,10,0;" +
+                "0,1,3,0;0,1,9,0;0,0,5,0;2,B,7,0;2,C,3,0;2,C,9,0;0,2,6,0;";
 
-        return null;
+        String string2 = "15;15;0,0,10,0;0,4,6,0;0,2,2,0;1,1,8,0;0,2,5,0;0,3,6,0;1,1,9,0;" +
+                "2,D,9,0;2,D,5,0;1,4,1,0;0,2,10,0;1,1,5,0;2,E,4,0;0,0,7,0;0,4,7,0;1,1,8,0;2,E,2,0;" +
+                "2,F,10,0;1,5,1,0;0,1,4,0;1,2,2,0;1,1,1,0;2,A,9,0;1,3,3,0;0,0,6,0;2,D,10,0;0,3,8,0;" +
+                "0,3,3,0;1,3,6,0;1,4,8,0;1,1,7,0;0,0,6,0;0,4,2,0;0,0,4,0;2,D,3,0;0,3,5,0;1,0,3,0;" +
+                "1,2,4,0;0,5,2,0;2,B,9,0;1,2,5,0;1,4,1,0;2,B,3,0;1,1,5,0;0,3,5,0;2,B,10,0;2,D,8,0;" +
+                "2,B,9,0;2,C,9,0;2,A,7,0;2,A,6,0;1,0,9,0;2,E,2,0;2,E,2,0;2,F,6,0;1,1,8,0;1,5,3,0;" +
+                "2,E,7,0;1,4,4,0;1,1,4,0;1,1,3,0;2,F,10,0;1,1,6,0;2,A,6,0;2,B,8,0;1,4,4,0;2,D,5,0;" +
+                "2,A,3,0;2,B,9,0;0,1,6,0;1,3,3,0;2,C,6,0;0,1,1,0;2,F,1,0;2,A,1,0;2,F,4,0;2,B,6,0;" +
+                "0,4,4,0;0,3,7,0;1,4,4,0;2,F,5,0;1,0,4,0;1,4,9,0;2,A,2,0;2,C,9,0;1,3,7,0;0,4,6,0;" +
+                "2,C,9,0;2,D,10,0;2,D,9,0;1,5,1,0;0,0,3,0;1,4,10,0;1,4,2,0;0,3,9,0;1,1,3,0;1,1,10,0;" +
+                "0,1,3,0;0,1,9,0;0,0,5,0;2,B,7,0;2,C,3,0;2,C,9,0;0,2,6,0;" +
+                "2,C,8,0;2,B,1,0;1,4,10,0;0,4,1,0;2,A,6,0;1,4,8,0;0,4,7,0;2,E,8,0;" +
+                "2,A,1,0;0,1,1,0;1,0,5,0;0,4,6,0;0,5,1,0;1,1,3,0;2,A,4,0;0,5,1,0;0,3,3,0;1,2,10,0;" +
+                "1,2,7,0;2,A,4,0;1,5,6,0;1,4,3,0;1,5,8,0;1,2,5,0;2,B,8,0;1,1,2,0;1,1,7,0;1,3,1,0;" +
+                "1,3,4,0;2,D,7,0;2,C,1,0;2,B,5,0;0,4,7,0;2,C,5,0;2,E,8,0;2,D,4,0;2,E,7,0;2,E,4,0;" +
+                "0,5,9,0;2,B,10,0;1,0,1,0;1,5,10,0;2,A,1,0;0,2,2,0;0,4,8,0;2,C,1,0;2,D,4,0;0,4,2,0;" +
+                "1,2,10,0;2,B,6,0;2,E,9,0;1,2,1,0;2,C,4,0;2,C,7,0;2,C,3,0;2,F,2,0;0,0,3,0;1,0,5,0;" +
+                "0,1,6,0;1,5,10,0;2,B,8,0;2,B,7,0;1,4,10,0;1,5,7,0;1,0,2,0;1,2,6,0;2,D,4,0;0,5,6,0;" +
+                "1,0,5,0;2,C,2,0;0,4,4,0;2,C,4,0;2,D,9,0;1,4,10,0;2,C,9,0;1,2,10,0;1,5,5,0;2,F,2,0;" +
+                "1,1,9,0;0,5,6,0;1,0,10,0;1,1,7,0;2,B,5,0;1,2,7,0;2,B,10,0;2,A,7,0;1,4,3,0;0,4,4,0;" +
+                "0,3,2,0;2,D,10,0;0,0,6,0;1,5,6,0;2,D,6,0;2,C,5,0;2,B,4,0;2,B,8,0;1,4,8,0;1,1,8,0;" +
+                "0,4,3,0;2,B,9,0;0,3,3,0;1,1,1,0;0,1,3,0;2,F,1,0;0,2,1,0;0,2,5,0;2,D,4,0;2,C,4,0;" +
+                "2,D,6,0;2,B,4,0;1,5,2,0;2,B,5,0;1,3,6,0;1,4,3,0;1,1,3,0;2,F,9,0;0,0,8,0;2,F,9,0;" +
+                "0,2,8,0;1,2,9,0;0,0,1,0;";
+
+        if (alternateur){
+            alternateur = !alternateur;
+            return string1;
+        } else {
+            alternateur = !alternateur;
+            return string1;
+        }
     }
 
     /**
-     * Gère le clic sur le plateau du joueur courant
-     * @param position : Coordonnées du plateau où le joueur a appuyé
+     * Méthode appelée par l'interface graphique pour obtenir les informations
+     * d'affichage de la main du joueur courant
+     * @return
      */
-    public void interractionJoueur(Position position){
-        // TODO : Cette méthode est appelée notamment lorsque le joueur appuie sur l'image de sa main dans l'app
+    public String getStringMainJoueur(){
+        // TODO
+
+        return "7;2,A,1,0;2,I,1,0;2,G,2,0;2,A,1,1;2,P,3,0;1,0,0,0;1,0,0,0;";
+    }
+
+    public int getPointsDuJoueur(){
+        return 12;
+    }
+
+    /**
+     * Méthode appelée par l'interface graphique pour obtenir les messages adressés au joueur
+     * @return
+     */
+    public String getStringMessageAuJoueur(){
+        // TODO
+
+        return null;
     }
 
     /**
@@ -132,8 +249,11 @@ public class Partie {
      * @return
      */
     public Joueur getCurrentJoueur(){
+        return listJoueur.get(joueurActuel);
+    }
 
-        // TODO
-        return new Joueur();
+    @Override
+    public void run() {
+
     }
 }

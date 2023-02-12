@@ -115,7 +115,6 @@ public class Plateau {
         Case c = listCase.get(p.getY()).get(p.getX());
         Lettre l = c.getLettre();
         if (getLettresJouees().contains(c) && l!=null) {
-            //c.setLettre(null);
             l.setFocused(true);
             lettresJouees.remove(c);
             setCaseFocused(c);
@@ -124,7 +123,58 @@ public class Plateau {
         return null;
     }
 
+    /**
+     * Renvoie la liste des cases sur lesquelles une lettre a été jouée ce tour ci
+     *
+     * @return List<Case>
+     */
     public List<Case> getLettresJouees() {
-        return lettresJouees;
+        return this.lettresJouees;
+    }
+
+
+    /**
+     * Modifie la liste des cases sur lesquelles une lettre a été jouée ce tour ci
+     *
+     * @param lettresJouees
+     */
+    public void setLettresJouees(List<Case> lettresJouees) {
+        this.lettresJouees = lettresJouees;
+    }
+
+
+    /**
+     * Renvoie la case d'indice (i,j), si elle n'existe pas on renvoie une case null
+     *
+     * @param i
+     * @param j
+     * @return Case
+     */
+    public Case getCase(int i, int j) {
+        try{
+            return listCase.get(j).get(i);
+        } catch (Exception e){
+            Case c = new Case();
+            return c;
+        }
+    }
+
+    /**
+     * Renvoie la largeur du plateau
+     *
+     * @return int
+     */
+    public int getLargeur() {
+        return largeur;
+    }
+
+
+    /**
+     * Renvoie la longueur du plateau
+     *
+     * @return int
+     */
+    public int getLongueur() {
+        return longueur;
     }
 }
