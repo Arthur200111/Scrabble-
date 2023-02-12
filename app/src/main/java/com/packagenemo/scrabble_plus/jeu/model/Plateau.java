@@ -90,15 +90,13 @@ public class Plateau {
      * @param pioche
      * @return Lettre
      */
-    public Lettre caseLibre(Position p, MainJoueur mainJ, Lettre focused_letter, Pioche pioche) {
+    public void caseLibre(Position p, MainJoueur mainJ, Lettre focused_letter, Pioche pioche) {
         Case c = listCase.get(p.getY()).get(p.getX());
         if (c.getLettre() == null) {
             c.setLettre(focused_letter);
             mainJ.supprLettre(focused_letter);
             lettresJouees.add(c);
-            return null;
         }
-        return focused_letter;
     }
 
 
