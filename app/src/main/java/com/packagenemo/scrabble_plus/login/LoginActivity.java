@@ -4,12 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.packagenemo.scrabble_plus.R;
 import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
+import com.packagenemo.scrabble_plus.menu.MenuActivity;
+import com.packagenemo.scrabble_plus.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -24,10 +28,25 @@ public class LoginActivity extends AppCompatActivity {
 
         mVerifConnexion = new VerifConnexion();
 
-        mButtonConnexion = findViewById(R.id.login_bouton_connexion);
+        mButtonConnexion = findViewById(R.id.loginButton);
         mButtonConnexion.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {verifLogin();
+            public void onClick(View v) {
+                verifLogin();
+            }
+        });
+        findViewById(R.id.loginButtonRegister).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextInputLayout textInputLayout = findViewById(R.id.loginInputMail);
+                String pseudo = textInputLayout.getEditText().getText().toString();
+                System.out.println(pseudo);
+                if (pseudo == "admin") {
+                    Intent toPageMenuIntent = new Intent(LoginActivity.this, MenuActivity.class);
+                    startActivity(toPageMenuIntent);
+                }
+                Intent toPageMenuIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(toPageMenuIntent);
             }
         });
 
@@ -67,9 +86,18 @@ public class LoginActivity extends AppCompatActivity {
      * Valide la connexion demandée lors de l'appui sur le bouton connexion
      */
     private void procederConnexion(){
+        TextInputLayout textInputLayout = findViewById(R.id.loginInputMail);
+        String pseudo = textInputLayout.getEditText().getText().toString();
+        System.out.println(pseudo);
+        if (pseudo.equals("admin")) {
+            Intent toPageMenuIntent = new Intent(LoginActivity.this, JeuActivity.class);
+            startActivity(toPageMenuIntent);
+        } else {
+            Intent toPageMenuIntent = new Intent(LoginActivity.this, MenuActivity.class);
+            startActivity(toPageMenuIntent);
+        }
+
 
         // FIXME : L'activité redirige vers le jeu directement, mais ceci devra changer
-        Intent toPageMenuIntent = new Intent(LoginActivity.this, JeuActivity.class);
-        startActivity(toPageMenuIntent);
     }
 }

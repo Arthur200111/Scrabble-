@@ -12,6 +12,24 @@
         android:theme="@style/Theme.Scrabble_plus"
         tools:targetApi="31">
         <activity
+            android:name=".resume.ResumeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".join.JoinActivity"
+            android:exported="false" />
+        <activity
+            android:name=".lobby.LobbyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".partyCreation.PartyCreationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".menu.MenuActivity"
+            android:exported="false" />
+        <activity
+            android:name=".register.RegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".jeu.ui.JeuActivity"
             android:exported="false" />
         <activity

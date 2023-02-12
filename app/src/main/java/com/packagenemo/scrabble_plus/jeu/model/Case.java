@@ -1,6 +1,10 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
+/**
+ * Classe qui représente
+ */
 public class Case {
+
 
     private  Position pos;
     private int multiplL;

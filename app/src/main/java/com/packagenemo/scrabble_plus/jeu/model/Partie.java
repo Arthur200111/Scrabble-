@@ -12,6 +12,7 @@ import java.util.List;
  * Les caractéristiques d'initialisation (nb de joueurs, parametres,.. se feront directement grace à la BDD)
  */
 public class Partie implements Runnable{
+
     private boolean alternateur;
 
     // Code de la dernière mise à jour, sert à déterminer si le plateau est à jour
@@ -32,13 +33,19 @@ public class Partie implements Runnable{
 
     /**
      * Initialise la partie pour chaque joueur
-     * @param connection : connexion à la base de données
      * @param idPartieBDD : ID de la partie pour la BDD
      * @param loginJoueurCourant : login du joueur utilisant l'interface
      */
-    public Partie(Connection connection, Integer idPartieBDD, String loginJoueurCourant) {
+    public Partie(String idPartieBDD, String loginJoueurCourant) {
         // TODO : Initialiser la partie avec les informations contenues sur la BDD
         // L'initialisation de la partie devra pouvoir se faire à tout moment du jeu (jeu en cours)
+
+        alternateur = true;
+    }
+
+    @Override
+    public void run() {
+        // TODO : transformer la classe partie en runnable pour pouvoir la lacer sur un thread à part
     }
 
     /**
@@ -155,10 +162,6 @@ public class Partie implements Runnable{
         plateau.setLettresJouees(new ArrayList<>());
     }
 
-    /**
-     * Méthode appelée par l'interface graphique pour obtenir les informations d'affichage
-     * @return
-     */
     public String getStringPlateau(){
         // TODO
         String string1 = "15;15;2,C,8,0;2,B,1,0;1,4,10,0;0,4,1,0;2,A,6,0;1,4,8,0;0,4,7,0;2,E,8,0;" +
@@ -245,7 +248,8 @@ public class Partie implements Runnable{
     }
 
     /**
-     * Retourne l'instance de la classe du joueur local pour l'affichage graphique
+     * Méthode appelée par l'interface graphique pour obtenir les informations
+     * d'affichage de la main du joueur courant
      * @return
      */
     public Joueur getCurrentJoueur(){
@@ -256,4 +260,5 @@ public class Partie implements Runnable{
     public void run() {
 
     }
+
 }
