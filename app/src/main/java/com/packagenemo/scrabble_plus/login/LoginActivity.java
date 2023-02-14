@@ -2,7 +2,6 @@ package com.packagenemo.scrabble_plus.login;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.packagenemo.scrabble_plus.register.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -57,23 +56,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
         mEditTextLogin = (EditText) findViewById(R.id.login_champ_login);
         mEditTextMdp = (EditText) findViewById(R.id.editTextTextPassword);
-/*        mVerifConnexion = new VerifConnexion();
-
-        mButtonConnexion = findViewById(R.id.login_bouton_connexion);
-        mButtonConnexion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {verifLogin();
-            }
-        });
-        findViewById(R.id.login_bouton_inscription).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent toPageMenuIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(toPageMenuIntent);
-            }
-        });*/
-
-        // TODO : Gérer les boutons, les champs, et gérer les appels avec id ok et pas ok
     }
 
     private void setupListeners(){
@@ -83,7 +65,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         });
 
         binding.loginBoutonConnexion.setOnClickListener(view -> {
-            startSignInActivity();
+            testSigningIn();
         });
     }
 
@@ -104,7 +86,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                         .build());
     }
 
-    private void startSignInActivity(){
+    private void testSigningIn(){
         String email, password;
 
         email = mEditTextLogin.getText().toString();
@@ -112,6 +94,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
         signIn(email, password);
     }
+
     private void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -128,11 +111,9 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
                         }
                     }
                 });
-        // [END sign_in_with_email]
     }
 
 
