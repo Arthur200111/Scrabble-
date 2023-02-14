@@ -19,10 +19,12 @@ import com.packagenemo.scrabble_plus.jeu.model.Partie;
 import java.util.logging.Logger;
 
 /**
- * Gère la fenêtre de jeu
+ * SurfaceView qui affiche l'interface de jeu.
+ * Affiche le plateau, la main, l'icone de défausse et l'icone de fin de tour
  */
 public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Callback {
 
+    // Partie qui est affichée dans la view. On l'initialise ici
     private Partie mPartie;
 
     private Thread thread;
@@ -63,6 +65,10 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         mCurseur = new Curseur();
     }
 
+    /**
+     * Crée et initialise les éléments de jeu. Le plateau, la main, les zones de défausse et de fin
+     * de tour.
+     */
     private void creationDesElementsDeJeu(){
         // Nombre de cases en horizontal dans la main
         int tailleMain = 7;
@@ -126,7 +132,8 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
     }
 
     /**
-     * Ce qui est run pendant le Thread
+     * > La fonction `run()` est la boucle principale du jeu. Il est appelé au démarrage du thread. Il
+     * est chargé de mettre à jour les éléments du jeu et de les dessiner à l'écran
      */
     @Override
     public void run() {
@@ -168,7 +175,7 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
     }
 
     /**
-     * Update de tous les graphismes
+     * Dessine à l'écran les éléments graphiques
      */
     private void draw () {
 
@@ -193,9 +200,11 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         getHolder().unlockCanvasAndPost(canvas);
     }
 
-
     /**
-     * Pause entre chaque mise à jour de l'écran
+     * La première ligne de la fonction calcule le temps écoulé depuis la dernière image
+     *
+     * Si le temps écoulé depuis la dernière image est inférieur au temps que nous voulons passer
+     * sur chaque image, la méthode est chargée d'attendre
      */
     private void sleep () {
 
@@ -215,7 +224,7 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
     }
 
     /**
-     * Appelé quand l'activity
+     * Appelé quand l'activity s'initialise
      */
     public void resume () {
         isPlaying = true;
@@ -235,6 +244,11 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         }
     }
 
+    /**
+     * Méthodes appelée lorque l'utilisateur appuie sur l'écran
+     * @param event The motion event.
+     * @return true
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         mCurseur.onTouchEvent(event);
@@ -270,6 +284,9 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {}
 
+    /**
+     * Méthode appelée à chaque rafraichissement de la page pour calculer le framerate
+     */
     private void calculeFrameRate(){
         mNombreDeFrames ++;
         if (mNombreDeFrames < ECART_IMAGES_FRAMERATE){

@@ -5,6 +5,7 @@ public class Lettre {
     private String lettre;
     private int score;
     private int isSelected;
+    private boolean focused;
 
     public Lettre() {
         lettre = null;
@@ -56,5 +57,9 @@ public class Lettre {
 
     public void setIsSelected(int isSelected) {
         this.isSelected = isSelected;
+    }
+
+    public void setFocused(boolean b) {
+        this.focused = b;
     }
 }

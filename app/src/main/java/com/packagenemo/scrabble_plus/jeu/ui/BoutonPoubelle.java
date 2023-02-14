@@ -1,5 +1,8 @@
 package com.packagenemo.scrabble_plus.jeu.ui;
 
+/**
+ * Bouton de défausse
+ */
 public class BoutonPoubelle extends Bouton {
     /**
      * Constructeur, prend en entrée la view et les limites du Encart

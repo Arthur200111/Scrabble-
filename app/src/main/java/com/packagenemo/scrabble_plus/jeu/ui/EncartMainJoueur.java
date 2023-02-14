@@ -43,7 +43,7 @@ public class EncartMainJoueur extends Encart {
     }
 
     /**
-     * Demande à la partie le dernier état de la main
+     * Demande à la partie le dernier état de la main et met en forme le résultat
      */
     @Override
     protected void metAJourStringJeu(){
@@ -59,10 +59,12 @@ public class EncartMainJoueur extends Encart {
         mNbCaseHauteurEncart = 1;
     }
 
+    /**
+     * Appelé lorsque l'utilisateur touche l'écran au niveau de la main
+     * @param curseur
+     */
     @Override
     public void onTouchEvent(Curseur curseur){
         super.onTouchEvent(curseur);
-
-
     }
 }

@@ -22,4 +22,24 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="connection_form">Formulaire de connexion</string>
+    <string name="party_creation">Création partie</string>
+    <string name="resume_party">Parties en cours</string>
+    <string name="join_party">Rejoindre une partie</string>
+    <string-array name="choice_mode">
+        <item>Mode 1</item>
+        <item>Mode 2</item>
+    </string-array>
+    <string name="creation_name">Nom de la partie</string>
+    <string name="creation_nb_player">Nombre de joueurs</string>
+    <string name="creation_form_name">Création de partie</string>
+    <string name="creation_mode">Mode de jeu</string>
+    <string name="submit">Submit</string>
+    <string name="lobby_password">XVQPT45FD</string>
+    <string name="go">Go !</string>
+    <string name="ours">Un ours</string>
+    <string name="join">Saisissez un code pour rejoindre un groupe !</string>
+    <string name="join_input">Code</string>
+    <string name="party">Super partie</string>
+    <string name="party_state">A toi de jouer, il te reste 15 min</string>
 </resources>

@@ -1,28 +1,47 @@
 package com.packagenemo.scrabble_plus.jeu.ui;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * Collection de cases
+ * Implémente des méthodes qui permettent de naviguer dans cette collection
  */
 public class CollectionCases {
 
+    // Largeur de la bordure autour de chaque case de la collection
     private final int LARGEUR_BORDURE_ELEMENTS = 4;
-    private int mNbCaseLargeur;
-    private int mNbCaseHauteur;
+    private final int mNbCaseLargeur;
+    private final int mNbCaseHauteur;
 
     private int mLargeurCase;
     private int mHauteurcase;
 
-    private int mLeft, mTop, mRight, mBottom;
+    private final int mLeft;
+    private final int mTop;
+    private final int mRight;
+    private final int mBottom;
 
-    private List<Case> mCaseList;
-    private BanqueImages mBanqueImages;
+    private final List<Case> mCaseList;
+    private final BanqueImages mBanqueImages;
 
-    private static Logger logger = Logger.getLogger(String.valueOf(CollectionCases.class));
+    private Case mDerniereCaseHighlight;
 
+    private static final Logger logger = Logger.getLogger(String.valueOf(CollectionCases.class));
+
+    /**
+     * Constructeur
+     * @param banqueImages : Banque d'images associée à la collection
+     * @param nbCaseLargeur : nb de cases en largeur
+     * @param nbCaseHauteur : nb de cases en hauteur
+     * @param left : position de la partie gauche de la zone de définition
+     * @param top : position de la partie haute de la zone de définition
+     * @param right : position de la partie droite de la zone de définition
+     * @param bottom : position de la partie basse de la zone de définition
+     */
     public CollectionCases(BanqueImages banqueImages, int nbCaseLargeur, int nbCaseHauteur, int left, int top, int right, int bottom) {
         mNbCaseLargeur = nbCaseLargeur;
         mNbCaseHauteur = nbCaseHauteur;
@@ -39,10 +58,11 @@ public class CollectionCases {
     }
 
     /**
-     * Met à jour l'allocation en pixels des cases en modifiant la liste mCoordonneesPixelsCases
+     * Initialise une instance de la classe Case par case
      */
     private void miseAJourAllocationCases(){
 
+        // Défini la largeur et la hauteur d'une case
         mLargeurCase = getLargeurAffichage() / mNbCaseLargeur;
         mHauteurcase = getHauteurAffichage() / mNbCaseHauteur;
 
@@ -50,6 +70,7 @@ public class CollectionCases {
 
         int x, y, largeur, hauteur;
 
+        // Crée une case par élément du quadrillage
         for (int i = 0; i < mNbCaseHauteur ; i++){
             for (int h = 0; h < mNbCaseLargeur ; h++){
                 x = mLeft + h* mLargeurCase + LARGEUR_BORDURE_ELEMENTS;
@@ -63,6 +84,12 @@ public class CollectionCases {
         }
     }
 
+    /**
+     * Retourne la case sous les coordonnées indiquées
+     * @param x : x sur l'écran
+     * @param y : y sur l'écran
+     * @return Case à ces coordonnées
+     */
     public Case getCaseAtCoordonneesAbsolues(int x, int y){
         int[] coord = coordonneesAbsoluesEnCoordonneesCases(x, y);
 
@@ -70,16 +97,25 @@ public class CollectionCases {
     }
 
     /**
-     *
-     * @param x
-     * @param y
-     * @return
+     * Retourne la position relative des cases par rapport au quadrillage
+     * @param x : x sur l'écran
+     * @param y : y sur l'écran
+     * @return Position en coordonnées quadrillage
      */
     public int[] coordonneesAbsoluesEnCoordonneesCases(int x, int y){
         int[] coordonneeCase = new int[2];
 
         coordonneeCase[0] = (x - mLeft)/mLargeurCase;
         coordonneeCase[1] = (y - mTop)/mHauteurcase;
+
+        // Ces cas se produisent au bord du plateau.
+        // L'arrondissement à l'int de la taille de chaque case crée une petite marge
+        if (coordonneeCase[0] >= mNbCaseLargeur){
+            coordonneeCase[0] = mNbCaseLargeur - 1;
+        }
+        if (coordonneeCase[1] >= mNbCaseHauteur){
+            coordonneeCase[1] = mNbCaseHauteur - 1;
+        }
 
         if ((x < mLeft || x > mRight) ||
                 (y < mTop || y > mBottom)){
@@ -90,13 +126,46 @@ public class CollectionCases {
         return coordonneeCase;
     }
 
-    public void majContenuCases(List<String> contenuCases){
+    /**
+     * Mise à jour du contenu de chauque case
+     * @param contenuCases : Liste de String représentant le contenu de chaque case
+     */
+    public void majCases(List<String> contenuCases){
 
         int index = 0;
         for (String contenu : contenuCases){
-            mCaseList.get(index).setContenuCase(contenu);
+            mCaseList.get(index).update(contenu);
 
             index++;
+        }
+    }
+
+    /**
+     * Highlight la case aux coordonnées indiquées
+     * @param x : x de la SurfaceView
+     * @param y : y de la SurfaceView
+     */
+    public void highlightCaseAtCoordonnees(int x, int y){
+        Case caseAHighlight = getCaseAtCoordonneesAbsolues(x, y);
+
+        if (caseAHighlight != mDerniereCaseHighlight){
+            if (mDerniereCaseHighlight == null){
+                mDerniereCaseHighlight = caseAHighlight;
+                mDerniereCaseHighlight.setHighlight(true);
+            } else {
+                mDerniereCaseHighlight.setHighlight(false);
+                caseAHighlight.setHighlight(true);
+                mDerniereCaseHighlight = caseAHighlight;
+            }
+        }
+    }
+
+    /**
+     * Supprime les Highlight dans la collection
+     */
+    public void supprimerHighlights(){
+        if (mDerniereCaseHighlight != null){
+            mDerniereCaseHighlight.setHighlight(false);
         }
     }
 
