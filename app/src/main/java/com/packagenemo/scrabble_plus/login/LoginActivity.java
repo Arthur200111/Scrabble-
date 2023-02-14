@@ -36,7 +36,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     private static final int RC_SIGN_IN = 123;
     private FirebaseAuth mAuth;
     private static final String TAG = "EmailPassword";
-    EditText mEditTextLogin, mEditTextMdp;
+    TextInputLayout mEditTextLogin, mEditTextMdp;
     Button mButtonInscription, mButtonConnexion;
     VerifConnexion mVerifConnexion;
 
@@ -53,8 +53,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         mAuth = FirebaseAuth.getInstance();
         setupListeners();
 
-        mEditTextLogin = (EditText) findViewById(R.id.loginInputMail);
-        mEditTextMdp = (EditText) findViewById(R.id.loginInputPassword);
+        mEditTextLogin = (TextInputLayout) findViewById(R.id.loginInputMail);
+        mEditTextMdp = (TextInputLayout) findViewById(R.id.loginInputPassword);
     }
 
     private void setupListeners(){
@@ -87,8 +87,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     private void testSigningIn(){
         String email, password;
 
-        email = mEditTextLogin.getText().toString();
-        password = mEditTextMdp.getText().toString();
+        email = mEditTextLogin.getEditText().toString();
+        password = mEditTextMdp.getEditText().toString();
 
         signIn(email, password);
     }
