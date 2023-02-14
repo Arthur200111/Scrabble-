@@ -12,6 +12,14 @@
         android:theme="@style/Theme.Scrabble_plus"
         tools:targetApi="31">
         <activity
+            android:name=".EmailPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BaseActivity"
+            android:exported="false"
+            android:label="@string/title_activity_base"
+            android:theme="@style/Theme.Scrabble_plus.NoActionBar" />
+        <activity
             android:name=".register.RegisterActivity"
             android:exported="false" />
         <activity
