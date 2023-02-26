@@ -1,7 +1,9 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Classe qui gère toute la partie.
@@ -9,7 +11,9 @@ import java.util.LinkedList;
  *
  * Les caractéristiques d'initialisation (nb de joueurs, parametres,.. se feront directement grace à la BDD)
  */
-public class Partie {
+public class Partie implements Runnable{
+
+    private boolean alternateur;
 
     // Code de la dernière mise à jour, sert à déterminer si le plateau est à jour
     private int codeLastUpdate;
@@ -17,15 +21,38 @@ public class Partie {
     // Boolean qui indique si la partie sur cette machine a subit des changements depuis le dernier download BDD
     private boolean desChangementsSeSontProduits;
 
+
+    private List<Joueur> listJoueur;
+    private int joueurActuel;
+    private Pioche pioche;
+    private Plateau plateau;
+    // Indique la lettre selectionné, vaut null si aucune ne l'est
+    private Lettre focused_lettre;
+    private GestionMots gestionM;
+    private boolean defausse;
+
     /**
      * Initialise la partie pour chaque joueur
-     * @param connection : connexion à la base de données
      * @param idPartieBDD : ID de la partie pour la BDD
      * @param loginJoueurCourant : login du joueur utilisant l'interface
      */
-    public Partie(Connection connection, Integer idPartieBDD, String loginJoueurCourant) {
+    public Partie(String idPartieBDD, String loginJoueurCourant) {
         // TODO : Initialiser la partie avec les informations contenues sur la BDD
         // L'initialisation de la partie devra pouvoir se faire à tout moment du jeu (jeu en cours)
+        listJoueur = new LinkedList<Joueur>();
+        listJoueur.add(new Joueur());
+        plateau = new Plateau();
+        pioche = new Pioche();
+        focused_lettre = null;
+        gestionM = new GestionMots();
+        defausse = false;
+        joueurActuel = 0;
+        alternateur = true;
+    }
+
+    @Override
+    public void run() {
+        // TODO : transformer la classe partie en runnable pour pouvoir la lacer sur un thread à part
     }
 
     /**
@@ -67,35 +94,150 @@ public class Partie {
      * Gère le clic sur le plateau du joueur courant
      * @param position : Coordonnées du plateau où le joueur a appuyé
      */
-    public void interractionPlateau(Position position){
-        // TODO : Cette méthode est appelée notamment lorsque le joueur appuie sur l'image du plateau dans l'app
+    public void giveInputJoueurPlateau(int[] position, String typeAction){
+        Position position1 = new Position(position[0],position[1]);
+        if (typeAction=="drag"){
+            focused_lettre = plateau.caseOccupee(position1, getCurrentJoueur().getMainJ());
+        }
+        else if (typeAction=="drop" && !defausse){
+            if (plateau.getCaseFocused() != null) {
+                plateau.getCaseFocused().setLettre(null);
+                plateau.setCaseFocused(null);
+            }
+            focused_lettre.setFocused(false);
+            plateau.caseLibre(position1, getCurrentJoueur().getMainJ(), focused_lettre, pioche);
+        }
     }
 
     /**
-     * Méthode appelée par l'interface graphique pour obtenir les informations d'affichage
+     * Gère le clic sur la main du joueur courant
+     * @param position : Coordonnées du plateau où le joueur a appuyé
+     */
+    public void giveInputJoueurMain(int position, String typeAction){
+        if (typeAction=="drag"){
+            focused_lettre = getCurrentJoueur().getMainJ().newFocus(position);
+        }
+        else if (typeAction=="drop"){
+            if (plateau.getCaseFocused() != null) {
+                getCurrentJoueur().getMainJ().getCartes().add(focused_lettre);
+                plateau.getCaseFocused().setLettre(null);
+                plateau.setCaseFocused(null);
+            }
+            focused_lettre.setFocused(false);
+        }
+    }
+
+    /**
+     * Lorsque le joueur appuie sur le bouton défausser
      * @return
      */
-    public Plateau getPlateau(){
+    public void giveInputJoueurDefausser(){
+        if (focused_lettre != null) {
+            if (plateau.getCaseFocused() != null) {
+                plateau.getCaseFocused().setLettre(null);
+                plateau.setCaseFocused(null);
+            } else {
+                getCurrentJoueur().getMainJ().supprLettre(focused_lettre);
+            }
+            focused_lettre = null;
+            defausse = true;
+        }
+    }
+
+    /**
+     * Lorsque le joueur appuie sur le bouton "fin de tour"
+     * @return
+     */
+    public void giveInputJoueurFinTour(){
+        if (defausse) {
+            for (Case c : plateau.getLettresJouees()) {
+                getCurrentJoueur().getMainJ().getCartes().add(c.getLettre());
+                c.setLettre(null);
+            }
+            getCurrentJoueur().getMainJ().complete(pioche);
+            defausse = false;
+        } else {
+            List<Mot> nouveauxMots = gestionM.ajoutMot(plateau.getLettresJouees(), plateau);
+            if (nouveauxMots != null) {
+                getCurrentJoueur().getMainJ().complete(pioche);
+                getCurrentJoueur().ajoutScore(nouveauxMots);
+            } else {
+                getCurrentJoueur().getMainJ().recup(plateau.getLettresJouees());
+            }
+        }
+        plateau.setLettresJouees(new ArrayList<>());
+    }
+
+    public String getStringPlateau(){
+        // TODO
+        String string1 = plateau.toString();
+
+        String string2 = "15;15;0,0,10,0;0,4,6,0;0,2,2,0;1,1,8,0;0,2,5,0;0,3,6,0;1,1,9,0;" +
+                "2,D,9,0;2,D,5,0;1,4,1,0;0,2,10,0;1,1,5,0;2,E,4,0;0,0,7,0;0,4,7,0;1,1,8,0;2,E,2,0;" +
+                "2,F,10,0;1,5,1,0;0,1,4,0;1,2,2,0;1,1,1,0;2,A,9,0;1,3,3,0;0,0,6,0;2,D,10,0;0,3,8,0;" +
+                "0,3,3,0;1,3,6,0;1,4,8,0;1,1,7,0;0,0,6,0;0,4,2,0;0,0,4,0;2,D,3,0;0,3,5,0;1,0,3,0;" +
+                "1,2,4,0;0,5,2,0;2,B,9,0;1,2,5,0;1,4,1,0;2,B,3,0;1,1,5,0;0,3,5,0;2,B,10,0;2,D,8,0;" +
+                "2,B,9,0;2,C,9,0;2,A,7,0;2,A,6,0;1,0,9,0;2,E,2,0;2,E,2,0;2,F,6,0;1,1,8,0;1,5,3,0;" +
+                "2,E,7,0;1,4,4,0;1,1,4,0;1,1,3,0;2,F,10,0;1,1,6,0;2,A,6,0;2,B,8,0;1,4,4,0;2,D,5,0;" +
+                "2,A,3,0;2,B,9,0;0,1,6,0;1,3,3,0;2,C,6,0;0,1,1,0;2,F,1,0;2,A,1,0;2,F,4,0;2,B,6,0;" +
+                "0,4,4,0;0,3,7,0;1,4,4,0;2,F,5,0;1,0,4,0;1,4,9,0;2,A,2,0;2,C,9,0;1,3,7,0;0,4,6,0;" +
+                "2,C,9,0;2,D,10,0;2,D,9,0;1,5,1,0;0,0,3,0;1,4,10,0;1,4,2,0;0,3,9,0;1,1,3,0;1,1,10,0;" +
+                "0,1,3,0;0,1,9,0;0,0,5,0;2,B,7,0;2,C,3,0;2,C,9,0;0,2,6,0;" +
+                "2,C,8,0;2,B,1,0;1,4,10,0;0,4,1,0;2,A,6,0;1,4,8,0;0,4,7,0;2,E,8,0;" +
+                "2,A,1,0;0,1,1,0;1,0,5,0;0,4,6,0;0,5,1,0;1,1,3,0;2,A,4,0;0,5,1,0;0,3,3,0;1,2,10,0;" +
+                "1,2,7,0;2,A,4,0;1,5,6,0;1,4,3,0;1,5,8,0;1,2,5,0;2,B,8,0;1,1,2,0;1,1,7,0;1,3,1,0;" +
+                "1,3,4,0;2,D,7,0;2,C,1,0;2,B,5,0;0,4,7,0;2,C,5,0;2,E,8,0;2,D,4,0;2,E,7,0;2,E,4,0;" +
+                "0,5,9,0;2,B,10,0;1,0,1,0;1,5,10,0;2,A,1,0;0,2,2,0;0,4,8,0;2,C,1,0;2,D,4,0;0,4,2,0;" +
+                "1,2,10,0;2,B,6,0;2,E,9,0;1,2,1,0;2,C,4,0;2,C,7,0;2,C,3,0;2,F,2,0;0,0,3,0;1,0,5,0;" +
+                "0,1,6,0;1,5,10,0;2,B,8,0;2,B,7,0;1,4,10,0;1,5,7,0;1,0,2,0;1,2,6,0;2,D,4,0;0,5,6,0;" +
+                "1,0,5,0;2,C,2,0;0,4,4,0;2,C,4,0;2,D,9,0;1,4,10,0;2,C,9,0;1,2,10,0;1,5,5,0;2,F,2,0;" +
+                "1,1,9,0;0,5,6,0;1,0,10,0;1,1,7,0;2,B,5,0;1,2,7,0;2,B,10,0;2,A,7,0;1,4,3,0;0,4,4,0;" +
+                "0,3,2,0;2,D,10,0;0,0,6,0;1,5,6,0;2,D,6,0;2,C,5,0;2,B,4,0;2,B,8,0;1,4,8,0;1,1,8,0;" +
+                "0,4,3,0;2,B,9,0;0,3,3,0;1,1,1,0;0,1,3,0;2,F,1,0;0,2,1,0;0,2,5,0;2,D,4,0;2,C,4,0;" +
+                "2,D,6,0;2,B,4,0;1,5,2,0;2,B,5,0;1,3,6,0;1,4,3,0;1,1,3,0;2,F,9,0;0,0,8,0;2,F,9,0;" +
+                "0,2,8,0;1,2,9,0;0,0,1,0;";
+
+        if (alternateur){
+            alternateur = !alternateur;
+            return string1;
+        } else {
+            alternateur = !alternateur;
+            return string1;
+        }
+    }
+
+    /**
+     * Méthode appelée par l'interface graphique pour obtenir les informations
+     * d'affichage de la main du joueur courant
+     * @return
+     */
+    public String getStringMainJoueur(){
+        // TODO
+
+        return getCurrentJoueur().getMainJ().toString();
+    }
+
+    public int getPointsDuJoueur(){
+        return getCurrentJoueur().getScore();
+    }
+
+    /**
+     * Méthode appelée par l'interface graphique pour obtenir les messages adressés au joueur
+     * @return
+     */
+    public String getStringMessageAuJoueur(){
         // TODO
 
         return null;
     }
 
     /**
-     * Gère le clic sur le plateau du joueur courant
-     * @param position : Coordonnées du plateau où le joueur a appuyé
-     */
-    public void interractionJoueur(Position position){
-        // TODO : Cette méthode est appelée notamment lorsque le joueur appuie sur l'image de sa main dans l'app
-    }
-
-    /**
-     * Retourne l'instance de la classe du joueur local pour l'affichage graphique
+     * Méthode appelée par l'interface graphique pour savoir quel
+     * est le joueur actuel
      * @return
      */
     public Joueur getCurrentJoueur(){
-
-        // TODO
-        return new Joueur();
+        return listJoueur.get(joueurActuel);
     }
+
 }
