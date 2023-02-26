@@ -23,7 +23,7 @@ public class LobbyActivity extends AppCompatActivity {
     private Button mLobbyButtonPlay;
     private TextView mPasswordText;
     private RecyclerView mLobbyRecyclerView;
-    PlayerAdapter adapter;
+    private PlayerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class LobbyActivity extends AppCompatActivity {
      * @param pictureLabel nom de la photo utilisée par le joueur
      */
     public void addNewPlayer(String name, String pictureLabel) {
-        adapter.update(new PlayerData(name,getImgFromLabel(pictureLabel)));
+        adapter.update(new PlayerData(name,getPlayerImgFromLabel(pictureLabel)));
     }
 
     /**
@@ -88,7 +88,7 @@ public class LobbyActivity extends AppCompatActivity {
      * @param pictureLabel nom de l'image
      * @return renvoie l'identifiant de l'image
      */
-    public int getImgFromLabel(String pictureLabel) {
+    public int getPlayerImgFromLabel(String pictureLabel) {
         int id = getResources().getIdentifier(pictureLabel, "drawable", getPackageName());
         if (id == 0) {
             id = R.drawable.bear;

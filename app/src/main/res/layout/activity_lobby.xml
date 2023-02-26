@@ -19,20 +19,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintHeight_percent="0.6"
-            android:scrollbars="vertical"
-            android:id="@+id/lobbyRecyclerView"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:padding="8dp"
-            android:background="@drawable/button_border"
-            tools:layout_editor_absoluteX="16dp"
-            >
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/lobbyRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/button_border"
+        android:padding="8dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent="0.6"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.608"
+        tools:layout_editor_absoluteX="16dp">
 
-        </androidx.recyclerview.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <Button
         android:id="@+id/lobbyButtonPlay"
