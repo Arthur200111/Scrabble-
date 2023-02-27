@@ -17,7 +17,10 @@ import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
 import java.util.LinkedList;
 import java.util.List;
 
-
+/**
+ * Activitédu lobby
+ * Sur celle ci, on retrouve les différents joueurs qui ont rejoint la partie ainsi que le mot de passe pour accéder au lobby
+ */
 public class LobbyActivity extends AppCompatActivity {
 
     private Button mLobbyButtonPlay;
