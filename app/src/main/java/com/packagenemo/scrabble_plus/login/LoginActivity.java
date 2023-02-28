@@ -87,8 +87,11 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     private void testSigningIn(){
         String email, password;
 
-        email = mEditTextLogin.getEditText().toString();
-        password = mEditTextMdp.getEditText().toString();
+        email = mEditTextLogin.getEditText().getText().toString();
+        password = mEditTextMdp.getEditText().getText().toString();
+
+        System.out.println(email);
+        System.out.println(password);
 
         signIn(email, password);
     }
@@ -98,6 +101,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        FirebaseUser currentUser = mAuth.getCurrentUser();
+
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
