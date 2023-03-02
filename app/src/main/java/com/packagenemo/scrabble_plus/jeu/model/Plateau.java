@@ -1,5 +1,12 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
+import android.content.res.Resources;
+
+import com.packagenemo.scrabble_plus.R;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +49,69 @@ public class Plateau {
                 ligne.add(newCase);
             }
             listCase.add(ligne);
+        }
+
+        loadPlateau(R.raw.plateau);
+    }
+
+    /**
+     * Fonction permettant de charger le plateau, c'est à dire de définir pour chacune de ces cases le type de celle-ci
+     * Ces informations sont contenus dans un fichier texte donc le chemin d'accès est le paramètre de la fonction
+     *
+     * @param path
+     */
+    public void loadPlateau(int path) {
+        try {
+            InputStream is = Resources.getSystem().openRawResource(path);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            Position posCase;
+
+            for (int j = 0; j < longueur; j++) {
+                String line = br.readLine();
+                String values[] = line.split(" ");
+                for (int i = 0; i < largeur; i++) {
+                    int valCase = Integer.parseInt(values[i]);
+                    posCase = new Position(i, j);
+                    Case setCase = listCase.get(j).get(i);
+                    setCase.setPos(posCase);
+                    setCase.setTypeCase(valCase);
+                    String pathType = null;
+                    String pathMul = null;
+                    switch (valCase) {
+                        case 0:
+                            setCase.setMultiplL(1);
+                            setCase.setMultiplM(1);
+                            break;
+                        case 1:
+                            setCase.setMultiplL(2);
+                            setCase.setMultiplM(1);
+                            break;
+                        case 2:
+                            setCase.setMultiplL(3);
+                            setCase.setMultiplM(1);
+                            break;
+                        case 3:
+                            setCase.setMultiplL(1);
+                            setCase.setMultiplM(2);
+                            break;
+                        case 4:
+                            setCase.setMultiplL(1);
+                            setCase.setMultiplM(3);
+                            break;
+                        case 5:
+                            setCase.setMultiplL(1);
+                            setCase.setMultiplM(2);
+                            break;
+                        default:
+                            setCase.setMultiplL(1);
+                            setCase.setMultiplM(1);
+                            break;
+                    }
+                }
+            }
+            br.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
