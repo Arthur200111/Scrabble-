@@ -7,178 +7,18 @@
     android:padding="24dp"
     tools:context=".resume.ResumeActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="0dp"
+        android:id="@+id/resumeRecyclerView"
         android:background="@drawable/button_border"
-        tools:layout_editor_absoluteX="16dp">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/resumeCLPlarty1"
-            android:layout_width="match_parent"
-            android:layout_height="96dp"
-            android:background="@drawable/party_border"
-            android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/resumePartyImg1"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="H,3:3"
-                android:adjustViewBounds="true"
-                android:scaleType="fitStart"
-                android:src="@drawable/scrabble"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/party"
-                android:textStyle="bold"
-                android:textSize="24sp"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="@string/party_state"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent="0.6"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.641"
+        tools:layout_editor_absoluteX="24dp">
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/resumeCLPlarty2"
-            android:layout_width="match_parent"
-            android:layout_height="96dp"
-            android:background="@drawable/party_border"
-            android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/resumeCLPlarty1">
-
-            <ImageView
-                android:id="@+id/resumePartyImg2"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="H,3:3"
-                android:adjustViewBounds="true"
-                android:scaleType="fitStart"
-                android:src="@drawable/scrabble"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/party"
-                android:textStyle="bold"
-                android:textSize="24sp"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="@string/party_state"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/resumeCLPlarty3"
-            android:layout_width="match_parent"
-            android:layout_height="96dp"
-            android:background="@drawable/party_border"
-            android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/resumeCLPlarty2">
-
-            <ImageView
-                android:id="@+id/resumePartyImg3"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="H,3:3"
-                android:adjustViewBounds="true"
-                android:scaleType="fitStart"
-                android:src="@drawable/scrabble"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/party"
-                android:textStyle="bold"
-                android:textSize="24sp"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="@string/party_state"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/resumeCLPlarty4"
-            android:layout_width="match_parent"
-            android:layout_height="96dp"
-            android:background="@drawable/party_border"
-            android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/resumeCLPlarty3">
-
-            <ImageView
-                android:id="@+id/resumePartyImg4"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="H,3:3"
-                android:adjustViewBounds="true"
-                android:scaleType="fitStart"
-                android:src="@drawable/scrabble"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/party"
-                android:textStyle="bold"
-                android:textSize="24sp"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="@string/party_state"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.recyclerview.widget.RecyclerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

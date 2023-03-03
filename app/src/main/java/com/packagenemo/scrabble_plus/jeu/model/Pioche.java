@@ -1,5 +1,13 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
+import android.content.res.Resources;
+
+import com.packagenemo.scrabble_plus.R;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -15,7 +23,55 @@ public class Pioche {
     public Pioche() {
         voyelles = new LinkedList<Lettre>();
         consonnes = new LinkedList<Lettre>();
-        loadPioche();
+        loadPioche(R.raw.fr);
+    }
+
+    /**
+     * Permet de charger toutes les lettres qui se trouvent dans la pioche
+     * Le fichier utilisé répertorie toutes les lettres, le nombre occurrence de
+     * chacune de ces lettres et leur score associé.
+     * On charge tout ça et nous implémentons dans les listes "voyelles" et "consonnes"
+     *
+     * @param path
+     */
+    public void loadPioche(int path) {
+        try {
+
+            // On commence par charger le fichier qui décrit le contenu de la pioche
+            InputStream is = Resources.getSystem().openRawResource(path);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+            String firstLine = br.readLine();
+            String values[] = firstLine.split(" ");
+            int nbVoyelles = Integer.parseInt(values[1]);
+            int nbConsonnes = Integer.parseInt(values[2]);
+            int nbLettresDiff = nbVoyelles + nbConsonnes + 1;
+
+            // Ensuite, on charge toutes les lettres
+            for (int i = 0; i < nbLettresDiff; i++) {
+                String line = br.readLine();
+                String piece[] = line.split(" ");
+                String lettre = piece[0];
+                int occurence = Integer.parseInt(piece[1]);
+                int score = Integer.parseInt(piece[2]);
+                for (int j = 0; j < occurence; j++) {
+                    Lettre l = new Lettre(lettre, score);
+                    if (i < nbVoyelles) {
+                        this.voyelles.add(l);
+                    } else {
+                        this.consonnes.add(l);
+                    }
+                }
+            }
+            br.close();
+
+            // On mélange pour créer une pioche équitable
+            Collections.shuffle(voyelles);
+            Collections.shuffle(consonnes);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 
