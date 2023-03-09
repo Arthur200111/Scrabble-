@@ -55,6 +55,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
         mEditTextLogin = (TextInputLayout) findViewById(R.id.loginInputMail);
         mEditTextMdp = (TextInputLayout) findViewById(R.id.loginInputPassword);
+
+
     }
 
     private void setupListeners(){
@@ -64,7 +66,10 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         });
 
         binding.loginButton.setOnClickListener(view -> {
-            testSigningIn();
+            if(!mEditTextLogin.getEditText().getText().toString().isEmpty() &&
+                    !mEditTextMdp.getEditText().getText().toString().isEmpty()){
+                testSigningIn();
+            }
         });
     }
 
