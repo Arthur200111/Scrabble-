@@ -1,5 +1,6 @@
 package com.packagenemo.scrabble_plus.login;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -12,33 +13,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 import com.google.android.gms.tasks.Task;
 
-import android.widget.Button;
-import android.widget.EditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 
-import androidx.appcompat.app.AppCompatActivity;
 import com.packagenemo.scrabble_plus.R;
-import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
+import com.packagenemo.scrabble_plus.jeu.manager.UtilisateurManager;
 import com.packagenemo.scrabble_plus.menu.MenuActivity;
-import com.packagenemo.scrabble_plus.register.RegisterActivity;
-import com.packagenemo.scrabble_plus.login.BaseActivity;
 import com.packagenemo.scrabble_plus.databinding.ActivityLoginBinding;
 
 
 
 
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
-    private static final int RC_SIGN_IN = 123;
+    //private static final int RC_SIGN_IN = 123;
     private FirebaseAuth mAuth;
     private static final String TAG = "EmailPassword";
     TextInputLayout mEditTextLogin, mEditTextMdp;
-    Button mButtonInscription, mButtonConnexion;
-    VerifConnexion mVerifConnexion;
+
+    private static UtilisateurManager utilisateurManager = UtilisateurManager.getInstance();
 
     @Override
     ActivityLoginBinding getViewBinding() {
@@ -101,6 +96,11 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         signIn(email, password);
     }
 
+    // Show Snack Bar with a message
+    private void showSnackBar( String message){
+        Snackbar.make(binding.loginButton, message, Snackbar.LENGTH_SHORT).show();
+    }
+
     private void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -113,6 +113,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
+                            utilisateurManager.createUser();
+                            showSnackBar("Connexion réussie");
                             startActivity(intent);
                             //updateUI(user);
                         } else {
