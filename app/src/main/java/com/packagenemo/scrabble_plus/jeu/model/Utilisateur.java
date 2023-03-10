@@ -7,21 +7,21 @@ public class Utilisateur {
     private String uid;
     private String nom;
 
-    private List<Partie> PartiesJouees;
-    private List<Partie> PartiesEnCours;
+    private List<Joueur> joueursList;
 
     public Utilisateur(String uid, String nom){
         this.uid = uid;
         this.nom = nom;
-        PartiesJouees = new ArrayList<>();
-        PartiesEnCours = new ArrayList<>();
+
+        this.joueursList = new ArrayList<>();
     }
-    public Utilisateur(String uid, String nom, List<Partie> partiesJouees, List<Partie> partiesEnCours) {
+    public Utilisateur(String uid, String nom, List<Joueur> j) {
         this.uid = uid;
         this.nom = nom;
-        PartiesJouees = partiesJouees;
-        PartiesEnCours = partiesEnCours;
+
+        this.joueursList = j;
     }
+
 
     public String getUid() {
         return uid;
@@ -39,19 +39,8 @@ public class Utilisateur {
         this.nom = nom;
     }
 
-    public List<Partie> getPartiesJouees() {
-        return PartiesJouees;
-    }
+    public List<Joueur> getJoueursList(){ return this.joueursList; }
+    public void setJoueursList(List<Joueur> j){ this.joueursList = j; }
 
-    public void setPartiesJouees(List<Partie> partiesJouees) {
-        PartiesJouees = partiesJouees;
-    }
-
-    public List<Partie> getPartiesEnCours() {
-        return PartiesEnCours;
-    }
-
-    public void setPartiesEnCours(List<Partie> partiesEnCours) {
-        PartiesEnCours = partiesEnCours;
-    }
+    public void addJoueur(Joueur j){ this.joueursList.add(j);}
 }

@@ -43,7 +43,6 @@ public class UtilisateurManager {
 
 
     public void createUser(){
-        System.out.printf("Dans createUser du manager");
         utilisateurRepository.createUtilisateur();
     }
 
