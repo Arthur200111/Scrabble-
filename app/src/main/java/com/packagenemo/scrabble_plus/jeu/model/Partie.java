@@ -89,24 +89,19 @@ public class Partie implements Runnable{
 
     private void changementAction(int[] position, String typeAction) {
         if (mActionJoueur){
-            Log.d("ACTION", "Choix");
             if (mChoixPlateau){
-                Log.d("ACTION", "Plateau");
                 plateau(position, typeAction);
                 mChoixPlateau = false;
             }
             if (mChoixMain){
-                Log.d("ACTION", "Main");
                 main(position[0], typeAction);
                 mChoixMain = false;
             }
             if (mChoixDefausse){
-                Log.d("ACTION", "Defausse");
                 defausse();
                 mChoixDefausse = false;
             }
             if (mChoixFin){
-                Log.d("ACTION", "Fin");
                 finDeTour();
                 mChoixFin = false;
                 desChangementsSeSontProduits = true;

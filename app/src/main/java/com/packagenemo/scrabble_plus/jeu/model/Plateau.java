@@ -3,6 +3,7 @@ package com.packagenemo.scrabble_plus.jeu.model;
 import android.content.res.Resources;
 import android.util.Log;
 
+import java.util.LinkedList;
 import java.util.Observable;
 
 import com.packagenemo.scrabble_plus.R;
@@ -38,6 +39,7 @@ public class Plateau{
     public Plateau(int lar, int lon) {
         largeur = lar;
         longueur = lon;
+        lettresJouees = new LinkedList<>();
         buildPlateau();
         setRepPlateau();
     }
@@ -160,7 +162,7 @@ public class Plateau{
         String info = this.largeur + ";" + this.longueur + ";";
         for (int i = 0; i<largeur; i++) {
             for (int j = 0; j < longueur; j++) {
-                info = info + listCase.get(i).get(j) + ";";
+                info = info + listCase.get(i).get(j).toString() + ";";
             }
         }
         return info;

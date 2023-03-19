@@ -36,6 +36,9 @@ public class MainJoueur {
         for (Lettre lettre : this.cartes){
             info = info + lettre + ";";
         }
+        for (int i=0; i<(7-this.cartes.size()); i++){
+            info = info + "1,0,0,0;";
+        }
         return info;
     }
 

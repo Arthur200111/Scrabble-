@@ -2,6 +2,7 @@ package com.packagenemo.scrabble_plus.jeu.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,7 +11,10 @@ import android.widget.ImageView;
 
 import com.packagenemo.scrabble_plus.R;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Instancie les éléments affichés à l'écran
@@ -18,6 +22,7 @@ import java.io.File;
 public class JeuActivity extends AppCompatActivity {
 
     private JeuView mJeuView;
+    private static Context context;
 
     /**
      * On instancie la surface de jeu
@@ -29,8 +34,8 @@ public class JeuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = getApplicationContext();
         setContentView(R.layout.activity_jeu);
-
         mJeuView = findViewById(R.id.jeu_zone_jeu);
     }
 
@@ -51,5 +56,9 @@ public class JeuActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mJeuView.resume();
+    }
+
+    public static Context getContext() {
+        return context;
     }
 }

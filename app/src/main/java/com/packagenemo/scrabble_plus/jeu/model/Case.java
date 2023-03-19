@@ -1,5 +1,7 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
+import android.util.Log;
+
 /**
  * Classe qui représente
  */
@@ -43,7 +45,7 @@ public class Case {
             info =  0 + "," + this.typeCase + "," + 0 + "," + this.isSelected;
         }
         else {
-            info = 2 + "," + this.lettre + "," + this.lettre.getScore() + "," + this.isSelected;
+            info = 2 + "," + this.lettre.getLettre() + "," + this.lettre.getScore() + "," + this.isSelected;
         }
         return  info;
     }
