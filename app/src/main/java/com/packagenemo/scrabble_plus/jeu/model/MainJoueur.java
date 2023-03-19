@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class MainJoueur {
 
     private List<Lettre> cartes;
+    private String repMain;
 
     public MainJoueur() {
         cartes = new ArrayList<Lettre>();
@@ -87,4 +88,11 @@ public class MainJoueur {
         }
     }
 
+    public String getRepMain() {
+        return repMain;
+    }
+
+    public void setRepMain() {
+        this.repMain = this.toString();
+    }
 }

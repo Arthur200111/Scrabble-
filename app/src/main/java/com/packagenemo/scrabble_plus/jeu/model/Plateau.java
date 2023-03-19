@@ -1,6 +1,9 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
 import android.content.res.Resources;
+import android.util.Log;
+
+import java.util.Observable;
 
 import com.packagenemo.scrabble_plus.R;
 
@@ -10,7 +13,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Plateau {
+public class Plateau{
 
     private int largeur;
     private int longueur;
@@ -19,9 +22,10 @@ public class Plateau {
     private List<Case> lettresJouees;
 
     private Case caseFocused;
+    private String repPlateau;
 
     public Plateau(){
-        this(0,0);
+        this(15,15);
     }
 
     /**
@@ -35,6 +39,7 @@ public class Plateau {
         largeur = lar;
         longueur = lon;
         buildPlateau();
+        setRepPlateau();
     }
 
     public void buildPlateau(){
@@ -61,13 +66,31 @@ public class Plateau {
      * @param path
      */
     public void loadPlateau(int path) {
+        String val_Plateau = "4 0 0 1 0 0 0 4 0 0 0 1 0 0 4;"
+        +"0 3 0 0 0 2 0 0 0 2 0 0 0 3 0;"
+        +"0 0 3 0 0 0 1 0 1 0 0 0 3 0 0;"
+        +"1 0 0 3 0 0 0 1 0 0 0 3 0 0 1;"
+        +"0 0 0 0 3 0 0 0 0 0 3 0 0 0 0;"
+        +"0 2 0 0 0 2 0 0 0 2 0 0 0 2 0;"
+        +"0 0 1 0 0 0 1 0 1 0 0 0 1 0 0;"
+        +"4 0 0 1 0 0 0 5 0 0 0 1 0 0 4;"
+        +"0 0 1 0 0 0 1 0 1 0 0 0 1 0 0;"
+        +"0 2 0 0 0 2 0 0 0 2 0 0 0 2 0;"
+        +"0 0 0 0 3 0 0 0 0 0 3 0 0 0 0;"
+        +"1 0 0 3 0 0 0 1 0 0 0 3 0 0 1;"
+        +"0 0 3 0 0 0 1 0 1 0 0 0 3 0 0;"
+        +"0 3 0 0 0 2 0 0 0 2 0 0 0 3 0;"
+        +"4 0 0 1 0 0 0 4 0 0 0 1 0 0 4";
         try {
+            /*Log.d("INFO", "Entrez");
             InputStream is = Resources.getSystem().openRawResource(path);
+            Log.d("INFO", "Entre");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            Log.d("INFO", "Entr");*/
             Position posCase;
-
-            for (int j = 0; j < longueur; j++) {
-                String line = br.readLine();
+            int j =0;
+            String lines[] = val_Plateau.split(";");
+            for (String line : lines) {
                 String values[] = line.split(" ");
                 for (int i = 0; i < largeur; i++) {
                     int valCase = Integer.parseInt(values[i]);
@@ -108,11 +131,13 @@ public class Plateau {
                             break;
                     }
                 }
+                j++;
             }
-            br.close();
+            //br.close();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Log.e("CATCH", e.getMessage());
         }
+        this.setRepPlateau();
     }
 
     public void stringToPlateau(String info){
@@ -244,5 +269,13 @@ public class Plateau {
      */
     public int getLongueur() {
         return longueur;
+    }
+
+    public String getRepPlateau(){
+        return this.repPlateau;
+    }
+
+    public void setRepPlateau(){
+        this.repPlateau = this.toString();
     }
 }

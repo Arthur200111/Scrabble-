@@ -36,20 +36,51 @@ public class Pioche {
      */
     public void loadPioche(int path) {
         try {
+            String val_pioche = "100 6 20;"
+            +"A 9 1;"
+            +"E 15 1;"
+            +"I 8 1;"
+            +"O 6 1;"
+            +"U 6 1;"
+            +"Y 1 10;"
+            +"B 2 3;"
+            +"C 2 3;"
+            +"D 3 2;"
+            +"F 2 4;"
+            +"G 2 2;"
+            +"H 2 4;"
+            +"J 1 8;"
+            +"K 1 10;"
+            +"L 5 1;"
+            +"M 3 2;"
+            +"N 6 1;"
+            +"P 2 3;"
+            +"Q 1 8;"
+            +"R 6 1;"
+            +"S 6 1;"
+            +"T 6 1;"
+            +"V 2 4;"
+            +"W 1 10;"
+            +"X 1 10;"
+            +"Z 1 10;"
+            +"_ 2 0;";
 
             // On commence par charger le fichier qui décrit le contenu de la pioche
-            InputStream is = Resources.getSystem().openRawResource(path);
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            /*InputStream is = Resources.getSystem().openRawResource(path);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));*/
 
-            String firstLine = br.readLine();
+            String lines[] = val_pioche.split(";");
+            String firstLine = lines[0];
             String values[] = firstLine.split(" ");
             int nbVoyelles = Integer.parseInt(values[1]);
             int nbConsonnes = Integer.parseInt(values[2]);
             int nbLettresDiff = nbVoyelles + nbConsonnes + 1;
+            int k = 1;
 
             // Ensuite, on charge toutes les lettres
             for (int i = 0; i < nbLettresDiff; i++) {
-                String line = br.readLine();
+                String line = lines[k];
+                k++;
                 String piece[] = line.split(" ");
                 String lettre = piece[0];
                 int occurence = Integer.parseInt(piece[1]);
@@ -63,7 +94,7 @@ public class Pioche {
                     }
                 }
             }
-            br.close();
+            //br.close();
 
             // On mélange pour créer une pioche équitable
             Collections.shuffle(voyelles);

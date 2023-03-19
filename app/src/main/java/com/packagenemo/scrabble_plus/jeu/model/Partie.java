@@ -1,9 +1,12 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
+import android.util.Log;
+
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Classe qui gère toute la partie.
@@ -13,6 +16,7 @@ import java.util.List;
  */
 public class Partie implements Runnable{
 
+    private static final int FPS_VOULU = 35;
     private boolean alternateur;
 
     // Code de la dernière mise à jour, sert à déterminer si le plateau est à jour
@@ -21,15 +25,24 @@ public class Partie implements Runnable{
     // Boolean qui indique si la partie sur cette machine a subit des changements depuis le dernier download BDD
     private boolean desChangementsSeSontProduits;
 
-
     private List<Joueur> listJoueur;
     private int joueurActuel;
     private Pioche pioche;
     private Plateau plateau;
+    private Dictionnaire dictionnaire;
     // Indique la lettre selectionné, vaut null si aucune ne l'est
     private Lettre focused_lettre;
     private GestionMots gestionM;
     private boolean defausse;
+    private Thread modelThread;
+    private long mTempsDerniereFrame;
+    private boolean mActionJoueur; // Indique que le joueur a effectuer une action
+    private int[] position; // Donne la position de cette action (si besoin)
+    private String typeAction; // Donne le type de cette action : "drag" ou "drop"
+    private boolean mChoixPlateau; // Indique que l'action concerne le plateau
+    private boolean mChoixMain; // Indique que l'action concerne la main du joueur
+    private boolean mChoixDefausse; // Indique que l'action concerne la défausse
+    private boolean mChoixFin; // Indique que l'action concerne la fin de tour
 
     /**
      * Initialise la partie pour chaque joueur
@@ -43,16 +56,80 @@ public class Partie implements Runnable{
         listJoueur.add(new Joueur());
         plateau = new Plateau();
         pioche = new Pioche();
+        dictionnaire = new Dictionnaire();
         focused_lettre = null;
         gestionM = new GestionMots();
         defausse = false;
         joueurActuel = 0;
+        pioche.piocher(7,listJoueur.get(joueurActuel).getMainJ().getCartes());
+        listJoueur.get(joueurActuel).getMainJ().setRepMain();
         alternateur = true;
+
+        mActionJoueur = false;
+        position = new int[2];
+        typeAction = "drag";
+        mChoixPlateau = false;
+        mChoixMain = false;
+        mChoixDefausse = false;
+        mChoixFin = false;
+
+        modelThread = new Thread(this);
+        modelThread.start();
     }
 
     @Override
     public void run() {
         // TODO : transformer la classe partie en runnable pour pouvoir la lacer sur un thread à part
+        while (true){
+            changementAction(position, typeAction);
+            updatePartie();
+            sleep();
+        }
+    }
+
+    private void changementAction(int[] position, String typeAction) {
+        if (mActionJoueur){
+            Log.d("ACTION", "Choix");
+            if (mChoixPlateau){
+                Log.d("ACTION", "Plateau");
+                plateau(position, typeAction);
+                mChoixPlateau = false;
+            }
+            if (mChoixMain){
+                Log.d("ACTION", "Main");
+                main(position[0], typeAction);
+                mChoixMain = false;
+            }
+            if (mChoixDefausse){
+                Log.d("ACTION", "Defausse");
+                defausse();
+                mChoixDefausse = false;
+            }
+            if (mChoixFin){
+                Log.d("ACTION", "Fin");
+                finDeTour();
+                mChoixFin = false;
+                desChangementsSeSontProduits = true;
+            }
+            mActionJoueur = false;
+            plateau.setRepPlateau();
+            getCurrentJoueur().getMainJ().setRepMain();
+        }
+    }
+
+    private void sleep () {
+        long intervalle = System.currentTimeMillis() - mTempsDerniereFrame;
+
+        while (intervalle < 1000/FPS_VOULU){
+            try {
+                Thread.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            intervalle = System.currentTimeMillis() - mTempsDerniereFrame;
+        }
+
+        mTempsDerniereFrame = System.currentTimeMillis();
     }
 
     /**
@@ -61,22 +138,6 @@ public class Partie implements Runnable{
      */
     public void updatePartie(){
 
-        // TODO
-
-        if (!partieAJour()){
-            // TODO : Cas si la partie n'est pas à jour
-            // Il faudra gérer les cas spécifiques où le joueur a effectué une action,
-            // mais où la partie n'est pas à jour. Est-ce qu'on conserve les données de la machine ou de la BDD ?
-            // Ce cas se présentera lorsque le joueur aura mis trop de temps à jouer par exemple
-
-            return;
-        }
-
-        // TODO : Cas où la partie est à jour
-
-        if (desChangementsSeSontProduits){
-            // TODO : Upload sur la BDD des changements locaux
-        }
     }
 
     /**
@@ -95,11 +156,21 @@ public class Partie implements Runnable{
      * @param position : Coordonnées du plateau où le joueur a appuyé
      */
     public void giveInputJoueurPlateau(int[] position, String typeAction){
+        this.position = position;
+        this.typeAction = typeAction;
+        mActionJoueur = true;
+        mChoixPlateau = true;
+    }
+
+    /**
+     * Action a effectuer lors d'une action sur le plateau
+     */
+    public void plateau(int[] position, String typeAction){
         Position position1 = new Position(position[0],position[1]);
-        if (typeAction=="drag"){
+        if (typeAction.equals("drag")){
             focused_lettre = plateau.caseOccupee(position1, getCurrentJoueur().getMainJ());
         }
-        else if (typeAction=="drop" && !defausse){
+        else if (typeAction.equals("drop") && !defausse){
             if (plateau.getCaseFocused() != null) {
                 plateau.getCaseFocused().setLettre(null);
                 plateau.setCaseFocused(null);
@@ -114,10 +185,21 @@ public class Partie implements Runnable{
      * @param position : Coordonnées du plateau où le joueur a appuyé
      */
     public void giveInputJoueurMain(int position, String typeAction){
-        if (typeAction=="drag"){
+        this.position[0] = position;
+        this.typeAction = typeAction;
+        mActionJoueur = true;
+        mChoixMain = true;
+    }
+
+    /**
+     * Action a effectuer lors d'une action sur la main du joueur
+     */
+    public void main(int position, String typeAction){
+        if (typeAction.equals("drag")){
             focused_lettre = getCurrentJoueur().getMainJ().newFocus(position);
+            Log.d("MAIN", focused_lettre.getLettre());
         }
-        else if (typeAction=="drop"){
+        else if (typeAction.equals("drop")){
             if (plateau.getCaseFocused() != null) {
                 getCurrentJoueur().getMainJ().getCartes().add(focused_lettre);
                 plateau.getCaseFocused().setLettre(null);
@@ -129,9 +211,16 @@ public class Partie implements Runnable{
 
     /**
      * Lorsque le joueur appuie sur le bouton défausser
-     * @return
      */
     public void giveInputJoueurDefausser(){
+        mActionJoueur = true;
+        mChoixDefausse = true;
+    }
+
+    /**
+     * Action a effectuer lors d'une défausse
+     */
+    public void defausse(){
         if (focused_lettre != null) {
             if (plateau.getCaseFocused() != null) {
                 plateau.getCaseFocused().setLettre(null);
@@ -146,9 +235,16 @@ public class Partie implements Runnable{
 
     /**
      * Lorsque le joueur appuie sur le bouton "fin de tour"
-     * @return
      */
     public void giveInputJoueurFinTour(){
+        mActionJoueur = true;
+        mChoixFin = true;
+    }
+
+    /**
+     * Action a effectuer lors d'une fin de tour
+     */
+    public void finDeTour(){
         if (defausse) {
             for (Case c : plateau.getLettresJouees()) {
                 getCurrentJoueur().getMainJ().getCartes().add(c.getLettre());
@@ -170,7 +266,7 @@ public class Partie implements Runnable{
 
     public String getStringPlateau(){
         // TODO
-        String string1 = plateau.toString();
+        String string1 = plateau.getRepPlateau();
 
         String string2 = "15;15;0,0,10,0;0,4,6,0;0,2,2,0;1,1,8,0;0,2,5,0;0,3,6,0;1,1,9,0;" +
                 "2,D,9,0;2,D,5,0;1,4,1,0;0,2,10,0;1,1,5,0;2,E,4,0;0,0,7,0;0,4,7,0;1,1,8,0;2,E,2,0;" +
@@ -212,9 +308,8 @@ public class Partie implements Runnable{
      * @return
      */
     public String getStringMainJoueur(){
-        // TODO
-
-        return getCurrentJoueur().getMainJ().toString();
+        return getCurrentJoueur().getMainJ().getRepMain();
+        //return "7;1,1,3,0;2,F,9,0;0,0,8,0;2,F,9,0;0,2,8,0;1,2,9,0;0,0,1,0;";
     }
 
     public int getPointsDuJoueur(){
