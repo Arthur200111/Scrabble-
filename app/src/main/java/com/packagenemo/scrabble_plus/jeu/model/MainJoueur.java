@@ -55,7 +55,7 @@ public class MainJoueur {
      */
     @Override
     public String toString(){
-        String info = this.cartes.size() + ";";
+        String info = 7 + ";";
         for (Lettre lettre : this.cartes){
             info = info + lettre + ";";
         }
