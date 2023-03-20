@@ -37,6 +37,13 @@ public class JoueurManager {
         joueurRepository.addJoueur(numero_partie, nombre_joueurs, joueur);
     }
 
+    /*
+    public void addJoueurFromCode(String code_partie, int nombre_joueurs, Joueur joueur){
+        joueurRepository.addJoueurFromCode(code_partie, nombre_joueurs, joueur);
+    }
+
+     */
+
     public void deleteJoueur(String numero_partie, int nombre_joueurs, String nom){
         joueurRepository.deleteJoueur(numero_partie,nombre_joueurs,nom);
     }
