@@ -7,7 +7,7 @@ import com.packagenemo.scrabble_plus.jeu.repository.PartieRepository;
 
 import java.util.HashMap;
 
-public class PartieManager {
+public class    PartieManager {
 
     private static volatile PartieManager instance;
     private PartieRepository partieRepository;

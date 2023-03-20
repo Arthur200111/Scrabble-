@@ -6,6 +6,7 @@ import android.os.Debug;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.packagenemo.scrabble_plus.jeu.model.Joueur;
 import com.packagenemo.scrabble_plus.jeu.model.Utilisateur;
 import com.packagenemo.scrabble_plus.jeu.repository.UtilisateurRepository;
 import com.packagenemo.scrabble_plus.jeu.repository.UtilisateurRepository.*;
@@ -65,4 +66,6 @@ public class UtilisateurManager {
     public Task<Void> SignOut(Context context){
         return utilisateurRepository.signOut(context);
     }
+
+
 }

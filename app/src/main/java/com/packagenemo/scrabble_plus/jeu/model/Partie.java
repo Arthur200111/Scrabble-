@@ -15,6 +15,7 @@ public class Partie implements Runnable{
 
     private boolean alternateur;
 
+
     // Code de la dernière mise à jour, sert à déterminer si le plateau est à jour
     private int codeLastUpdate;
 
@@ -31,12 +32,15 @@ public class Partie implements Runnable{
     private GestionMots gestionM;
     private boolean defausse;
 
+    // Code attribué à la partie qui permet aux joueurs de joindre le lobby
+    private final String code;
+
     /**
      * Initialise la partie pour chaque joueur
      * @param idPartieBDD : ID de la partie pour la BDD
      * @param loginJoueurCourant : login du joueur utilisant l'interface
      */
-    public Partie(String idPartieBDD, String loginJoueurCourant) {
+    public Partie(String idPartieBDD, String loginJoueurCourant, String code) {
         // TODO : Initialiser la partie avec les informations contenues sur la BDD
         // L'initialisation de la partie devra pouvoir se faire à tout moment du jeu (jeu en cours)
         listJoueur = new LinkedList<Joueur>();
@@ -48,6 +52,7 @@ public class Partie implements Runnable{
         defausse = false;
         joueurActuel = 0;
         alternateur = true;
+        this.code = code;
     }
 
     @Override
@@ -240,4 +245,7 @@ public class Partie implements Runnable{
         return listJoueur.get(joueurActuel);
     }
 
+    public String getCode(){
+        return this.code;
+    }
 }
