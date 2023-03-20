@@ -83,11 +83,12 @@ public class Partie implements Runnable{
      */
     @Override
     public void run() {
-        while (true){
+        while (true) {
             changementAction(position, typeAction);
             updatePartie();
             sleep();
         }
+    }
 
     /**
      * Cette fonction vérifie si l'utilisateur a effectué une action, si c'est le cas on va chercher
