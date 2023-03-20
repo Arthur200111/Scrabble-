@@ -56,7 +56,6 @@ public class Partie implements Runnable{
         listJoueur.add(new Joueur());
         plateau = new Plateau();
         pioche = new Pioche();
-        dictionnaire = new Dictionnaire();
         focused_lettre = null;
         gestionM = new GestionMots();
         defausse = false;

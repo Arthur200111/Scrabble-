@@ -22,7 +22,7 @@ public class Dictionnaire {
      */
     public Dictionnaire() {
         listMot = new ArrayList<>();
-        //this.loadDico(R.raw.dictionnaire_francais);
+        this.loadDico();
     }
 
 
