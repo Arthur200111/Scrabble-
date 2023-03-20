@@ -26,3 +26,50 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 }
+/*
+
+package com.packagenemo.scrabble_plus.register;
+
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+
+import com.firebase.ui.auth.AuthUI;
+import com.packagenemo.scrabble_plus.R;
+import com .packagenemo.scrabble_plus.databinding.ActivityRegisterBinding;
+import com.packagenemo.scrabble_plus.login.BaseActivity;
+
+import java.util.Collections;
+import java.util.List;
+
+public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
+
+
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setupListeners();
+    }
+
+
+
+    private void startSignInActivity(){
+
+        // Choose authentication providers
+        List<AuthUI.IdpConfig> providers =
+                Collections.singletonList(new AuthUI.IdpConfig.EmailBuilder().build());
+
+        // Launch the activity
+        startActivity(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setTheme(R.style.LoginTheme)
+                        .setAvailableProviders(providers)
+                        .setIsSmartLockEnabled(false, true)
+                        .setLogo(R.drawable.ic_logo_auth)
+                        .build());
+    }
+}
+*/

@@ -1,10 +1,6 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
-import android.content.res.Resources;
-import android.util.Log;
-
 import java.util.LinkedList;
-import java.util.Observable;
 
 import com.packagenemo.scrabble_plus.R;
 

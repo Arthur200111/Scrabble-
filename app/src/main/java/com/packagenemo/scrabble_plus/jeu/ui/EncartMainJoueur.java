@@ -3,16 +3,19 @@ package com.packagenemo.scrabble_plus.jeu.ui;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * Classe qui est appelée dans JeuView et qui gère les graphismes de la main
  *  du joueur UNIQUEMENT et les interractions avec celles ci
  */
 public class EncartMainJoueur extends Encart {
+
+    private static Logger logger = Logger.getLogger(String.valueOf(EncartMainJoueur.class));
 
     public EncartMainJoueur(JeuView jeuView, int left, int top, int right, int bottom) {
         super(jeuView, left, top, right, bottom);
@@ -57,6 +60,8 @@ public class EncartMainJoueur extends Encart {
         // en Largeur seulement
         mNbCaseLargeurEncart = Integer.parseInt(mArrayEncartSplitted.remove(0));
         mNbCaseHauteurEncart = 1;
+
+        verifStringJeu(mNbCaseLargeurEncart, mNbCaseHauteurEncart, stringEncart);
     }
 
     /**
@@ -67,4 +72,37 @@ public class EncartMainJoueur extends Encart {
     public void onTouchEvent(Curseur curseur){
         super.onTouchEvent(curseur);
     }
+
+    /**
+     * Vérifie le string que l'encart reçoit de la partie
+     * Si ce string n'est pas conforme à ce qui est attendu, affiche un message dans les logs
+     * @param mNbCaseLargeurEncart
+     * @param mNbCaseHauteurEncart
+     * @param stringEncart : String de l'encart
+     */
+    protected void verifStringJeu(int mNbCaseLargeurEncart,int mNbCaseHauteurEncart, String stringEncart) {
+
+        // On met ce if pour éviter de devoir vérrifier le regex à chaque frame
+        if (mOldStringEncart != stringEncart) {
+
+            if (mRegex == null) {
+                mRegex = mNbCaseLargeurEncart + ";([0-9]+,[0-9A-Z],[0-9]+,[0-9]+;){" +
+                        mNbCaseLargeurEncart*mNbCaseHauteurEncart + "}";
+                mParternRegex = Pattern.compile(mRegex);
+
+                logger.info("Le regex des données attendues par la Partie est : " + mRegex);
+            }
+
+            mMatcher = mParternRegex.matcher(stringEncart);
+
+            if (!mMatcher.matches()) {
+                logger.warning("Le string renvoye par la partie n est pas de la forme attendue. Attendu : "
+                        + mRegex + "   Recu : " + stringEncart);
+            }
+
+            mOldStringEncart = stringEncart;
+        }
+    }
 }
+
+

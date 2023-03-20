@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/resumeItemRelativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeightLarge"
+    android:background="@drawable/lobby_border_item"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/resumeItemImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:padding="8dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitStart"
+        android:layout_marginStart="@dimen/lobby_activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/lobby_activity_horizontal_margin"
+        android:contentDescription="Party Image" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_toRightOf="@id/resumeItemImg">
+
+
+    <TextView
+        android:id="@+id/resumePartyLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="24sp"/>
+
+    <TextView
+        android:id="@+id/resumeStateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:text="aze"
+        android:textSize="12sp"
+        />
+    </LinearLayout>
+
+
+</RelativeLayout>

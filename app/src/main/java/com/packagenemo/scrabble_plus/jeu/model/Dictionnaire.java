@@ -4,8 +4,6 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-import android.util.Log;
-
 import com.packagenemo.scrabble_plus.R;
 import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
 
@@ -24,8 +22,7 @@ public class Dictionnaire {
      */
     public Dictionnaire() {
         listMot = new ArrayList<>();
-        this.loadDico();
-
+        //this.loadDico(R.raw.dictionnaire_francais);
     }
 
 

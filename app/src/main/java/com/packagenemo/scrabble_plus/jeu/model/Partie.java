@@ -29,6 +29,7 @@ public class Partie implements Runnable{
     private int joueurActuel;
     private Pioche pioche;
     private Plateau plateau;
+    private Dictionnaire dictionnaire;
     // Indique la lettre selectionné, vaut null si aucune ne l'est
     private Lettre focused_lettre;
     private GestionMots gestionM;
@@ -55,6 +56,7 @@ public class Partie implements Runnable{
         listJoueur.add(new Joueur());
         plateau = new Plateau();
         pioche = new Pioche();
+        dictionnaire = new Dictionnaire();
         focused_lettre = null;
         gestionM = new GestionMots();
         defausse = false;
@@ -86,7 +88,6 @@ public class Partie implements Runnable{
             updatePartie();
             sleep();
         }
-    }
 
     /**
      * Cette fonction vérifie si l'utilisateur a effectué une action, si c'est le cas on va chercher
