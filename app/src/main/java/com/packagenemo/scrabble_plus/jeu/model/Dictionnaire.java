@@ -20,7 +20,7 @@ public class Dictionnaire {
     private int longueur_dico;
 
     /**
-     *
+     * Constructeur du dictionnaire
      */
     public Dictionnaire() {
         listMot = new ArrayList<>();
@@ -30,6 +30,7 @@ public class Dictionnaire {
 
 
     /**
+     * Renvoei la liste des mots du dictionnaire
      * @return List<String>
      */
     public List<String> getListMot() {
@@ -38,6 +39,7 @@ public class Dictionnaire {
 
 
     /**
+     * Modifie la liste des mots du dictionnaire
      * @param listMot
      */
     public void setListMot(ArrayList<String> listMot) {
@@ -46,10 +48,10 @@ public class Dictionnaire {
 
 
     /**
-     *
+     * Crée la liste des mots du dictionnaire à partir d'un fichier texte contenant tout les mots
+     * valides au Scrabble
      */
     public void loadDico(){
-        //TODO Chargement du dictionnaire
         try {
             InputStream is = JeuActivity.getContext().getResources().openRawResource(R.raw.dictionnaire_francais);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -66,6 +68,7 @@ public class Dictionnaire {
 
 
     /**
+     * Fonction vérifiant la présence d'un mot dans le dictionnaire
      * @param mot
      * @return boolean
      */

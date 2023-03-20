@@ -58,6 +58,10 @@ public class JeuActivity extends AppCompatActivity {
         mJeuView.resume();
     }
 
+    /**
+     * Renvoie le contexte afin de pouvoir gérer certaine fonction dans le modèel
+     * @return
+     */
     public static Context getContext() {
         return context;
     }

@@ -44,6 +44,9 @@ public class Plateau{
         setRepPlateau();
     }
 
+    /**
+     * Fonction créant les cases du plateau, elles possèdent seulement une position
+     */
     public void buildPlateau(){
         listCase = new ArrayList<>();
         ArrayList<Case> ligne;
@@ -53,100 +56,61 @@ public class Plateau{
             ligne = new ArrayList<>();
             for (int i = 0; i < largeur; i++) {
                 newCase = new Case();
+                Position pos = new Position(i,j);
+                newCase.setPos(pos);
                 ligne.add(newCase);
             }
             listCase.add(ligne);
         }
 
-        loadPlateau(R.raw.plateau);
+        loadPlateau();
     }
 
     /**
      * Fonction permettant de charger le plateau, c'est à dire de définir pour chacune de ces cases le type de celle-ci
      * Ces informations sont contenus dans un fichier texte donc le chemin d'accès est le paramètre de la fonction
      *
-     * @param path
      */
-    public void loadPlateau(int path) {
-        String val_Plateau = "4 0 0 1 0 0 0 4 0 0 0 1 0 0 4;"
-        +"0 3 0 0 0 2 0 0 0 2 0 0 0 3 0;"
-        +"0 0 3 0 0 0 1 0 1 0 0 0 3 0 0;"
-        +"1 0 0 3 0 0 0 1 0 0 0 3 0 0 1;"
-        +"0 0 0 0 3 0 0 0 0 0 3 0 0 0 0;"
-        +"0 2 0 0 0 2 0 0 0 2 0 0 0 2 0;"
-        +"0 0 1 0 0 0 1 0 1 0 0 0 1 0 0;"
-        +"4 0 0 1 0 0 0 5 0 0 0 1 0 0 4;"
-        +"0 0 1 0 0 0 1 0 1 0 0 0 1 0 0;"
-        +"0 2 0 0 0 2 0 0 0 2 0 0 0 2 0;"
-        +"0 0 0 0 3 0 0 0 0 0 3 0 0 0 0;"
-        +"1 0 0 3 0 0 0 1 0 0 0 3 0 0 1;"
-        +"0 0 3 0 0 0 1 0 1 0 0 0 3 0 0;"
-        +"0 3 0 0 0 2 0 0 0 2 0 0 0 3 0;"
-        +"4 0 0 1 0 0 0 4 0 0 0 1 0 0 4";
-        try {
-            /*Log.d("INFO", "Entrez");
-            InputStream is = Resources.getSystem().openRawResource(path);
-            Log.d("INFO", "Entre");
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            Log.d("INFO", "Entr");*/
-            Position posCase;
-            int j =0;
-            String lines[] = val_Plateau.split(";");
-            for (String line : lines) {
-                String values[] = line.split(" ");
-                for (int i = 0; i < largeur; i++) {
-                    int valCase = Integer.parseInt(values[i]);
-                    posCase = new Position(i, j);
-                    Case setCase = listCase.get(j).get(i);
-                    setCase.setPos(posCase);
-                    setCase.setTypeCase(valCase);
-                    String pathType = null;
-                    String pathMul = null;
-                    switch (valCase) {
-                        case 0:
-                            setCase.setMultiplL(1);
-                            setCase.setMultiplM(1);
-                            break;
-                        case 1:
-                            setCase.setMultiplL(2);
-                            setCase.setMultiplM(1);
-                            break;
-                        case 2:
-                            setCase.setMultiplL(3);
-                            setCase.setMultiplM(1);
-                            break;
-                        case 3:
-                            setCase.setMultiplL(1);
-                            setCase.setMultiplM(2);
-                            break;
-                        case 4:
-                            setCase.setMultiplL(1);
-                            setCase.setMultiplM(3);
-                            break;
-                        case 5:
-                            setCase.setMultiplL(1);
-                            setCase.setMultiplM(2);
-                            break;
-                        default:
-                            setCase.setMultiplL(1);
-                            setCase.setMultiplM(1);
-                            break;
-                    }
-                }
-                j++;
-            }
-            //br.close();
-        } catch (Exception e) {
-            Log.e("CATCH", e.getMessage());
-        }
+    public void loadPlateau() {
+        String val_Plateau = "15;15;0,4,0,0;0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,0,0,0;" +
+                "0,4,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,4,0,0;0,0,0,0;" +
+                "0,3,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,2,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,2,0,0;" +
+                "0,0,0,0;0,0,0,0;0,0,0,0;0,3,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,3,0,0;0,0,0,0;" +
+                "0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,3,0,0;" +
+                "0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,3,0,0;0,0,0,0;0,0,0,0;0,0,0,0;" +
+                "0,1,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,3,0,0;0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;" +
+                "0,0,0,0;0,0,0,0;0,0,0,0;0,3,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,0,0,0;" +
+                "0,3,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,2,0,0;0,0,0,0;0,0,0,0;" +
+                "0,0,0,0;0,2,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,2,0,0;0,0,0,0;0,0,0,0;0,0,0,0;" +
+                "0,2,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,1,0,0;" +
+                "0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,4,0,0;" +
+                "0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,5,0,0;0,0,0,0;0,0,0,0;" +
+                "0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,4,0,0;0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;" +
+                "0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,1,0,0;" +
+                "0,0,0,0;0,0,0,0;0,0,0,0;0,2,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,2,0,0;0,0,0,0;" +
+                "0,0,0,0;0,0,0,0;0,2,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,2,0,0;0,0,0,0;0,0,0,0;" +
+                "0,0,0,0;0,0,0,0;0,0,0,0;0,3,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,0,0,0;" +
+                "0,3,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,3,0,0;" +
+                "0,0,0,0;0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,3,0,0;0,0,0,0;" +
+                "0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,3,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,1,0,0;" +
+                "0,0,0,0;0,1,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,3,0,0;0,0,0,0;0,0,0,0;0,0,0,0;" +
+                "0,3,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,2,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,2,0,0;" +
+                "0,0,0,0;0,0,0,0;0,0,0,0;0,3,0,0;0,0,0,0;0,4,0,0;0,0,0,0;0,0,0,0;0,1,0,0;" +
+                "0,0,0,0;0,0,0,0;0,0,0,0;0,4,0,0;0,0,0,0;0,0,0,0;0,0,0,0;0,1,0,0;0,0,0,0;" +
+                "0,0,0,0;0,4,0,0;";
+        this.stringToPlateau(val_Plateau);
         this.setRepPlateau();
     }
 
+    /**
+     * Fonction transformant une chaîne de caractère en Plateau (selon des conventions), utiliser
+     * en lisant la base de données pour initialiser/mettre à jour le plateau
+     * @param info
+     */
     public void stringToPlateau(String info){
         String[] split = info.split(";");
         largeur = Integer.parseInt(split[0]);
         longueur = Integer.parseInt(split[1]);
-        buildPlateau();
 
         int posString = 2;
         for (int i = 0; i<largeur; i++) {
@@ -157,6 +121,10 @@ public class Plateau{
         }
     }
 
+    /**
+     * Fonction transformant le plateau en chaîne de caractère pouvant être lu par l'UI
+     * @return la chaîne de caractère
+     */
     @Override
     public String toString(){
         String info = this.largeur + ";" + this.longueur + ";";
@@ -185,15 +153,17 @@ public class Plateau{
      * @param mainJ
      * @param focused_letter
      * @param pioche
-     * @return Lettre
+     * @return booléen donnant la réussite ou non de l'action
      */
-    public void caseLibre(Position p, MainJoueur mainJ, Lettre focused_letter, Pioche pioche) {
+    public boolean caseLibre(Position p, MainJoueur mainJ, Lettre focused_letter, Pioche pioche) {
         Case c = listCase.get(p.getY()).get(p.getX());
         if (c.getLettre() == null) {
             c.setLettre(focused_letter);
             mainJ.supprLettre(focused_letter);
             lettresJouees.add(c);
+            return true;
         }
+        return false;
     }
 
 
@@ -273,10 +243,17 @@ public class Plateau{
         return longueur;
     }
 
+    /**
+     * Fonction renvoyant la chaîne de caractère décrivant le plateau
+     * @return
+     */
     public String getRepPlateau(){
         return this.repPlateau;
     }
 
+    /**
+     * Fonction mettant à jour la chaîne de caractère décrivant le plateau, elle utilise la méthode toString
+     */
     public void setRepPlateau(){
         this.repPlateau = this.toString();
     }
