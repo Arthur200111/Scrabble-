@@ -27,12 +27,21 @@ public class Joueur {
         mainJ = new MainJoueur();
     }
 
+    /**
+     * Transforme une chaîne de caractère en joueur selon des conventions
+     * Remarque : inutiliser dans cette application
+     * @param info
+     */
     public void stringToJoueur(String info){
         String[] split = info.split(",");
         this.nom = split[0];
         this.score = Integer.parseInt(split[1]);
     }
 
+    /**
+     * Renvoei une chaîne de caractère décrivant le joueur
+     * @return
+     */
     @Override
     public String toString(){
         String info = "";
@@ -40,6 +49,10 @@ public class Joueur {
         return info;
     }
 
+    /**
+     * Calcul le score à ajouter au joueur puis l'ajoute à son total
+     * @param motsJouees
+     */
     public void ajoutScore(List<Mot> motsJouees){
         int score = 0;
         for (Mot mot : motsJouees){
@@ -57,26 +70,50 @@ public class Joueur {
         this.score = this.score + score;
     }
 
+    /**
+     * Renvoie le nom du joueur
+     * @return
+     */
     public String getNom() {
         return nom;
     }
 
+    /**
+     * Modifie le nom du joueur
+     * @param nom
+     */
     public void setNom(String nom) {
         this.nom = nom;
     }
 
+    /**
+     * Renovie le score du joueur
+     * @return
+     */
     public int getScore() {
         return score;
     }
 
+    /**
+     * Modifie le score du joueur
+     * @param score
+     */
     public void setScore(int score) {
         this.score = score;
     }
 
+    /**
+     * Renvoie la main du joueur
+     * @return
+     */
     public MainJoueur getMainJ() {
         return mainJ;
     }
 
+    /**
+     * Modifie la main du joueur
+     * @param mainJ
+     */
     public void setMainJ(MainJoueur mainJ) {
         this.mainJ = mainJ;
     }

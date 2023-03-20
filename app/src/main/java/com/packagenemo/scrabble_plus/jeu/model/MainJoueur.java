@@ -8,33 +8,59 @@ public class MainJoueur {
     private List<Lettre> cartes;
     private String repMain;
 
+    /**
+     * Constructeur de la main du joueur
+     */
     public MainJoueur() {
         cartes = new ArrayList<Lettre>();
+        String val_Main = "7;2,A,1,0;2,I,1,0;2,G,2,0;2,A,1,0;2,P,3,0;2,A,1,0;2,G,2,0;";
+        this.stringToMain(val_Main);
+        this.setRepMain();
     }
 
+    /**
+     * Renvoie les éléments de la main du joueur
+     * @return
+     */
     public List<Lettre> getCartes() {
         return cartes;
     }
 
+    /**
+     * Modifie les éléments de la main du joueur
+     */
     public void setCartes(List<Lettre> cartes) {
         this.cartes = cartes;
     }
 
+    /**
+     * Fonction transformant une chaîne de caractère en Main de joueur (selon des conventions), utiliser
+     * en lisant la base de données pour initialiser/mettre à jour la main
+     * @param info
+     */
     public void stringToMain(String info){
-        info = info.substring(2);
         String[] split = info.split(";");
-        for (String infoLettre : split){
+        for (int i=1; i<=Integer.parseInt(split[0]); i++){
             Lettre lettreMain = new Lettre();
-            lettreMain.stringToLettre(infoLettre);
-            this.cartes.add(lettreMain);
+            lettreMain.stringToLettre(split[i]);
+            if (lettreMain.getLettre() != null){
+                this.cartes.add(lettreMain);
+            }
         }
     }
 
+    /**
+     * Fonction transformant la main du joueur en chaîne de caractère pouvant être lu par l'UI
+     * @return la chaîne de caractère
+     */
     @Override
     public String toString(){
         String info = this.cartes.size() + ";";
         for (Lettre lettre : this.cartes){
             info = info + lettre + ";";
+        }
+        for (int i=0; i<(7-this.cartes.size()); i++){
+            info = info + "1,0,0,0;";
         }
         return info;
     }
@@ -95,5 +121,4 @@ public class MainJoueur {
     public void setRepMain() {
         this.repMain = this.toString();
     }
-
 }
