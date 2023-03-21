@@ -1,6 +1,7 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
 import android.content.res.Resources;
+import java.util.Observable;
 
 import com.packagenemo.scrabble_plus.R;
 
@@ -10,7 +11,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Plateau {
+public class Plateau extends Observable {
 
     private int largeur;
     private int longueur;
@@ -19,9 +20,10 @@ public class Plateau {
     private List<Case> lettresJouees;
 
     private Case caseFocused;
+    private String repPlateau;
 
     public Plateau(){
-        this(0,0);
+        this(15,15);
     }
 
     /**
@@ -113,6 +115,7 @@ public class Plateau {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        this.setRepPlateau();
     }
 
     public void stringToPlateau(String info){
@@ -244,5 +247,15 @@ public class Plateau {
      */
     public int getLongueur() {
         return longueur;
+    }
+
+    public String getRepPlateau(){
+        return this.repPlateau;
+    }
+
+    public void setRepPlateau(){
+        this.repPlateau = this.toString();
+        this.setChanged();
+        this.notifyObservers(repPlateau);
     }
 }
