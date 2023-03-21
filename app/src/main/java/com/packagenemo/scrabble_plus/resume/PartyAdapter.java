@@ -20,9 +20,11 @@ import java.util.List;
  */
 public class PartyAdapter extends RecyclerView.Adapter<PartyAdapter.ViewHolder>{
     private List<PartyData> partiesData;
+    private ResumeActivity resumeActivity;
 
-    public PartyAdapter(List<PartyData> partiesData) {
+    public PartyAdapter(List<PartyData> partiesData, ResumeActivity resumeActivity) {
         this.partiesData = partiesData;
+        this.resumeActivity = resumeActivity;
     }
 
     /**
@@ -62,7 +64,7 @@ public class PartyAdapter extends RecyclerView.Adapter<PartyAdapter.ViewHolder>{
             @Override
             public void onClick(View view) {
                 // Permet d'afficher un message à chaque fois que l'utilisateur clique sur un élément de la liste déroulante
-                Toast.makeText(view.getContext(), "Click sur player : " + data.getPartyLabel(), Toast.LENGTH_SHORT).show();
+                resumeActivity.redirectToPArty(data.getId());
             }
         });
     }

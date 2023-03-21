@@ -1,52 +1,46 @@
 package com.packagenemo.scrabble_plus.lobby;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.packagenemo.scrabble_plus.R;
 import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Activitédu lobby
  * Sur celle ci, on retrouve les différents joueurs qui ont rejoint la partie ainsi que le mot de passe pour accéder au lobby
  */
 public class LobbyActivity extends AppCompatActivity {
-
-    private Button mLobbyButtonPlay;
     private TextView mPasswordText;
     private RecyclerView mLobbyRecyclerView;
     private PlayerAdapter adapter;
+    private String partyId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
 
+        // On récupère l'intent pour vérifier que le code est bon
+        Intent intent = getIntent();
+        partyId = intent.getStringExtra("partyId");
+        if (!partyVerification()) {
+            Toast.makeText(this, "Party Not Found", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
         // Initialisation of the different graphic components
-        mLobbyButtonPlay = findViewById(R.id.lobbyButtonPlay);
         mLobbyRecyclerView = findViewById(R.id.lobbyRecyclerView);
         mPasswordText = findViewById(R.id.lobbyPwdText);
-
-
-        // Set redirections
-        mLobbyButtonPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent toPageMenuIntent = new Intent(LobbyActivity.this, JeuActivity.class);
-                startActivity(toPageMenuIntent);
-            }
-        });
 
         // Initialisation Recycler View
         adapter = new PlayerAdapter(new LinkedList<>());
@@ -54,15 +48,42 @@ public class LobbyActivity extends AppCompatActivity {
         mLobbyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mLobbyRecyclerView.setAdapter(adapter);
 
-        // Manual add of players
-        this.addNewPlayer("Arthur","turtle");
-        this.addNewPlayer("Bryan","turtle");
-        this.addNewPlayer("Nicolas","turtle");
-        this.addNewPlayer("Thomas","turtle");
-        this.addNewPlayer("Tristan","turtle");
-
         // Manual set of password
-        this.setPassword("XVQPT45FD");
+        this.setPassword(partyId);
+
+        addYourselfToPArty();
+        updatePlayers();
+    }
+
+    // Permet de s'ajouter sur la base de données à la liste des joueurs concernés par la partie si non déjà présent
+    private void addYourselfToPArty() {
+        // TODO ajouter le joueur à la partie dans la bdd
+    }
+
+    /**
+     * Méthode permettant d'ajouter les joueurs de la partie à la liste des joueurs
+     */
+    private void updatePlayers() {
+        // TODO add player to recycler view
+        // Par contre je sais pas quand la fonction doit être appelée : on doit la faire s'appeler
+        // à la fin pour détecter l'arrivé de nouvelles personnes ?
+
+        // Manual add of players
+        this.addNewPlayer("Arthur","");
+        this.addNewPlayer("Bryan","");
+        this.addNewPlayer("Nicolas","");
+        this.addNewPlayer("Thomas","");
+        this.addNewPlayer("Tristan","");
+    }
+
+    /**
+     * Permet de savoir si un id de partie correspond bien à une partie
+     * @return true: partie existe bien, false: non
+     */
+    private boolean partyVerification() {
+        // TODO vérifier que la partie est bien dans la base de données à partir de son id (ici partyId)
+        // Aussi regarder si la partie a déjà commencé, si est déjà commencée: renvoyer false
+        return false;
     }
 
     /**
@@ -105,5 +126,14 @@ public class LobbyActivity extends AppCompatActivity {
      */
     public void setPassword(String pw) {
         mPasswordText.setText(pw);
+    }
+
+    public void finishPartyCreation(View view) {
+        // TODO vérifier que tout est ok mais normalement pas besoin de modifier la bdd
+        // Peut être mettre une valeur pour dernierCoup pour la table partie dans la bdd pour
+        // montrer que plus personne ne peut rejoindre la partie
+        Intent toPageGameIntent = new Intent(LobbyActivity.this, JeuActivity.class);
+        toPageGameIntent.putExtra("partyId",partyId);
+        startActivity(toPageGameIntent);
     }
 }
