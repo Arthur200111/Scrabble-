@@ -37,6 +37,8 @@ public class Pioche {
      *
      */
     public void loadPioche() {
+        //TODO Récupérer le String de la pioche dans la base de données, tant pis pour l'instant si le format
+        // est pas tout à fait correct
         String val_pioche = "102,6,20;"
         +"A,9,1;"
         +"E,15,1;"

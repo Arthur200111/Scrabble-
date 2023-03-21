@@ -56,6 +56,10 @@ public class Partie implements Runnable{
     public Partie(String idPartieBDD, String loginJoueurCourant, String code) {
         // TODO : Initialiser la partie avec les informations contenues sur la BDD
         // L'initialisation de la partie devra pouvoir se faire à tout moment du jeu (jeu en cours)
+
+        //TODO Récupérer les Strings du plateau, joueur (main, score) et pioche dans la base de données
+        // ensuite je peux me débrouiller pour les traiter
+
         listJoueur = new LinkedList<Joueur>();
         listJoueur.add(new Joueur());
         plateau = new Plateau();
