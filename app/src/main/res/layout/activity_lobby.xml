@@ -45,6 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.935"
         app:layout_constraintStart_toStartOf="parent"
+        android:onClick="finishPartyCreation"
         app:layout_constraintTop_toBottomOf="@+id/lobbyRecyclerView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
