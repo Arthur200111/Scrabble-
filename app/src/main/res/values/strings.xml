@@ -1,5 +1,9 @@
 <resources>
+    <!-- Basic strings-->
     <string name="app_name">Scrabble +</string>
+    <string name="submit">Submit</string>
+
+    <!-- Strings used for authentication and registering -->
     <string name="hint_email">Email</string>
     <string name="hint_password">Mot de passe</string>
     <string name="hint_name">Pseudo</string>
@@ -13,19 +17,14 @@
     <string name="old_password">Ancien mot de passe</string>
     <string name="new_password">Nouveau mot de passe</string>
     <string name="register_form">Formulaire d\'inscritpion</string>
-    <string name="title_activity_base">BaseActivity</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="connection_form">Formulaire de connexion</string>
+
+    <!-- Strings used for activity_menu -->
     <string name="party_creation">Création partie</string>
     <string name="resume_party">Parties en cours</string>
     <string name="join_party">Rejoindre une partie</string>
+
+    <!-- Strings used for party creation -->
     <string-array name="choice_mode">
         <item>Mode 1</item>
         <item>Mode 2</item>
@@ -34,12 +33,17 @@
     <string name="creation_nb_player">Nombre de joueurs</string>
     <string name="creation_form_name">Création de partie</string>
     <string name="creation_mode">Mode de jeu</string>
-    <string name="submit">Submit</string>
+
+    <!-- Strings used for the lobby -->
     <string name="lobby_password">---------</string>
     <string name="go">Go !</string>
     <string name="ours">Un ours</string>
+
+    <!-- Strings used to join a party-->
     <string name="join">Saisissez un code pour rejoindre un groupe !</string>
     <string name="join_input">Code</string>
+
+    <!-- Strings used to resume a party-->
     <string name="party">Super partie</string>
     <string name="party_state">A toi de jouer, il te reste 15 min</string>
 </resources>

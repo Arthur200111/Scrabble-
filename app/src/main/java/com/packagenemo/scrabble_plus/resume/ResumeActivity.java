@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.packagenemo.scrabble_plus.R;
+import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 
 import java.lang.reflect.Array;
@@ -34,31 +37,36 @@ public class ResumeActivity extends AppCompatActivity {
         // Initialisation du menu déroulant contenant toutes les parties en cours
         mResumeRecyclerView = findViewById(R.id.resumeRecyclerView);
 
-        adapter = new PartyAdapter(new LinkedList<>());
+        adapter = new PartyAdapter(new LinkedList<>(), this);
         mResumeRecyclerView.setHasFixedSize(true);
         mResumeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mResumeRecyclerView.setAdapter(adapter);
 
-        // On va récupérer les parties en cours pour les afficher
-
-        // Dans
+        // TODO Ici à la place d'une implémentation brut de parties il faut les charger
         this.partieManager.getPartieFromUser(new PartieInterface() {
                                                  @Override
                                                  public void onCallback(ArrayList<String> parties) {
                                                      for(int i = 0; i<parties.size()/3;i+=3){
-                                                         addNewParty(parties.get(i+1), parties.get(i+2),"");
+                                                         addNewParty(parties.get(i),parties.get(i+1),"à " +parties.get(i+2) + " de joueur","");
+                                                         //addNewParty(parties.get(i+1), parties.get(i+2),"");
                                                      }
                                                  }
                                              }
         );
 
         // Implémentation d'exemples de joueur
-        /*addNewParty("jeu 1", "à toi de jouer", "");
-        addNewParty("jeu 2", "tu joues dans 2min", "");
-        addNewParty("jeu 3", "à Tristan de jouer", "");
-        addNewParty("jeu 4", "bientôt à toi", "");
-        addNewParty("jeu 5", "en attente de Thomas ...", "");
-        addNewParty("jeu 6", "Il te reste 15min", "");*/
+
+
+
+        // Il faudrait donc pouvoir avoir le titre et savoir si c'est à l'utilisateur de jouer ou non
+        //addNewParty("XVGTEDFFF","jeu 1", "à toi de jouer", "");
+    }
+
+    public void redirectToPArty(String id) {
+        // TODO fonction appelé lorsque l'on clique sur l'une des parties pour aller sur la gameActivity
+        Intent toPageGameIntent = new Intent(ResumeActivity.this, JeuActivity.class);
+        toPageGameIntent.putExtra("partyId",id);
+        startActivity(toPageGameIntent);
     }
 
     /**
@@ -68,8 +76,8 @@ public class ResumeActivity extends AppCompatActivity {
      * @param partyState état de la partie
      * @param partyImgLabel nom de l'image utilisé pour la partie
      */
-    public void addNewParty(String partyName, String partyState, String partyImgLabel) {
-        adapter.update(new PartyData(partyName,partyState,getPartyImgFromLabel(partyImgLabel)));
+    public void addNewParty(String id, String partyName, String partyState, String partyImgLabel) {
+        adapter.update(new PartyData(partyName,partyState,getPartyImgFromLabel(partyImgLabel), id));
     }
 
     /**

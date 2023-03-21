@@ -5,6 +5,7 @@ package com.packagenemo.scrabble_plus.resume;
  */
 public class PartyData {
     private String partyLabel;
+    private String id;
     private String partyState;
     private int partyImgId;
 
@@ -14,10 +15,19 @@ public class PartyData {
      * @param partyState état de la partie
      * @param partyImgId id de l'image de la partie
      */
-    public PartyData(String partyLabel, String partyState, int partyImgId) {
+    public PartyData(String partyLabel, String partyState, int partyImgId, String id) {
         this.partyLabel = partyLabel;
         this.partyState = partyState;
         this.partyImgId = partyImgId;
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPartyLabel() {
