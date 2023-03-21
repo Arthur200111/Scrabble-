@@ -6,6 +6,8 @@ import android.graphics.Paint;
 
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Représente un Encart sur la fenêtre de jeu.
@@ -19,8 +21,16 @@ public abstract class Encart {
     // Liste qui contient les informations d'affichage données par la partie
     protected List<String> mArrayEncartSplitted;
 
+    protected String mOldStringEncart;
+
     protected int mNbCaseLargeurEncart;
     protected int mNbCaseHauteurEncart;
+
+    // Regex qui va définir la forme que doit prendre le string donné par la partie
+    protected String mRegex;
+    protected Pattern mParternRegex;
+    protected Matcher mMatcher;
+
 
     // Collection de case
     private CollectionCases mCollectionCases;
@@ -165,4 +175,13 @@ public abstract class Encart {
      * Demande à la partie le dernier état du Encart
      */
     protected abstract void metAJourStringJeu();
+
+    /**
+     * Vérifie le string que l'encart reçoit de la partie
+     * Si ce string n'est pas conforme à ce qui est attendu, affiche un message dans les logs
+     * @param mNbCaseLargeurEncart
+     * @param mNbCaseHauteurEncart
+     * @param stringEncart : String de l'encart
+     */
+    protected abstract void verifStringJeu(int mNbCaseLargeurEncart,int mNbCaseHauteurEncart, String stringEncart);
 }

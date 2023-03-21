@@ -36,6 +36,7 @@ public class Mot {
     }
 
     /**
+     * Renvoie la chaîne de caractère du mot
      * @return String
      */
     @Override
@@ -44,6 +45,7 @@ public class Mot {
     }
 
     /**
+     * Vérifie l'égalité entre 2 mots
      * @param obj
      * @return boolean
      */
@@ -57,6 +59,7 @@ public class Mot {
     }
 
     /**
+     * Renvoie les cases où sont placées les lettres du mot
      * @return List<Case>
      */
     public List<Case> getCasesMot() {
@@ -64,6 +67,7 @@ public class Mot {
     }
 
     /**
+     * Modifie les cases où sont placées les lettres du mot
      * @param casesMot
      */
     public void setCasesMot(List<Case> casesMot) {
@@ -71,6 +75,7 @@ public class Mot {
     }
 
     /**
+     * Renvoie la chaîne de caractère du mot
      * @return String
      */
     public String getMot() {
@@ -78,6 +83,7 @@ public class Mot {
     }
 
     /**
+     * Modifie la chaîne de caractère du mot
      * @param mot
      */
     public void setMot(String mot) {

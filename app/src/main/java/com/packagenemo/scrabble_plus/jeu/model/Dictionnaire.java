@@ -4,6 +4,12 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import com.packagenemo.scrabble_plus.R;
+import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,16 +18,16 @@ public class Dictionnaire {
     private int longueur_dico;
 
     /**
-     *
+     * Constructeur du dictionnaire
      */
     public Dictionnaire() {
         listMot = new ArrayList<>();
         this.loadDico();
-
     }
 
 
     /**
+     * Renvoei la liste des mots du dictionnaire
      * @return List<String>
      */
     public List<String> getListMot() {
@@ -30,6 +36,7 @@ public class Dictionnaire {
 
 
     /**
+     * Modifie la liste des mots du dictionnaire
      * @param listMot
      */
     public void setListMot(ArrayList<String> listMot) {
@@ -38,14 +45,27 @@ public class Dictionnaire {
 
 
     /**
-     *
+     * Crée la liste des mots du dictionnaire à partir d'un fichier texte contenant tout les mots
+     * valides au Scrabble
      */
     public void loadDico(){
-        //TODO Chargement du dictionnaire
+        try {
+            InputStream is = JeuActivity.getContext().getResources().openRawResource(R.raw.dictionnaire_francais);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            longueur_dico = Integer.parseInt(br.readLine());
+            for (int i=0; i<longueur_dico; i++){
+                String line = br.readLine();
+                listMot.add(line);
+            }
+            br.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 
     /**
+     * Fonction vérifiant la présence d'un mot dans le dictionnaire
      * @param mot
      * @return boolean
      */

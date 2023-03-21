@@ -60,7 +60,8 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         getHolder().addCallback(this);
 
         // TODO : Récupérer les infos pour la co BDD
-        this.mPartie = new Partie("idPartieBDD","loginJoueurCourant");
+        // il faudra faire une fonction qui génére un code
+        this.mPartie = new Partie("idPartieBDD","loginJoueurCourant", "Xagg4H");
 
         mCurseur = new Curseur();
     }

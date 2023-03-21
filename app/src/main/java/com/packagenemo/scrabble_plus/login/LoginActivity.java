@@ -1,103 +1,129 @@
 package com.packagenemo.scrabble_plus.login;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.firebase.ui.auth.AuthUI;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import java.util.Collections;
+import java.util.List;
 import android.content.Intent;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.Toast;
+import com.google.android.gms.tasks.Task;
 
 import com.google.android.material.textfield.TextInputLayout;
+
+
 import com.packagenemo.scrabble_plus.R;
-import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
+import com.packagenemo.scrabble_plus.jeu.manager.UtilisateurManager;
 import com.packagenemo.scrabble_plus.menu.MenuActivity;
-import com.packagenemo.scrabble_plus.register.RegisterActivity;
+import com.packagenemo.scrabble_plus.databinding.ActivityLoginBinding;
 
-public class LoginActivity extends AppCompatActivity {
 
-    EditText mEditTextLogin, mEditTextMdp;
-    Button mButtonInscription, mButtonConnexion;
-    VerifConnexion mVerifConnexion;
+
+
+public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
+    //private static final int RC_SIGN_IN = 123;
+    private FirebaseAuth mAuth;
+    private static final String TAG = "EmailPassword";
+    TextInputLayout mEditTextLogin, mEditTextMdp;
+
+    private static UtilisateurManager utilisateurManager = UtilisateurManager.getInstance();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    ActivityLoginBinding getViewBinding() {
+        return ActivityLoginBinding.inflate(getLayoutInflater());
+    }
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        //setContentView(R.layout.activity_login);
+        mAuth = FirebaseAuth.getInstance();
+        setupListeners();
 
-        mVerifConnexion = new VerifConnexion();
+        mEditTextLogin = (TextInputLayout) findViewById(R.id.loginInputMail);
+        mEditTextMdp = (TextInputLayout) findViewById(R.id.loginInputPassword);
 
-        mButtonConnexion = findViewById(R.id.loginButton);
-        mButtonConnexion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                verifLogin();
-            }
-        });
-        findViewById(R.id.loginButtonRegister).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TextInputLayout textInputLayout = findViewById(R.id.loginInputMail);
-                String pseudo = textInputLayout.getEditText().getText().toString();
-                System.out.println(pseudo);
-                if (pseudo == "admin") {
-                    Intent toPageMenuIntent = new Intent(LoginActivity.this, MenuActivity.class);
-                    startActivity(toPageMenuIntent);
-                }
-                Intent toPageMenuIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(toPageMenuIntent);
-            }
+
+    }
+
+    private void setupListeners(){
+        // Login Button
+        binding.loginButtonRegister.setOnClickListener(view -> {
+            startLogInActivity();
         });
 
-        // TODO : Gérer les boutons, les champs, et gérer les appels avec id ok et pas ok
+        binding.loginButton.setOnClickListener(view -> {
+            if(!mEditTextLogin.getEditText().getText().toString().isEmpty() &&
+                    !mEditTextMdp.getEditText().getText().toString().isEmpty()){
+                testSigningIn();
+            }
+        });
     }
 
-    /**
-     * Méthode appelée lorsque le joueur valide ses informations de connexion
-     */
-    private void verifLogin(){
+    private void startLogInActivity(){
+        // Choose authentication providers
+        List<AuthUI.IdpConfig> providers =
+                Collections.singletonList(new AuthUI.IdpConfig.EmailBuilder().build());
 
-        // TODO : Faire les vérifications sur les logins des usagers
-        if (mVerifConnexion.verifInformationsDeConnexion("Greta", "Thunberg")){
-            procederConnexion();
-        } else {
-            // Informer l'utilisateur que connexion pas ok et pourquoi
-        }
-
-
+       // Launch the activity
+        startActivity(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setTheme(R.style.LoginTheme)
+                        .setAvailableProviders(providers)
+                        .setIsSmartLockEnabled(false, true)
+                        .setLogo(R.drawable.blurbg)
+                        .build());
     }
 
-    /**
-     * Scénario dans lequel l'utilisateur saisi de mauvaises informations de connexion
-     */
-    private void connexionInvalide(){
-        // TODO
+    private void testSigningIn(){
+        String email, password;
+
+        email = mEditTextLogin.getEditText().getText().toString();
+        password = mEditTextMdp.getEditText().getText().toString();
+
+        System.out.println(email);
+        System.out.println(password);
+
+        signIn(email, password);
     }
 
-    /**
-     * Appelé pour rediriger l'utilisateur vers la page d'inscription
-     */
-    private void procederInscription(){
-        // TODO
+    // Show Snack Bar with a message
+    private void showSnackBar( String message){
+        Snackbar.make(binding.loginButton, message, Snackbar.LENGTH_SHORT).show();
     }
 
-    /**
-     * Valide la connexion demandée lors de l'appui sur le bouton connexion
-     */
-    private void procederConnexion(){
-        TextInputLayout textInputLayout = findViewById(R.id.loginInputMail);
-        String pseudo = textInputLayout.getEditText().getText().toString();
-        System.out.println(pseudo);
-        if (pseudo.equals("admin")) {
-            Intent toPageMenuIntent = new Intent(LoginActivity.this, JeuActivity.class);
-            startActivity(toPageMenuIntent);
-        } else {
-            Intent toPageMenuIntent = new Intent(LoginActivity.this, MenuActivity.class);
-            startActivity(toPageMenuIntent);
-        }
+    private void signIn(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-
-        // FIXME : L'activité redirige vers le jeu directement, mais ceci devra changer
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
+                            utilisateurManager.createUser();
+                            showSnackBar("Connexion réussie");
+                            startActivity(intent);
+                            //updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }
