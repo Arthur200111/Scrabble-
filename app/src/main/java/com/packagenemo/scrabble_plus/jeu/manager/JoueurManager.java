@@ -48,4 +48,13 @@ public class JoueurManager {
         joueurRepository.deleteJoueur(numero_partie,nombre_joueurs,nom);
     }
 
+
+
+    public void updateScore(int score, String id_partie){
+        this.joueurRepository.updateScore(score, id_partie);
+    }
+
+    public void updateMain(String main, String id_partie){
+        this.joueurRepository.updateMain(main, id_partie);
+    }
 }

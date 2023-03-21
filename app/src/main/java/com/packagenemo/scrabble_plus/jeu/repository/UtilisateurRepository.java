@@ -53,7 +53,6 @@ public final class UtilisateurRepository {
     }
 
     public void createUtilisateur() {
-        System.out.printf("Dans createUser du manager");
         FirebaseUser utilisateur = FirebaseAuth.getInstance().getCurrentUser();
         if(utilisateur != null){
             String name = utilisateur.getDisplayName();
