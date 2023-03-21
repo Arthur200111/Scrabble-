@@ -25,8 +25,15 @@ public class Lettre {
 
     public void stringToLettre(String info){
         String[] split = info.split(",");
-        this.lettre = split[0];
-        this.score = Integer.parseInt(split[1]);
+        if (Integer.parseInt(split[0]) == 2){
+            this.lettre = split[1];
+            this.score = Integer.parseInt(split[2]);
+        }
+        else{
+            this.lettre = null;
+            this.score = 0;
+        }
+
     }
 
     @Override
