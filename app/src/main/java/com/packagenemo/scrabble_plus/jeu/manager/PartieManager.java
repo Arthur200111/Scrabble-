@@ -1,21 +1,14 @@
 package com.packagenemo.scrabble_plus.jeu.manager;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.packagenemo.scrabble_plus.jeu.model.Joueur;
 import com.packagenemo.scrabble_plus.jeu.model.Parametres;
 import com.packagenemo.scrabble_plus.jeu.model.Pioche;
+import com.packagenemo.scrabble_plus.jeu.callback.PartieInterface;
 import com.packagenemo.scrabble_plus.jeu.repository.PartieRepository;
-
-import java.util.HashMap;
 
 public class    PartieManager {
 
@@ -80,6 +73,10 @@ public class    PartieManager {
         return partieRepository.getLastCoupInfo(numero,nombre);
     }
 
+
+    public void getPartieFromUser(PartieInterface cb){
+        this.partieRepository.getPartieFromUser(cb);
+    }
     /*
     public HashMap partieInfo = new HashMap<>();
 

@@ -6,7 +6,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.firebase.ui.auth.AuthUI;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import android.content.Intent;
@@ -22,8 +21,6 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import com.packagenemo.scrabble_plus.R;
 import com.packagenemo.scrabble_plus.jeu.manager.UtilisateurManager;
-import com.packagenemo.scrabble_plus.jeu.model.Partie;
-import com.packagenemo.scrabble_plus.jeu.repository.PartieInterface;
 import com.packagenemo.scrabble_plus.jeu.repository.PartieRepository;
 import com.packagenemo.scrabble_plus.menu.MenuActivity;
 import com.packagenemo.scrabble_plus.databinding.ActivityLoginBinding;
@@ -62,16 +59,16 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     }
 
     // TEST FIREBASE : méthode qui appelle la méthode du repo (ça devrait etre dans le manager) et qui lui passe le callback (qui est sour la forme d'une interface)
-    public void test(){
+    /*public void test(){
         List<Partie> games = new ArrayList<>();
         this.partieRepository.getPartieFromUser(new PartieInterface() {
                               @Override
-                              public void onCallback(int nb){
+                              public void onCallback(HashMap<String, String>){
                                    setTestint(nb);
                               }
                           }
         );
-    }
+    }*/
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,7 +83,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         testint = 0;
 
         // TEST FIREBASE : on appelle la fonction qui doit modifier l'attribut
-        test();
+        //test();
 
 
     }

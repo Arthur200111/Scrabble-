@@ -1,5 +1,7 @@
 package com.packagenemo.scrabble_plus.resume;
 
+import com.packagenemo.scrabble_plus.jeu.manager.*;
+import com.packagenemo.scrabble_plus.jeu.callback.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,7 +9,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.packagenemo.scrabble_plus.R;
 import android.os.Bundle;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Activité pour reprendre une partie
@@ -16,6 +23,9 @@ import java.util.LinkedList;
 public class ResumeActivity extends AppCompatActivity {
     private RecyclerView mResumeRecyclerView;
     private PartyAdapter adapter;
+
+    private static PartieManager partieManager = PartieManager.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,13 +39,26 @@ public class ResumeActivity extends AppCompatActivity {
         mResumeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mResumeRecyclerView.setAdapter(adapter);
 
+        // On va récupérer les parties en cours pour les afficher
+
+        // Dans
+        this.partieManager.getPartieFromUser(new PartieInterface() {
+                                                 @Override
+                                                 public void onCallback(ArrayList<String> parties) {
+                                                     for(int i = 0; i<parties.size()/3;i+=3){
+                                                         addNewParty(parties.get(i+1), parties.get(i+2),"");
+                                                     }
+                                                 }
+                                             }
+        );
+
         // Implémentation d'exemples de joueur
-        addNewParty("jeu 1", "à toi de jouer", "");
+        /*addNewParty("jeu 1", "à toi de jouer", "");
         addNewParty("jeu 2", "tu joues dans 2min", "");
         addNewParty("jeu 3", "à Tristan de jouer", "");
         addNewParty("jeu 4", "bientôt à toi", "");
         addNewParty("jeu 5", "en attente de Thomas ...", "");
-        addNewParty("jeu 6", "Il te reste 15min", "");
+        addNewParty("jeu 6", "Il te reste 15min", "");*/
     }
 
     /**

@@ -17,16 +17,17 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.packagenemo.scrabble_plus.jeu.callback.PartieInterface;
 import com.packagenemo.scrabble_plus.jeu.manager.PartieManager;
 import com.packagenemo.scrabble_plus.jeu.model.Joueur;
 import com.packagenemo.scrabble_plus.jeu.model.Lettre;
 import com.packagenemo.scrabble_plus.jeu.model.Parametres;
-import com.packagenemo.scrabble_plus.jeu.model.Partie;
 import com.packagenemo.scrabble_plus.jeu.model.Pioche;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -34,7 +35,7 @@ public class PartieRepository {
 
     private final String TAG = this.getClass().toString();
     private static final String PARTIE_COLLECTION = "jeux";
-    private static final String JOUEUR_COLLECTION = "joueurs";
+    private static final String JOUEUR_COLLECTION = "joueur";
     private static final String COUP_COLLECTION = "coups";
     private static final String PIOCHE_COLLECTION = "pioche";
     private static final String PIOCHE_DOCUMENT = "lettres";
@@ -337,16 +338,34 @@ public class PartieRepository {
      */
     public void getPartieFromUser(PartieInterface cb) {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            System.out.println("Trying to access players by User");
             this.getJoueurCollection().whereEqualTo("utilisateur", "aaaa").get().addOnSuccessListener( //FirebaseAuth.getInstance().getCurrentUser()
                     new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            ArrayList<Partie> parties;
-                            parties = new ArrayList<>();
-                            for (DocumentSnapshot q : queryDocumentSnapshots.getDocuments()) {
-                                parties.add(q.toObject(Partie.class));
+                            System.out.println("If we are here, we succeded. The first player is : " + queryDocumentSnapshots.getDocuments().get(0).get("nom", String.class));
+
+                            for(DocumentSnapshot q : queryDocumentSnapshots.getDocuments()) {
+
+
+                                getPartieCollection().document(q.get("partie", DocumentReference.class).toString()).get().addOnSuccessListener(
+                                        new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                String[] champs = {"code", "nom", "prochain joueur"};
+                                                ArrayList<String> parties = new ArrayList<>();
+
+                                                for (DocumentSnapshot q : queryDocumentSnapshots.getDocuments()) {
+                                                    for (String str : Arrays.asList(champs)) {
+                                                        parties.add(q.get(str, String.class));
+                                                    }
+                                                }
+                                                cb.onCallback(parties);
+                                            }
+                                        }
+                                );
                             }
-                            cb.onCallback(10);
+
                         }
                     }
             );
