@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.firebase.ui.auth.AuthUI;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import android.content.Intent;
@@ -21,6 +22,9 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import com.packagenemo.scrabble_plus.R;
 import com.packagenemo.scrabble_plus.jeu.manager.UtilisateurManager;
+import com.packagenemo.scrabble_plus.jeu.model.Partie;
+import com.packagenemo.scrabble_plus.jeu.repository.PartieInterface;
+import com.packagenemo.scrabble_plus.jeu.repository.PartieRepository;
 import com.packagenemo.scrabble_plus.menu.MenuActivity;
 import com.packagenemo.scrabble_plus.databinding.ActivityLoginBinding;
 
@@ -33,6 +37,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     private static final String TAG = "EmailPassword";
     TextInputLayout mEditTextLogin, mEditTextMdp;
 
+    private static PartieRepository partieRepository = PartieRepository.getInstance();
+
     private static UtilisateurManager utilisateurManager = UtilisateurManager.getInstance();
 
     @Override
@@ -40,6 +46,32 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         return ActivityLoginBinding.inflate(getLayoutInflater());
     }
 
+    // TEST FIREBASE : l'attribut a modifié avec les getter/setter + méthode qui l'affiche
+    private int testint;
+
+    public void setTestint(int testint){
+        this.testint = testint;
+    }
+
+    public int getTestint(){ return testint;}
+
+
+    public void displayTestint(){
+        System.out.println(" ----------------------- \n \r  \n" +
+                " La valeur de set int doit être égale à 10 mais est égale à " + getTestint());
+    }
+
+    // TEST FIREBASE : méthode qui appelle la méthode du repo (ça devrait etre dans le manager) et qui lui passe le callback (qui est sour la forme d'une interface)
+    public void test(){
+        List<Partie> games = new ArrayList<>();
+        this.partieRepository.getPartieFromUser(new PartieInterface() {
+                              @Override
+                              public void onCallback(int nb){
+                                   setTestint(nb);
+                              }
+                          }
+        );
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +82,11 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
         mEditTextLogin = (TextInputLayout) findViewById(R.id.loginInputMail);
         mEditTextMdp = (TextInputLayout) findViewById(R.id.loginInputPassword);
+
+        testint = 0;
+
+        // TEST FIREBASE : on appelle la fonction qui doit modifier l'attribut
+        test();
 
 
     }
@@ -109,6 +146,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                         FirebaseUser currentUser = mAuth.getCurrentUser();
 
                         if (task.isSuccessful()) {
+                            // TEST FIREBASE : je regarde juste si l'attribut a bien été modifié
+                            displayTestint();
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();

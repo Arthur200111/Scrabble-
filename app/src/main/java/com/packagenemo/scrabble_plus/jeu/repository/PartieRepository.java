@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -20,9 +21,12 @@ import com.packagenemo.scrabble_plus.jeu.manager.PartieManager;
 import com.packagenemo.scrabble_plus.jeu.model.Joueur;
 import com.packagenemo.scrabble_plus.jeu.model.Lettre;
 import com.packagenemo.scrabble_plus.jeu.model.Parametres;
+import com.packagenemo.scrabble_plus.jeu.model.Partie;
 import com.packagenemo.scrabble_plus.jeu.model.Pioche;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -67,6 +71,14 @@ public class PartieRepository {
         return getFirestoreInstance().collection(PARTIE_COLLECTION);
     }
 
+    /**
+     * Get the Collection Reference
+     * @return
+     */
+    private CollectionReference getJoueurCollection(){
+        return getFirestoreInstance().collection(JOUEUR_COLLECTION);
+    }
+
 
     public Task<DocumentSnapshot> getPartieInfo(String numero_partie) {
         if (numero_partie != null){
@@ -94,6 +106,14 @@ public class PartieRepository {
             return null;
         }
     }
+
+
+
+
+
+
+
+
 
     /**
      * Generate an alphanumeric code
@@ -308,6 +328,31 @@ public class PartieRepository {
     }
 
 
+    // TEST FIREBASE : Défintion de la méthode à laquelle on passe plus tard le callback
+    /**
+     * Get info from the game with the same code
+     * Get String nom, int nombre de coups, int nombre de joueurs, String plateau, String prochain joueur
+     * @param cb
+     * @return
+     */
+    public void getPartieFromUser(PartieInterface cb) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            this.getJoueurCollection().whereEqualTo("utilisateur", "aaaa").get().addOnSuccessListener( //FirebaseAuth.getInstance().getCurrentUser()
+                    new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            ArrayList<Partie> parties;
+                            parties = new ArrayList<>();
+                            for (DocumentSnapshot q : queryDocumentSnapshots.getDocuments()) {
+                                parties.add(q.toObject(Partie.class));
+                            }
+                            cb.onCallback(10);
+                        }
+                    }
+            );
 
-
+        }
+    }
 }
+
+
