@@ -11,8 +11,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.packagenemo.scrabble_plus.R;
+import com.packagenemo.scrabble_plus.jeu.callback.PartieInterface;
+import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
+import com.packagenemo.scrabble_plus.jeu.manager.PartieManager;
 import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -25,6 +29,9 @@ public class LobbyActivity extends AppCompatActivity {
     private PlayerAdapter adapter;
     private String partyId;
 
+    private PartieManager partieManager = PartieManager.getInstance();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,10 +40,9 @@ public class LobbyActivity extends AppCompatActivity {
         // On récupère l'intent pour vérifier que le code est bon
         Intent intent = getIntent();
         partyId = intent.getStringExtra("partyId");
-        if (!partyVerification()) {
-            Toast.makeText(this, "Party Not Found", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+
+        this.partyVerification(partyId);
+
 
         // Initialisation of the different graphic components
         mLobbyRecyclerView = findViewById(R.id.lobbyRecyclerView);
@@ -57,33 +63,47 @@ public class LobbyActivity extends AppCompatActivity {
 
     // Permet de s'ajouter sur la base de données à la liste des joueurs concernés par la partie si non déjà présent
     private void addYourselfToPArty() {
-        // TODO ajouter le joueur à la partie dans la bdd
+        // DONE ajouter le joueur à la partie dans la bdd : c'est fait dans l'activité précédente
     }
 
     /**
      * Méthode permettant d'ajouter les joueurs de la partie à la liste des joueurs
      */
     private void updatePlayers() {
-        // TODO add player to recycler view
+        // DONE : faut juste faire la méthode qui l'appelle
         // Par contre je sais pas quand la fonction doit être appelée : on doit la faire s'appeler
         // à la fin pour détecter l'arrivé de nouvelles personnes ?
-
-        // Manual add of players
-        this.addNewPlayer("Arthur","");
-        this.addNewPlayer("Bryan","");
-        this.addNewPlayer("Nicolas","");
-        this.addNewPlayer("Thomas","");
-        this.addNewPlayer("Tristan","");
+        this.partieManager.findPlayersInPartie(
+                this.partyId,
+                new PartieInterface() {
+                    @Override
+                    public void onCallback(ArrayList<String> parties) {
+                        for(String str: parties){
+                            addNewPlayer(str, "");
+                        }
+                    }
+                }
+        );
     }
 
     /**
      * Permet de savoir si un id de partie correspond bien à une partie
      * @return true: partie existe bien, false: non
      */
-    private boolean partyVerification() {
+    private void partyVerification(String partieId) {
         // TODO vérifier que la partie est bien dans la base de données à partir de son id (ici partyId)
-        // Aussi regarder si la partie a déjà commencé, si est déjà commencée: renvoyer false
-        return false;
+        // Aussi regarder si la partie a déjà commencé, si est déjà commencée: renvoyer false        return ;
+        partieManager.isPartieExisting(partieId, new StringInterface() {
+            @Override
+            public void onCallback(String str) {
+                partieInexistante();
+            }
+        });
+    }
+
+    private void partieInexistante(){
+        Toast.makeText(this, "Party Not Found", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     /**

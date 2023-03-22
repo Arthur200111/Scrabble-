@@ -59,9 +59,27 @@ public class    PartieManager {
     public void createPartie(String nom_partie, String code, String plateau, Pioche pioche, Parametres parametres){
         partieRepository.createPartie(nom_partie,code,plateau,pioche, parametres);
     }
-    public void joinPartie(String code_partie, Joueur joueur){
-        partieRepository.joinPartie(code_partie, joueur);
+
+    public void isPartieExisting(String idPartie, StringInterface pi){
+        this.partieRepository.isPartieExisting(idPartie, pi);
     }
+
+    /*public void joinPartie(String code_partie, Joueur joueur){
+        partieRepository.joinPartie(code_partie, joueur);
+    }*/
+
+
+    public boolean joinPartie(String idPartie){
+        return partieRepository.joinPartie(idPartie);
+    }
+
+    public void findPlayersInPartie(String idPartie, PartieInterface pi){
+        this.partieRepository.findPlayersInPartie(
+                idPartie,
+                pi
+        );
+    }
+
 
     public CollectionReference getJoueursCollection(String numero_partie){
         return partieRepository.getJoueursCollection(numero_partie);

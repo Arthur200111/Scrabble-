@@ -75,12 +75,13 @@ public class PartyCreationActivity extends AppCompatActivity {
         // DONE créer une partie à partie de son id, son nom et de son mode de jeu
         // Il faut voir avec Tristan pour tout ce qui est récup' d'un plateau basique, je ne sais pas trop comment il fait.
         // Aussi il faut vérifier que le gameId n'ait pas déjà été généré
-        Parametres params = new Parametres(Integer.parseInt(gameMode),24);
+
+        Parametres params = new Parametres(Integer.parseInt(gameMode.substring(gameMode.length()-1)),24);
         String plateau = new Plateau().toString();
 
         partieManager.createPartie(partyName, gameId, plateau, null, params);
 
-        return false;
+        return true;
     }
 
     /**

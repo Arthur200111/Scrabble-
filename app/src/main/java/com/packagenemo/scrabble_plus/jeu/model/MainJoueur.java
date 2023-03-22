@@ -13,7 +13,6 @@ public class MainJoueur {
      */
     public MainJoueur() {
         cartes = new ArrayList<Lettre>();
-        //TODO Récupérer le String de la main dans la base de données
 //        String val_Main = "7;2,A,1,0;2,I,1,0;2,G,2,0;2,A,1,0;2,P,3,0;2,A,1,0;2,G,2,0;";
 //        this.stringToMain(val_Main);
 //        this.setRepMain();
@@ -21,7 +20,7 @@ public class MainJoueur {
 
     public MainJoueur(String mainFromDTB) {
         cartes = new ArrayList<Lettre>();
-        //TODO Récupérer le String de la main dans la base de données
+        //DONE Récupérer le String de la main dans la base de données
         this.stringToMain(mainFromDTB);
         this.setRepMain();
     }

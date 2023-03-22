@@ -29,6 +29,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -158,11 +159,10 @@ public class PartieRepository {
         partie.put("nom", nom_partie);
         partie.put("prochain joueur", 0);
         partie.put("nombre de coups", 0);
-        partie.put("nombre de joueurs", 1);
+        //partie.put("nombre de joueurs", 1);
         partie.put("plateau", plateau);
         partie.put("code",code);
         partie.put("temps", FieldValue.serverTimestamp());
-        partie.put("joueur1", docJoueurRef);
 
         DocumentReference docRef = this.getPartieCollection().document(code);
 
@@ -197,10 +197,68 @@ public class PartieRepository {
         docRef.collection(PIOCHE_COLLECTION).document(PIOCHE_DOCUMENT).set(piocheStr);
 //        docRef.collection(JOUEUR_COLLECTION).document(code + FirebaseAuth.getInstance().getCurrentUser().getUid()).set(joueur);
 
+        // ajout du joueur à la collection joueurs du document
+        String playerUid = code + FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+        HashMap<String, String> j = new HashMap<>();
+
+        j.put("id", playerUid);
+        j.put("nom", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
+        docRef.collection("joueurs").document(playerUid).set(j);
+
         return docRef;
     }
 
-    public void joinPartie(String code_partie, Joueur joueur){
+    /**
+     * Fonction qui crée un joueur et l'ajoute a la partie (si la partie existe bien
+     * @param codePartie
+     * @return  retourne true si la partie a bien été trouvé
+     */
+    public boolean joinPartie(String codePartie){
+        boolean success = false;
+        String playerUid = codePartie + FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+
+        //if(this.getPartieCollection().document("U5D3217W").get().isSuccessful()){
+            success = true;
+
+            DocumentReference docJoueurRef = joueurRepository.addJoueur(codePartie, null);
+
+            HashMap<String, String> j = new HashMap<>();
+
+            j.put("id", playerUid);
+            j.put("nom", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
+            this.getPartieCollection().document(codePartie).collection("joueurs").document(playerUid).set(j);
+        //}
+        return success;
+    }
+
+    /**
+     * Fonction qui va récupérer les noms des joueurs inscrit dans une partie et passer cela à un callback pour traitement
+     * @param codePartie le code de la partie en cours
+     */
+    public void findPlayersInPartie(String codePartie, PartieInterface pi){
+        this.getPartieCollection().document(codePartie).collection("joueurs").get().addOnSuccessListener(
+                new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        ArrayList<String> nomsJoueurs = new ArrayList<>();
+
+                        for(DocumentSnapshot ds: queryDocumentSnapshots.getDocuments()){
+                            nomsJoueurs.add(ds.get("nom", String.class));
+                        }
+
+                        pi.onCallback(nomsJoueurs);
+                    }
+                }
+        );
+    }
+
+
+    /*public void joinPartie(String code_partie, Joueur joueur){
+
+        boolean e = this.getPartieCollection().document("erere").get().isSuccessful();
+
         Task<QuerySnapshot> task = getPartieFromCode(code_partie);
         task.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -238,7 +296,7 @@ public class PartieRepository {
                 }
             }
         });
-    }
+    }*/
 
 
     public CollectionReference getJoueursCollection(String numero_partie){
@@ -389,6 +447,17 @@ public class PartieRepository {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         si.onCallback(documentSnapshot.get("plateau", String.class));
+                    }
+                }
+        );
+    }
+
+    public void isPartieExisting(String idPartie, StringInterface pi) {
+        this.getPartieCollection().document(idPartie).get().addOnFailureListener(
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        pi.onCallback("raté");
                     }
                 }
         );
