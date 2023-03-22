@@ -46,4 +46,7 @@
     <!-- Strings used to resume a party-->
     <string name="party">Super partie</string>
     <string name="party_state">A toi de jouer, il te reste 15 min</string>
+
+    <!-- Strings used for resume screen -->
+    <string name="resume_label">Reprendre une partie en cours</string>
 </resources>
