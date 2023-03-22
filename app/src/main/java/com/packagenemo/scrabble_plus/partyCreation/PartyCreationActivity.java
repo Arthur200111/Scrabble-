@@ -72,7 +72,7 @@ public class PartyCreationActivity extends AppCompatActivity {
      * @return true: la partie a été crée, false: non
      */
     private boolean partyCreation(String gameId, String partyName, String gameMode) {
-        // TODO créer une partie à partie de son id, son nom et de son mode de jeu
+        // DONE créer une partie à partie de son id, son nom et de son mode de jeu
         // Il faut voir avec Tristan pour tout ce qui est récup' d'un plateau basique, je ne sais pas trop comment il fait.
         // Aussi il faut vérifier que le gameId n'ait pas déjà été généré
         Parametres params = new Parametres(Integer.parseInt(gameMode),24);
