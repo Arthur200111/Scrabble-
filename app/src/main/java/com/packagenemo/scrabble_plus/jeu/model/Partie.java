@@ -2,6 +2,9 @@ package com.packagenemo.scrabble_plus.jeu.model;
 
 import android.util.Log;
 
+import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
+import com.packagenemo.scrabble_plus.jeu.manager.PartieManager;
+
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -48,6 +51,9 @@ public class Partie implements Runnable{
     // Code attribué à la partie qui permet aux joueurs de joindre le lobby
     private final String code;
 
+    private static PartieManager partieManager = PartieManager.getInstance();
+
+
     /**
      * Initialise la partie pour chaque joueur
      * @param idPartieBDD : ID de la partie pour la BDD
@@ -59,7 +65,6 @@ public class Partie implements Runnable{
 
         //TODO Récupérer les Strings du plateau, joueur (main, score) et pioche dans la base de données
         // ensuite je peux me débrouiller pour les traiter
-
         listJoueur = new LinkedList<Joueur>();
         listJoueur.add(new Joueur());
         plateau = new Plateau();
@@ -93,7 +98,7 @@ public class Partie implements Runnable{
     public void run() {
         while (true) {
             changementAction(position, typeAction);
-            updatePartie();
+            //updatePartie();
             sleep();
         }
     }
@@ -151,10 +156,26 @@ public class Partie implements Runnable{
 
     /**
      * Synchronise le plateau avec la BDD
+     *  Il faut récupérer le plateau de la partie (idpartie)
+     *  Main, score et pioche du joueur (idpartie + currentuseruid)
      *
+     *  Utiliser les méthode set dans le callback qu'il faut créer
      */
-    public void updatePartie(){
-        //TODO
+    public void updatePartie(String idPartie){
+        //TODO Récupérer les Strings du plateau, joueur (main, score) et pioche dans la base de données
+        // ensuite je peux me débrouiller pour les traiter
+        // Set le plateau en fonction de la DTB
+        //this.setPlateau(plateauStr);
+
+        // On appelle cette méthode
+        partieManager.getPlateauFromPartie(idPartie, new StringInterface() {
+            @Override
+            public void onCallback(String str) {
+                updatePartie(str);
+            }
+        });
+
+
     }
 
     /**
@@ -330,4 +351,6 @@ public class Partie implements Runnable{
     public String getCode(){
         return this.code;
     }
+
+    public void setPlateau(String str) { this.plateau.loadPlateau(str);}
 }

@@ -28,6 +28,19 @@ public class Joueur {
     }
 
     /**
+     * Constructeur d'un joueur à partir de son score et de son nom
+     *
+     * @param name nom du joueur
+     * @param sco  score du joueur
+     * @param mainFromDTB main du joueur récupéré avec firebase
+     */
+    public Joueur(String name, int sco, String mainFromDTB) {
+        nom = name;
+        score = sco;
+        mainJ = new MainJoueur(mainFromDTB);
+    }
+
+    /**
      * Transforme une chaîne de caractère en joueur selon des conventions
      * Remarque : inutiliser dans cette application
      * @param info

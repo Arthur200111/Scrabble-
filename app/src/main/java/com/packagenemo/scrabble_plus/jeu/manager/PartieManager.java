@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
 import com.packagenemo.scrabble_plus.jeu.model.Joueur;
 import com.packagenemo.scrabble_plus.jeu.model.Parametres;
 import com.packagenemo.scrabble_plus.jeu.model.Pioche;
@@ -76,6 +77,10 @@ public class    PartieManager {
 
     public void getPartieFromUser(PartieInterface cb){
         this.partieRepository.getPartieFromUser(cb);
+    }
+
+    public void getPlateauFromPartie(String str, StringInterface si){
+        this.partieRepository.getPlateauFromPartie(str, si);
     }
     /*
     public HashMap partieInfo = new HashMap<>();

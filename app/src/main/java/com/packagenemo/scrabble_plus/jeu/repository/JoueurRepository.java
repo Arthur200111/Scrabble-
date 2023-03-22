@@ -76,6 +76,7 @@ public class JoueurRepository {
         return this.getJoueurCollection().document(codePartie + FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
     }
 
+    //public void get
     public ArrayList<Joueur> getJoueursInfo(String numero_partie, int nombre_joueurs) {
         ArrayList<Joueur> joueurs = new ArrayList<>();
         if (numero_partie != null && nombre_joueurs > 0){
@@ -177,6 +178,7 @@ public class JoueurRepository {
         );
     }
 
+    //public void getJoueur
 
     /*
     public void addJoueurFromCode(String code_partie,int nombre_joueurs,Joueur joueur){

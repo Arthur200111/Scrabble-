@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.packagenemo.scrabble_plus.jeu.callback.PartieInterface;
+import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
 import com.packagenemo.scrabble_plus.jeu.manager.PartieManager;
 import com.packagenemo.scrabble_plus.jeu.model.Joueur;
 import com.packagenemo.scrabble_plus.jeu.model.Lettre;
@@ -255,7 +256,6 @@ public class PartieRepository {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            //TODO get Map data from document
                             Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                             Log.d(TAG, document.getData().get("date").toString() +
                                     " ; " + document.getData().get("joueur").toString() +
@@ -308,7 +308,6 @@ public class PartieRepository {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            //TODO get Map data from document
                             Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                             pioche_total[0] = document.get("consonnes").toString() + document.get("consonnes").toString();
 
@@ -371,6 +370,17 @@ public class PartieRepository {
             );
 
         }
+    }
+
+    public void getPlateauFromPartie(String idpartie, StringInterface si){
+        this.getPartieCollection().document(idpartie).get().addOnSuccessListener(
+                new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        si.onCallback(documentSnapshot.get("plateau", String.class));
+                    }
+                }
+        );
     }
 }
 
