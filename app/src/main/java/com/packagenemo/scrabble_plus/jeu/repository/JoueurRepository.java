@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -23,14 +24,16 @@ import com.packagenemo.scrabble_plus.jeu.model.MainJoueur;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class JoueurRepository {
 
     /**
-     * CONVENTION NOMMAGES DES DOCUMENTS DE LA COLLECTION JOUEUR : L'ID EST LA CONCATENATION DU CODE DELA PARTIE ET DE L'ID DU JOUEUR
+     * CONVENTION NOMMAGES DES DOCUMENTS DE LA COLLECTION JOUEUR : L'ID EST LA CONCATENATION DU CODE DELA PARTIE ET DE L'ID De l'USER
      */
     private static volatile JoueurRepository instance;
     private static final String JOUEUR_COLLECTION = "joueurs";
@@ -96,7 +99,7 @@ public class JoueurRepository {
         return joueurs;
     }
 
-    public void addJoueur(String numero_partie,int nombre_joueurs,Joueur joueur){
+    public void addJoueurs(String numero_partie,int nombre_joueurs,Joueur joueur){
         if (numero_partie != null){
             String nom_joueur = "joueur" + String.valueOf(nombre_joueurs + 1);
             partieManager.getJoueursCollection(numero_partie).document(nom_joueur)
@@ -114,6 +117,49 @@ public class JoueurRepository {
                         }
                     });
         }
+    }
+
+    /**
+     * Créé un joueur : utiliser dans la fonction de création de partie ou bien de rejoindre partie
+     * @param codePartie
+     * @param joueur
+     */
+    public DocumentReference addJoueur(String codePartie, Joueur joueur){
+        DocumentReference docRef = null;
+
+        if (codePartie != null){
+
+            docRef = getJoueurCollection().document(codePartie + FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            String utilisateur = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            String partieCode = codePartie;
+            String mainJoueur;
+            String nom;
+            int score;
+
+            if(joueur==null){
+                mainJoueur = new MainJoueur().getRepMain();
+                nom = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                score = 0;
+            }
+            else{
+                mainJoueur = joueur.getMainJ().getRepMain();
+                nom = joueur.getNom();
+                score = 0;
+            }
+
+            // Ajoute les informations sur la partie
+            Map<String, Object> joueurMap = new HashMap<>();
+            joueurMap.put("main", mainJoueur);
+            joueurMap.put("nom", nom);
+            joueurMap.put("partie", partieCode);
+            joueurMap.put("score", score);
+            joueurMap.put("utilisateur", utilisateur);
+
+
+            docRef.set(joueurMap);
+        }
+        return docRef;
     }
 
     /**

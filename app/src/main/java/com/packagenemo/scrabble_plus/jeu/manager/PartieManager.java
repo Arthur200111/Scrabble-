@@ -2,6 +2,7 @@ package com.packagenemo.scrabble_plus.jeu.manager;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
@@ -55,8 +56,8 @@ public class    PartieManager {
         return partieRepository.getPartieFromCode(code);
     }
 
-    public void createPartie(String nom_partie, Joueur joueur, String plateau, Pioche pioche, Parametres parametres){
-        partieRepository.createPartie(nom_partie,joueur,plateau,pioche, parametres);
+    public void createPartie(String nom_partie, String code, String plateau, Pioche pioche, Parametres parametres){
+        partieRepository.createPartie(nom_partie,code,plateau,pioche, parametres);
     }
     public void joinPartie(String code_partie, Joueur joueur){
         partieRepository.joinPartie(code_partie, joueur);

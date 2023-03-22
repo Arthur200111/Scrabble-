@@ -34,7 +34,7 @@ public class JoueurManager {
     }
 
     public void addJoueur(String numero_partie, int nombre_joueurs, Joueur joueur){
-        joueurRepository.addJoueur(numero_partie, nombre_joueurs, joueur);
+        joueurRepository.addJoueurs(numero_partie, nombre_joueurs, joueur);
     }
 
     /*

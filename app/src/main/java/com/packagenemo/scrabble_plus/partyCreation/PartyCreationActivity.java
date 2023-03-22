@@ -1,5 +1,8 @@
 package com.packagenemo.scrabble_plus.partyCreation;
 
+import com.google.apphosting.datastore.testing.DatastoreTestTrace;
+import com.packagenemo.scrabble_plus.jeu.manager.*;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,6 +15,8 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.packagenemo.scrabble_plus.R;
+import com.packagenemo.scrabble_plus.jeu.model.Parametres;
+import com.packagenemo.scrabble_plus.jeu.model.Plateau;
 import com.packagenemo.scrabble_plus.lobby.LobbyActivity;
 
 import java.util.Random;
@@ -23,6 +28,8 @@ public class PartyCreationActivity extends AppCompatActivity {
     Spinner mDropdownMenu;
     TextInputLayout mCreationInputName;
     TextInputLayout mCreationInputNbPlayer;
+
+    private static PartieManager partieManager = PartieManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +75,11 @@ public class PartyCreationActivity extends AppCompatActivity {
         // TODO créer une partie à partie de son id, son nom et de son mode de jeu
         // Il faut voir avec Tristan pour tout ce qui est récup' d'un plateau basique, je ne sais pas trop comment il fait.
         // Aussi il faut vérifier que le gameId n'ait pas déjà été généré
+        Parametres params = new Parametres(Integer.parseInt(gameMode),24);
+        String plateau = new Plateau().toString();
+
+        partieManager.createPartie(partyName, gameId, plateau, null, params);
+
         return false;
     }
 

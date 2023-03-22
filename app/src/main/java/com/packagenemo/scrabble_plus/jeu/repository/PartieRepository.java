@@ -43,6 +43,7 @@ public class PartieRepository {
     private static final String PARAMETRE_COLLECTION = "parametres";
     private static volatile PartieRepository instance;
     private PartieManager partieManager;
+    private static JoueurRepository joueurRepository = JoueurRepository.getInstance();
 
 
 
@@ -142,30 +143,42 @@ public class PartieRepository {
      * Utilise un nom de partie, le joueur qui crée la partie, le plateau et la pioche
      * Renvoie le document contenant la partie
      * @param nom_partie
-     * @param joueur
+     * @param code
      * @param plateau
      * @param pioche
+     * @param parametres
      * @return
      */
-    public DocumentReference createPartie(String nom_partie, Joueur joueur, String plateau, Pioche pioche, Parametres parametres){
-        // Création d'un nouveau document contenant la partie et récupération de sa référence
-        DocumentReference docRef = this.getPartieCollection().document();
+    public DocumentReference createPartie(String nom_partie, String code, String plateau, Pioche pioche, Parametres parametres){
+        // Crée le joueur et l'ajoute une référence vers lui dans la partei
+        DocumentReference docJoueurRef = joueurRepository.addJoueur(code, null);
 
         // Ajoute les informations sur la partie
         Map<String, Object> partie = new HashMap<>();
         partie.put("nom", nom_partie);
-        partie.put("prochain joueur", joueur.getNom());
+        partie.put("prochain joueur", 0);
         partie.put("nombre de coups", 0);
         partie.put("nombre de joueurs", 1);
         partie.put("plateau", plateau);
-        partie.put("code",generateCode(8));
+        partie.put("code",code);
         partie.put("temps", FieldValue.serverTimestamp());
+        partie.put("joueur1", docJoueurRef);
+
+        DocumentReference docRef = this.getPartieCollection().document(code);
+
         docRef.set(partie);
 
         // Ajoute les paramètres
+        if(parametres==null){
+            parametres = new Parametres();
+        }
         docRef.collection(PARAMETRE_COLLECTION).add(parametres);
 
         // Ajoute les informations sur la pioche
+        if(pioche == null){
+            pioche = new Pioche();
+        }
+
         Map<String, Object> piocheStr = new HashMap<>();
         piocheStr.put("consonnes","");
         piocheStr.put("voyelles","");
@@ -182,9 +195,7 @@ public class PartieRepository {
             piocheStr.put("voyelles", piocheStr.get("voyelles") + l.getLettre());
         }
         docRef.collection(PIOCHE_COLLECTION).document(PIOCHE_DOCUMENT).set(piocheStr);
-
-        // Ajoute le joueur qui a créé la partie
-        docRef.collection(JOUEUR_COLLECTION).document("joueur1").set(joueur);
+//        docRef.collection(JOUEUR_COLLECTION).document(code + FirebaseAuth.getInstance().getCurrentUser().getUid()).set(joueur);
 
         return docRef;
     }

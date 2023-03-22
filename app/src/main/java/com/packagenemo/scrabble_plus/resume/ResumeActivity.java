@@ -42,7 +42,7 @@ public class ResumeActivity extends AppCompatActivity {
         mResumeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mResumeRecyclerView.setAdapter(adapter);
 
-        // TODO Ici à la place d'une implémentation brut de parties il faut les charger
+        // DONE Ici à la place d'une implémentation brut de parties il faut les charger
         this.partieManager.getPartieFromUser(new PartieInterface() {
                                                  @Override
                                                  public void onCallback(ArrayList<String> parties) {
