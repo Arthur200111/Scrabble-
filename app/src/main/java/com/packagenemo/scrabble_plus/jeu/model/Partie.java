@@ -73,8 +73,8 @@ public class Partie implements Runnable{
         gestionM = new GestionMots();
         defausse = false;
         joueurActuel = 0;
-        //pioche.piocher(7,listJoueur.get(joueurActuel).getMainJ().getCartes());
-        //listJoueur.get(joueurActuel).getMainJ().setRepMain();
+        pioche.piocher(7,listJoueur.get(joueurActuel).getMainJ().getCartes());
+        listJoueur.get(joueurActuel).getMainJ().setRepMain();
         alternateur = true;
         this.code = code;
 

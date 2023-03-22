@@ -13,9 +13,10 @@ public class MainJoueur {
      */
     public MainJoueur() {
         cartes = new ArrayList<Lettre>();
-        String val_Main = "7;2,A,1,0;2,I,1,0;2,G,2,0;2,A,1,0;2,P,3,0;2,A,1,0;2,G,2,0;";
-        this.stringToMain(val_Main);
-        this.setRepMain();
+        //TODO Récupérer le String de la main dans la base de données
+//        String val_Main = "7;2,A,1,0;2,I,1,0;2,G,2,0;2,A,1,0;2,P,3,0;2,A,1,0;2,G,2,0;";
+//        this.stringToMain(val_Main);
+//        this.setRepMain();
     }
 
     public MainJoueur(String mainFromDTB) {
