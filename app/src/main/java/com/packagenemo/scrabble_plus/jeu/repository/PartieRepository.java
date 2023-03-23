@@ -152,7 +152,7 @@ public class PartieRepository {
      */
     public DocumentReference createPartie(String nom_partie, String code, String plateau, Pioche pioche, Parametres parametres){
         // Crée le joueur et l'ajoute une référence vers lui dans la partei
-        DocumentReference docJoueurRef = joueurRepository.addJoueur(code, null);
+        //DocumentReference docJoueurRef = joueurRepository.addJoueur(code, null);
 
         // Ajoute les informations sur la partie
         Map<String, Object> partie = new HashMap<>();
@@ -204,7 +204,7 @@ public class PartieRepository {
         j.put("id", playerUid);
         j.put("nom", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
-        docRef.collection("joueurs").document(playerUid).set(j);
+        docRef.collection(JOUEUR_COLLECTION).document(playerUid).set(j);
 
         return docRef;
     }
@@ -228,7 +228,7 @@ public class PartieRepository {
             j.put("id", playerUid);
             j.put("nom", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
-            this.getPartieCollection().document(codePartie).collection("joueurs").document(playerUid).set(j);
+            this.getPartieCollection().document(codePartie).collection(JOUEUR_COLLECTION).document(playerUid).set(j);
         //}
         return success;
     }
@@ -238,7 +238,7 @@ public class PartieRepository {
      * @param codePartie le code de la partie en cours
      */
     public void findPlayersInPartie(String codePartie, PartieInterface pi){
-        this.getPartieCollection().document(codePartie).collection("joueurs").get().addOnSuccessListener(
+        this.getPartieCollection().document(codePartie).collection(JOUEUR_COLLECTION).get().addOnSuccessListener(
                 new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -461,6 +461,11 @@ public class PartieRepository {
                     }
                 }
         );
+    }
+
+    public CollectionReference getCollectionReference(String idPartie){
+        CollectionReference cRef = this.getPartieCollection().document(idPartie).collection(JOUEUR_COLLECTION);
+        return cRef;
     }
 }
 

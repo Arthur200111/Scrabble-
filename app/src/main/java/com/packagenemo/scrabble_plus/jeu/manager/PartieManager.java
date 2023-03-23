@@ -101,6 +101,11 @@ public class    PartieManager {
     public void getPlateauFromPartie(String str, StringInterface si){
         this.partieRepository.getPlateauFromPartie(str, si);
     }
+
+
+    public CollectionReference getCollectionReference(String idPartie){
+        return this.partieRepository.getCollectionReference(idPartie);
+    }
     /*
     public HashMap partieInfo = new HashMap<>();
 

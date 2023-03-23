@@ -19,7 +19,7 @@ import java.io.InputStreamReader;
 /**
  * Instancie les éléments affichés à l'écran
  */
-public class JeuActivity extends AppCompatActivity {
+public class    JeuActivity extends AppCompatActivity {
 
     private JeuView mJeuView;
     private static Context context;

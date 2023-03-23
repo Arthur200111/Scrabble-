@@ -1,15 +1,22 @@
 package com.packagenemo.scrabble_plus.lobby;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.packagenemo.scrabble_plus.R;
 import com.packagenemo.scrabble_plus.jeu.callback.PartieInterface;
 import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
@@ -43,6 +50,8 @@ public class LobbyActivity extends AppCompatActivity {
 
         this.partyVerification(partyId);
 
+        CollectionReference cref = partieManager.getCollectionReference(partyId);
+
 
         // Initialisation of the different graphic components
         mLobbyRecyclerView = findViewById(R.id.lobbyRecyclerView);
@@ -57,7 +66,16 @@ public class LobbyActivity extends AppCompatActivity {
         // Manual set of password
         this.setPassword(partyId);
 
-        addYourselfToPArty();
+        // C'est deja fait
+        //addYourselfToPArty();
+
+        cref.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                updatePlayers();
+            }
+        });
+
         updatePlayers();
     }
 
@@ -73,11 +91,15 @@ public class LobbyActivity extends AppCompatActivity {
         // DONE : faut juste faire la méthode qui l'appelle
         // Par contre je sais pas quand la fonction doit être appelée : on doit la faire s'appeler
         // à la fin pour détecter l'arrivé de nouvelles personnes ?
+        deleteAllPlayers();
+
         this.partieManager.findPlayersInPartie(
                 this.partyId,
                 new PartieInterface() {
                     @Override
                     public void onCallback(ArrayList<String> parties) {
+                        System.out.println("Nombre de joueur : " + parties.size());
+                        deleteAllPlayers();
                         for(String str: parties){
                             addNewPlayer(str, "");
                         }
@@ -126,6 +148,16 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     /**
+     * Supprime la liste des jours avant d'appeler Update
+     *
+     */
+    public void deleteAllPlayers(){
+        for(int i = adapter.getItemCount()-1; i>=0;i--){
+            adapter.delete(i);
+        }
+    }
+
+    /**
      * Permet d'obtenir l'identifiant d'une image à partir de son label
      * Si le label ne correspond à aucune image, l'identifiant de l'image par défaut est renvoyée
      * L'image par défaut est celle d'un ours
@@ -152,8 +184,15 @@ public class LobbyActivity extends AppCompatActivity {
         // TODO vérifier que tout est ok mais normalement pas besoin de modifier la bdd
         // Peut être mettre une valeur pour dernierCoup pour la table partie dans la bdd pour
         // montrer que plus personne ne peut rejoindre la partie
-        Intent toPageGameIntent = new Intent(LobbyActivity.this, JeuActivity.class);
-        toPageGameIntent.putExtra("partyId",partyId);
-        startActivity(toPageGameIntent);
+        Intent startingPartieIntent;
+        if(true){
+            startingPartieIntent = new Intent(LobbyActivity.this, JeuActivity.class);
+        }
+        else {
+            startingPartieIntent = new Intent(LobbyActivity.this, JeuActivity.class);
+        }
+
+        startingPartieIntent.putExtra("partyId",partyId);
+        startActivity(startingPartieIntent);
     }
 }

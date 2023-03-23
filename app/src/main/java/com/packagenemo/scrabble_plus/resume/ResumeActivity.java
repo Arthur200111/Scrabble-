@@ -63,7 +63,7 @@ public class ResumeActivity extends AppCompatActivity {
     }
 
     public void redirectToPArty(String id) {
-        // TODO fonction appelé lorsque l'on clique sur l'une des parties pour aller sur la gameActivity
+        // DONE fonction appelé lorsque l'on clique sur l'une des parties pour aller sur la gameActivity
         Intent toPageGameIntent = new Intent(ResumeActivity.this, JeuActivity.class);
         toPageGameIntent.putExtra("partyId",id);
         startActivity(toPageGameIntent);
