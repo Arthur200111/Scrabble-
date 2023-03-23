@@ -18,10 +18,12 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.packagenemo.scrabble_plus.R;
+import com.packagenemo.scrabble_plus.jeu.callback.BooleanInterface;
 import com.packagenemo.scrabble_plus.jeu.callback.PartieInterface;
 import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
 import com.packagenemo.scrabble_plus.jeu.manager.PartieManager;
 import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
+import com.packagenemo.scrabble_plus.resume.ResumeActivity;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -113,7 +115,7 @@ public class LobbyActivity extends AppCompatActivity {
      * @return true: partie existe bien, false: non
      */
     private void partyVerification(String partieId) {
-        // TODO vérifier que la partie est bien dans la base de données à partir de son id (ici partyId)
+        // DONE vérifier que la partie est bien dans la base de données à partir de son id (ici partyId)
         // Aussi regarder si la partie a déjà commencé, si est déjà commencée: renvoyer false        return ;
         partieManager.isPartieExisting(partieId, new StringInterface() {
             @Override
@@ -181,18 +183,28 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     public void finishPartyCreation(View view) {
-        // TODO vérifier que tout est ok mais normalement pas besoin de modifier la bdd
+        // DONE vérifier que tout est ok mais normalement pas besoin de modifier la bdd
         // Peut être mettre une valeur pour dernierCoup pour la table partie dans la bdd pour
         // montrer que plus personne ne peut rejoindre la partie
-        Intent startingPartieIntent;
-        if(true){
-            startingPartieIntent = new Intent(LobbyActivity.this, JeuActivity.class);
-        }
-        else {
-            startingPartieIntent = new Intent(LobbyActivity.this, JeuActivity.class);
-        }
 
-        startingPartieIntent.putExtra("partyId",partyId);
-        startActivity(startingPartieIntent);
+        partieManager.isItMyTurn(
+                this.partyId,
+                new BooleanInterface() {
+                    @Override
+                    public void onCallback(boolean result) {
+                        Intent startingPartieIntent;
+
+                        if(result){
+                            startingPartieIntent = new Intent(LobbyActivity.this, JeuActivity.class);
+                            startingPartieIntent.putExtra("partyId",partyId);
+                        }
+                        else{
+                            startingPartieIntent = new Intent(LobbyActivity.this, ResumeActivity.class);
+                        }
+
+                        startActivity(startingPartieIntent);
+                    }
+                }
+        );
     }
 }

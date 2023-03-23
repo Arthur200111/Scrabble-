@@ -8,9 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.packagenemo.scrabble_plus.R;
 import com.packagenemo.scrabble_plus.jeu.ui.JeuActivity;
+import com.packagenemo.scrabble_plus.lobby.LobbyActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -47,6 +49,7 @@ public class ResumeActivity extends AppCompatActivity {
                                                  @Override
                                                  public void onCallback(ArrayList<String> parties) {
                                                      for(int i = 0; i<parties.size()/3;i+=3){
+                                                         System.out.println(parties.get(i) + "-" +parties.get(i+1) + "-" +"à " +parties.get(i+2) + " de joueur");
                                                          addNewParty(parties.get(i),parties.get(i+1),"à " +parties.get(i+2) + " de joueur","");
                                                          //addNewParty(parties.get(i+1), parties.get(i+2),"");
                                                      }
@@ -54,19 +57,35 @@ public class ResumeActivity extends AppCompatActivity {
                                              }
         );
 
-        // Implémentation d'exemples de joueur
-
-
-
         // Il faudrait donc pouvoir avoir le titre et savoir si c'est à l'utilisateur de jouer ou non
         //addNewParty("XVGTEDFFF","jeu 1", "à toi de jouer", "");
     }
 
     public void redirectToPArty(String id) {
         // DONE fonction appelé lorsque l'on clique sur l'une des parties pour aller sur la gameActivity
-        Intent toPageGameIntent = new Intent(ResumeActivity.this, JeuActivity.class);
-        toPageGameIntent.putExtra("partyId",id);
-        startActivity(toPageGameIntent);
+        partieManager.isItMyTurn(
+                id,
+                new BooleanInterface() {
+                    @Override
+                    public void onCallback(boolean result) {
+                        Intent startingPartieIntent;
+
+                        if(result){
+                            startingPartieIntent = new Intent(ResumeActivity.this, JeuActivity.class);
+                            startingPartieIntent.putExtra("partyId",id);
+                            startActivity(startingPartieIntent);
+                        }
+                        else{
+                            displayNotMyTurnToast();
+                        }
+
+                    }
+                }
+        );
+    }
+
+    public void displayNotMyTurnToast(){
+        Toast.makeText(this, "Ce n'est pas encore à vous de jouer", Toast.LENGTH_SHORT).show();
     }
 
     /**

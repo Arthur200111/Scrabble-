@@ -5,6 +5,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.packagenemo.scrabble_plus.jeu.callback.BooleanInterface;
 import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
 import com.packagenemo.scrabble_plus.jeu.model.Joueur;
 import com.packagenemo.scrabble_plus.jeu.model.Parametres;
@@ -106,6 +107,12 @@ public class    PartieManager {
     public CollectionReference getCollectionReference(String idPartie){
         return this.partieRepository.getCollectionReference(idPartie);
     }
+
+
+    public void isItMyTurn(String idPartie, BooleanInterface bi){
+        this.partieRepository.isItMyTurn(idPartie, bi);
+    }
+
     /*
     public HashMap partieInfo = new HashMap<>();
 
