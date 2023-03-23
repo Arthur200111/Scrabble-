@@ -36,7 +36,7 @@ public class JoueurRepository {
      * CONVENTION NOMMAGES DES DOCUMENTS DE LA COLLECTION JOUEUR : L'ID EST LA CONCATENATION DU CODE DELA PARTIE ET DE L'ID De l'USER
      */
     private static volatile JoueurRepository instance;
-    private static final String JOUEUR_COLLECTION = "joueurs";
+    private static final String JOUEUR_COLLECTION = "joueur";
     private static final String PIOCHE_COLLECTION = "pioche";
     private final String TAG = this.getClass().toString();
     private PartieManager partieManager = PartieManager.getInstance();

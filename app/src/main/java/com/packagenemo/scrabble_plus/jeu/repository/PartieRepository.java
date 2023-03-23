@@ -408,15 +408,68 @@ public class PartieRepository {
     public void getPartieFromUser(PartieInterface cb) {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             System.out.println("Trying to access players by User");
-            this.getJoueurCollection().whereEqualTo("utilisateur", FirebaseAuth.getInstance().getCurrentUser()).get().addOnSuccessListener( //FirebaseAuth.getInstance().getCurrentUser()
+
+            //this.getJoueurCollection().whereEqualTo("utilisateur", FirebaseAuth.getInstance().getCurrentUser()).get().addOnSuccessListener( //FirebaseAuth.getInstance().getCurrentUser()
+            //Task<DocumentSnapshot> documentSnapshotTask = this.getJoueurCollection().document("WEP9USHUR8U8hzUTkad1M9mgl18odXuFHQv1").get().addOnSuccessListener( //FirebaseAuth.getInstance().getCurrentUser()
+            this.getJoueurCollection().whereEqualTo("utilisateur", FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnSuccessListener(
                     new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            String code = queryDocumentSnapshots.getDocuments().get(0).get("partie", String.class);
+                            for(DocumentSnapshot q: queryDocumentSnapshots){
+                                getPartieFromCode(q.get("partie", String.class)).addOnSuccessListener(
+                                        new OnSuccessListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                String[] champs = {"code", "nom", "currentJoueur"};
+                                                ArrayList<String> parties = new ArrayList<>();
+
+                                                for (DocumentSnapshot q : queryDocumentSnapshots.getDocuments()) {
+                                                    for (String str : Arrays.asList(champs)) {
+                                                        System.out.println(q.get(str, String.class));
+                                                        parties.add(q.get(str, String.class));
+                                                    }
+                                                }
+                                                cb.onCallback(parties);
+                                            }
+                                        }
+                                );
+                            }
+                                /*getPartieCollection().document(queryDocumentSnapshots.getDocuments().get(0).get("partie", String.class)).get().addOnSuccessListener(
+                                        new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                String[] champs = {"code", "nom", "currentJoueur"};
+                                                ArrayList<String> parties = new ArrayList<>();
+
+                                                for (DocumentSnapshot q : queryDocumentSnapshots.getDocuments()) {
+                                                    for (String str : Arrays.asList(champs)) {
+                                                        System.out.println(q.get(str, String.class));
+                                                        parties.add(q.get(str, String.class));
+                                                    }
+                                                }
+                                                cb.onCallback(parties);
+                                            }
+                                        }
+                                );*/
+                            }
+                        }
+
+            );
+        }
+    }
+                    /*new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             System.out.println("If we are here, we succeded. The first player is : " + queryDocumentSnapshots.getDocuments().get(0).get("nom", String.class));
 
-                            for(DocumentSnapshot q : queryDocumentSnapshots.getDocuments()) {
-
-
+                            ArrayList<String> parties = new ArrayList<>();
+                            parties.add("89196GFQEDS");
+                            parties.add("Partouze");
+                            parties.add("Fabi");
+                            cb.onCallback(parties);*/
+                            /*for(DocumentSnapshot q : queryDocumentSnapshots.getDocuments()) {
+                                //DocumentSnapshot q = queryDocumentSnapshots.getDocuments().get(0);
                                 getPartieCollection().document(q.get("partie", DocumentReference.class).toString()).get().addOnSuccessListener(
                                         new OnSuccessListener<DocumentSnapshot>() {
                                             @Override
@@ -434,14 +487,9 @@ public class PartieRepository {
                                             }
                                         }
                                 );
-                            }
+                            }*/
 
-                        }
-                    }
-            );
 
-        }
-    }
 
     public void getPlateauFromPartie(String idpartie, StringInterface si){
         this.getPartieCollection().document(idpartie).get().addOnSuccessListener(
