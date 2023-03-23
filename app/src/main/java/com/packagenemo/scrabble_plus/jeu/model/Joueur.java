@@ -1,5 +1,6 @@
 package com.packagenemo.scrabble_plus.jeu.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Joueur {
@@ -130,4 +131,5 @@ public class Joueur {
     public void setMainJ(MainJoueur mainJ) {
         this.mainJ = mainJ;
     }
+
 }

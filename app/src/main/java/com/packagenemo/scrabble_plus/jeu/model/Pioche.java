@@ -9,6 +9,7 @@ import com.packagenemo.scrabble_plus.R;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,6 +21,8 @@ import java.util.Random;
 public class Pioche {
     private LinkedList<Lettre> voyelles;
     private LinkedList<Lettre> consonnes;
+
+    List<Lettre> contenuPioche;
 
     /**
      * Constructeur de la pioche
@@ -230,5 +233,20 @@ public class Pioche {
      */
     public boolean isEmpty() {
         return (this.getConsonnes().isEmpty() && this.getVoyelles().isEmpty());
+    }
+
+
+    // TODO THOMAS : Partie
+    private List<Lettre> getPiocheBDD(){
+
+        // Array de List<Lettre>
+
+        return new ArrayList<>();
+    }
+
+    private void setPiocheBDD(){
+        // Array de List<Lettre>
+        //
+        // Cette liste --> contenuPioche
     }
 }

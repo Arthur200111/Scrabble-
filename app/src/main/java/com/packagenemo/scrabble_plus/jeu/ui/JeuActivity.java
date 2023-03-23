@@ -15,14 +15,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.logging.Logger;
 
 /**
  * Instancie les éléments affichés à l'écran
  */
-public class    JeuActivity extends AppCompatActivity {
+public class JeuActivity extends AppCompatActivity {
 
     private JeuView mJeuView;
     private static Context context;
+    private static Logger logger = Logger.getLogger(String.valueOf(JeuActivity.class));
 
     /**
      * On instancie la surface de jeu
@@ -34,9 +36,15 @@ public class    JeuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String partyId = getIntent().getStringExtra("partyId");
+
+        logger.info("L'id de la partie est " + partyId);
+
         context = getApplicationContext();
         setContentView(R.layout.activity_jeu);
         mJeuView = findViewById(R.id.jeu_zone_jeu);
+        mJeuView.initialiserPartie(partyId);
     }
 
 

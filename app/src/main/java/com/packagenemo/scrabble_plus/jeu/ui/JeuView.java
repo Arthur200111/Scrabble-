@@ -59,12 +59,16 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
         super(context, attributeSet);
         getHolder().addCallback(this);
 
-        // TODO : Récupérer les infos pour la co BDD
-        // il faudra faire une fonction qui génére un code
-
-        this.mPartie = new Partie("idPartieBDD","loginJoueurCourant", "Xagg4H");
-
         mCurseur = new Curseur();
+    }
+
+    /**
+     * Méthode qui permet d'initialiser la Partie
+     * Doit être appelé immédiatement après la création de la View
+     * @param idPartie : id de la partie pour le BDD
+     */
+    public void initialiserPartie(String idPartie){
+        this.mPartie = new Partie(idPartie);
     }
 
     /**

@@ -7,13 +7,11 @@ import android.util.Log;
  */
 public class Case {
 
-
     private  Position pos;
     private int multiplL;
     private int multiplM;
     private Lettre lettre;
     private int typeCase;
-    private int isSelected;
 
     /**
      * Constructeur d'une case du plateau
@@ -24,7 +22,6 @@ public class Case {
         multiplM = 1;
         lettre = null;
         typeCase = 0;
-        isSelected = 0;
     }
 
     /**
@@ -76,10 +73,10 @@ public class Case {
     public String toString(){
         String info = "";
         if (this.lettre==null){
-            info =  0 + "," + this.typeCase + "," + 0 + "," + this.isSelected;
+            info =  0 + "," + this.typeCase + "," + 0 + ",0";
         }
         else {
-            info = 2 + "," + this.lettre.getLettre() + "," + this.lettre.getScore() + "," + this.isSelected;
+            info = 2 + "," + this.lettre.getLettre() + "," + this.lettre.getScore() + ",0";
         }
         return  info;
     }

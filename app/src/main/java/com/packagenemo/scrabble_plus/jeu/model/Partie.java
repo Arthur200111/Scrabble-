@@ -5,11 +5,8 @@ import android.util.Log;
 import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
 import com.packagenemo.scrabble_plus.jeu.manager.PartieManager;
 
-import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Classe qui gère toute la partie.
@@ -20,16 +17,11 @@ import java.util.Objects;
 public class Partie implements Runnable{
 
     private static final int FPS_VOULU = 35;
-    private boolean alternateur;
-
-
-    // Code de la dernière mise à jour, sert à déterminer si le plateau est à jour
-    private int codeLastUpdate;
 
     // Boolean qui indique si la partie sur cette machine a subit des changements depuis le dernier download BDD
     private boolean desChangementsSeSontProduits;
 
-    private List<Joueur> listJoueur;
+    private String[] listJoueur;
     private int joueurActuel;
     private Pioche pioche;
     private Plateau plateau;
@@ -49,34 +41,29 @@ public class Partie implements Runnable{
     private boolean mChoixFin; // Indique que l'action concerne la fin de tour
 
     // Code attribué à la partie qui permet aux joueurs de joindre le lobby
-    private final String code;
+    static public String idPartie;
+
+    private String currentJoueur;
 
     private static PartieManager partieManager = PartieManager.getInstance();
+    List<String> listeJoueurs;
+    Joueur joueurLocal;
+    Integer[] listePoints;
 
 
     /**
      * Initialise la partie pour chaque joueur
-     * @param idPartieBDD : ID de la partie pour la BDD
-     * @param loginJoueurCourant : login du joueur utilisant l'interface
      */
-    public Partie(String idPartieBDD, String loginJoueurCourant, String code) {
-        // TODO : Initialiser la partie avec les informations contenues sur la BDD // A voir pour peut etre faire autrement
-        // L'initialisation de la partie devra pouvoir se faire à tout moment du jeu (jeu en cours)
-
-        //Récupérer les Strings du plateau, joueur (main, score) et pioche dans la base de données
-        // ensuite je peux me débrouiller pour les traiter
-        listJoueur = new LinkedList<Joueur>();
-        listJoueur.add(new Joueur());
+    public Partie(String idPartie) {
+        joueurLocal = new Joueur();
         plateau = new Plateau();
         pioche = new Pioche();
-        focused_lettre = null;
+        focused_lettre = new Lettre();
         gestionM = new GestionMots();
         defausse = false;
-        joueurActuel = 0;
-        pioche.piocher(7,listJoueur.get(joueurActuel).getMainJ().getCartes());
-        listJoueur.get(joueurActuel).getMainJ().setRepMain();
-        alternateur = true;
-        this.code = code;
+        pioche.piocher(7,joueurLocal.getMainJ().getCartes());
+        joueurLocal.getMainJ().setRepMain();
+        this.idPartie = idPartie;
 
         mActionJoueur = false;
         position = new int[2];
@@ -132,7 +119,7 @@ public class Partie implements Runnable{
             }
             mActionJoueur = false;
             plateau.setRepPlateau();
-            getCurrentJoueur().getMainJ().setRepMain();
+            getJoueurLocal().getMainJ().setRepMain();
         }
     }
 
@@ -204,13 +191,13 @@ public class Partie implements Runnable{
     public void plateau(int[] position, String typeAction){
         Position position1 = new Position(position[0],position[1]);
         if (typeAction.equals("drag")){
-            focused_lettre = plateau.caseOccupee(position1, getCurrentJoueur().getMainJ());
+            focused_lettre = plateau.caseOccupee(position1, getJoueurLocal().getMainJ());
         }
         else if (typeAction.equals("drop") && !defausse){
             boolean cLibre = true;
             if (focused_lettre != null){
                 focused_lettre.setFocused(false);
-                cLibre = plateau.caseLibre(position1, getCurrentJoueur().getMainJ(), focused_lettre, pioche);
+                cLibre = plateau.caseLibre(position1, getJoueurLocal().getMainJ(), focused_lettre, pioche);
             }
             if (plateau.getCaseFocused() != null && cLibre) {
                 plateau.getCaseFocused().setLettre(null);
@@ -235,12 +222,12 @@ public class Partie implements Runnable{
      */
     public void main(int position, String typeAction){
         if (typeAction.equals("drag")){
-            focused_lettre = getCurrentJoueur().getMainJ().newFocus(position);
+            focused_lettre = getJoueurLocal().getMainJ().newFocus(position);
             Log.d("MAIN", focused_lettre.getLettre());
         }
         else if (typeAction.equals("drop")){
             if (plateau.getCaseFocused() != null) {
-                getCurrentJoueur().getMainJ().getCartes().add(focused_lettre);
+                getJoueurLocal().getMainJ().getCartes().add(focused_lettre);
                 plateau.getCaseFocused().setLettre(null);
                 plateau.setCaseFocused(null);
             }
@@ -265,7 +252,7 @@ public class Partie implements Runnable{
                 plateau.getCaseFocused().setLettre(null);
                 plateau.setCaseFocused(null);
             } else {
-                getCurrentJoueur().getMainJ().supprLettre(focused_lettre);
+                getJoueurLocal().getMainJ().supprLettre(focused_lettre);
             }
             focused_lettre = null;
             defausse = true;
@@ -286,18 +273,18 @@ public class Partie implements Runnable{
     public void finDeTour(){
         if (defausse) {
             for (Case c : plateau.getLettresJouees()) {
-                getCurrentJoueur().getMainJ().getCartes().add(c.getLettre());
+                getJoueurLocal().getMainJ().getCartes().add(c.getLettre());
                 c.setLettre(null);
             }
-            getCurrentJoueur().getMainJ().complete(pioche);
+            getJoueurLocal().getMainJ().complete(pioche);
             defausse = false;
         } else {
             List<Mot> nouveauxMots = gestionM.ajoutMot(plateau.getLettresJouees(), plateau);
             if (nouveauxMots != null) {
-                getCurrentJoueur().getMainJ().complete(pioche);
-                getCurrentJoueur().ajoutScore(nouveauxMots);
+                getJoueurLocal().getMainJ().complete(pioche);
+                getJoueurLocal().ajoutScore(nouveauxMots);
             } else {
-                getCurrentJoueur().getMainJ().recup(plateau.getLettresJouees());
+                getJoueurLocal().getMainJ().recup(plateau.getLettresJouees());
             }
         }
         plateau.setLettresJouees(new ArrayList<>());
@@ -318,7 +305,7 @@ public class Partie implements Runnable{
      * @return une chaîne de caractère pouvant être lu par l'UI
      */
     public String getStringMainJoueur(){
-        return getCurrentJoueur().getMainJ().getRepMain();
+        return getJoueurLocal().getMainJ().getRepMain();
     }
 
     /**
@@ -326,7 +313,7 @@ public class Partie implements Runnable{
      * @return son score
      */
     public int getPointsDuJoueur(){
-        return getCurrentJoueur().getScore();
+        return getJoueurLocal().getScore();
     }
 
     /**
@@ -344,13 +331,55 @@ public class Partie implements Runnable{
      * est le joueur actuel
      * @return le joueur actuel
      */
-    public Joueur getCurrentJoueur(){
-        return listJoueur.get(joueurActuel);
+    public Joueur getJoueurLocal(){
+        return joueurLocal;
     }
 
-    public String getCode(){
-        return this.code;
+    public String getIdPartie(){
+        return this.idPartie;
     }
 
     public void setPlateau(String str) { this.plateau.loadPlateau(str);}
+
+
+    // TODO THOMAS : Partie
+    private String getCurrentJoueur(){
+
+        // currentJoueur = "Thomas"
+
+        return "Henry";
+    }
+
+    private void setCurrentJoueur(String nextJoueur){
+
+        // nextJoueur = "Nicolas"
+        // nouveau string qui remplace le joueur actuel dans la BDD
+        // Ce string --> currentJoueur
+    }
+
+    private String[] getListeJoueurs(){
+
+        // retourne une liste de joueurs stockés dans la BDD, les joueurs
+
+        return new String[]{};
+    }
+
+    private void setListeJoueurs(){
+
+        // la liste de joueur est de type String[] à stocker dans la BDD
+        // Cette liste --> listeJoueurs
+    }
+
+    private Integer[] getPointsJoueur(){
+
+        // Integer[]
+
+        return new Integer[]{};
+    }
+
+    private void setPiocheBDD(){
+        // Integer[]
+        //
+        // Cette liste --> listePoints
+    }
 }

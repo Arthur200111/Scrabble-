@@ -12,6 +12,7 @@ import java.util.List;
 
 public class Plateau{
 
+    private String plateauBDD;
     private int largeur;
     private int longueur;
     private ArrayList<ArrayList<Case>> listCase;
@@ -268,5 +269,19 @@ public class Plateau{
      */
     public void setRepPlateau(){
         this.repPlateau = this.toString();
+    }
+
+
+    // TODO THOMAS : Partie
+    private String recupPlateauBDD(){
+        //Le plateau est une chaine de caractere
+
+        return "";
+    }
+
+    private void changerPlateauBDD(){
+        //Le plateau est une chaine de caractere
+
+        // Ce string --> plateauBDD
     }
 }
