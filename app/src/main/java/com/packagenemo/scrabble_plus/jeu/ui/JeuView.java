@@ -154,6 +154,9 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
             }
         }
 
+        System.out.println("on est dans le thread");
+
+
         creationDesElementsDeJeu();
 
         // Boucle principale qui update l'affichage
@@ -233,6 +236,7 @@ public class JeuView extends SurfaceView implements Runnable, SurfaceHolder.Call
      * Appelé quand l'activity s'initialise
      */
     public void resume () {
+
         isPlaying = true;
         thread = new Thread(this);
         thread.start();

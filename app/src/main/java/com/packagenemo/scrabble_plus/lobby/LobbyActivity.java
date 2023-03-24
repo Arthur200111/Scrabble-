@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
- * Activitédu lobby
+ * Activité du lobby
  * Sur celle ci, on retrouve les différents joueurs qui ont rejoint la partie ainsi que le mot de passe pour accéder au lobby
  */
 public class LobbyActivity extends AppCompatActivity {
@@ -187,7 +187,7 @@ public class LobbyActivity extends AppCompatActivity {
         // Peut être mettre une valeur pour dernierCoup pour la table partie dans la bdd pour
         // montrer que plus personne ne peut rejoindre la partie
 
-        partieManager.isItMyTurn(
+        /*partieManager.isItMyTurn(
                 this.partyId,
                 new BooleanInterface() {
                     @Override
@@ -205,6 +205,13 @@ public class LobbyActivity extends AppCompatActivity {
                         startActivity(startingPartieIntent);
                     }
                 }
-        );
+        );*/
+
+        Intent startingPartieIntent;
+
+        startingPartieIntent = new Intent(LobbyActivity.this, JeuActivity.class);
+        startingPartieIntent.putExtra("partyId",partyId);
+
+        startActivity(startingPartieIntent);
     }
 }

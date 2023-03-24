@@ -2,10 +2,21 @@ package com.packagenemo.scrabble_plus.jeu.model;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.packagenemo.scrabble_plus.jeu.callback.BooleanInterface;
+import com.packagenemo.scrabble_plus.jeu.callback.PartieInterface;
+import com.packagenemo.scrabble_plus.jeu.callback.PiocheInterface;
 import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
+import com.packagenemo.scrabble_plus.jeu.manager.JoueurManager;
 import com.packagenemo.scrabble_plus.jeu.manager.PartieManager;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -46,6 +57,10 @@ public class Partie implements Runnable{
     private String currentJoueur;
 
     private static PartieManager partieManager = PartieManager.getInstance();
+    private static JoueurManager joueurManager = JoueurManager.getInstance();
+    CollectionReference cref;
+
+
     List<String> listeJoueurs;
     Joueur joueurLocal;
     Integer[] listePoints;
@@ -55,15 +70,14 @@ public class Partie implements Runnable{
      * Initialise la partie pour chaque joueur
      */
     public Partie(String idPartie) {
-        joueurLocal = new Joueur();
-        plateau = new Plateau();
-        pioche = new Pioche();
+
+
+
         focused_lettre = new Lettre();
         gestionM = new GestionMots();
         defausse = false;
-        pioche.piocher(7,joueurLocal.getMainJ().getCartes());
-        joueurLocal.getMainJ().setRepMain();
-        this.idPartie = idPartie;
+
+
 
         mActionJoueur = false;
         position = new int[2];
@@ -74,7 +88,56 @@ public class Partie implements Runnable{
         mChoixFin = false;
 
         modelThread = new Thread(this);
-        modelThread.start();
+
+        this.idPartie = idPartie;
+        plateau = new Plateau();
+
+        // On récupère toutes les informations de la bdd avant de lancer le thread
+        // Chargement joueur local
+        System.out.println("Requete appelée");
+        joueurManager.getJoueurInfo(idPartie, new PartieInterface(){
+            @Override
+            public void onCallback(ArrayList<String> parties){
+                System.out.println("Dans le callback");
+                joueurLocal = new Joueur(parties.get(0), Integer.parseInt(parties.get(1)), parties.get(2));
+
+                partieManager.getPlateauFromPartie(idPartie, new StringInterface() {
+                    @Override
+                    public void onCallback(String str) {
+                        plateau.loadPlateauFromDtb(str);
+                        partieManager.getPioche(idPartie, new PiocheInterface() {
+                            @Override
+                            public void onCallback(Pioche p){
+                                pioche = p;
+                                //modelThread.start();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        // Chargement plateau
+
+
+
+
+
+
+
+
+        cref = partieManager.getCollectionReference(this.getIdPartie());
+        cref.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                updatePartie(getIdPartie());
+            }
+        });
+
+        /*// Il faut aussi update la pioche et le joueur
+        pioche.piocher(7,joueurLocal.getMainJ().getCartes());
+        joueurLocal.getMainJ().setRepMain();*/
+
     }
 
     /**
@@ -83,6 +146,7 @@ public class Partie implements Runnable{
      */
     @Override
     public void run() {
+        System.out.println("on est dans le thread");
         while (true) {
             changementAction(position, typeAction);
             //updatePartie();
@@ -162,6 +226,14 @@ public class Partie implements Runnable{
             }
         });
 
+        partieManager.getPioche(idPartie, new PiocheInterface() {
+            @Override
+            public void onCallback(Pioche p){
+                pioche = p;
+                modelThread.start();
+            }
+        });
+
 
     }
 
@@ -176,13 +248,22 @@ public class Partie implements Runnable{
 
     /**
      * Gère le clic sur le plateau du joueur courant
-     * @param position : Coordonnées du plateau où le joueur a appuyé
+     * @param pos : Coordonnées du plateau où le joueur a appuyé
      */
-    public void giveInputJoueurPlateau(int[] position, String typeAction){
-        this.position = position;
-        this.typeAction = typeAction;
-        mActionJoueur = true;
-        mChoixPlateau = true;
+    public void giveInputJoueurPlateau(int[] pos, String tA){
+        partieManager.isItMyTurn(this.getIdPartie(), new BooleanInterface() {
+            @Override
+            public void onCallback(boolean result) {
+                if(result){
+                    System.out.println("dans la fonction outut joueurplateau");
+                    position = pos;
+                    typeAction = tA;
+                    mActionJoueur = true;
+                    mChoixPlateau = true;
+                }
+            }
+        });
+
     }
 
     /**
@@ -208,13 +289,21 @@ public class Partie implements Runnable{
 
     /**
      * Gère le clic sur la main du joueur courant
-     * @param position : Position de la main où le joueur a appuyé (seul la première composante nous intéresse)
+     * @param pos : Position de la main où le joueur a appuyé (seul la première composante nous intéresse)
      */
-    public void giveInputJoueurMain(int position, String typeAction){
-        this.position[0] = position;
-        this.typeAction = typeAction;
-        mActionJoueur = true;
-        mChoixMain = true;
+    public void giveInputJoueurMain(int pos, String tA){
+        partieManager.isItMyTurn(this.getIdPartie(), new BooleanInterface() {
+            @Override
+            public void onCallback(boolean result) {
+                if(result){
+                    position[0] = pos;
+                    typeAction = tA;
+                    mActionJoueur = true;
+                    mChoixMain = true;
+                }
+            }
+        });
+
     }
 
     /**
@@ -239,8 +328,16 @@ public class Partie implements Runnable{
      * Lorsque le joueur appuie sur le bouton défausser
      */
     public void giveInputJoueurDefausser(){
-        mActionJoueur = true;
-        mChoixDefausse = true;
+        partieManager.isItMyTurn(this.getIdPartie(), new BooleanInterface() {
+            @Override
+            public void onCallback(boolean result) {
+                if(result){
+                    mActionJoueur = true;
+                    mChoixDefausse = true;
+                }
+            }
+        });
+
     }
 
     /**
@@ -263,8 +360,16 @@ public class Partie implements Runnable{
      * Lorsque le joueur appuie sur le bouton "fin de tour"
      */
     public void giveInputJoueurFinTour(){
-        mActionJoueur = true;
-        mChoixFin = true;
+        partieManager.isItMyTurn(this.getIdPartie(), new BooleanInterface() {
+            @Override
+            public void onCallback(boolean result) {
+                if(result){
+                    mActionJoueur = true;
+                    mChoixFin = true;
+                }
+            }
+        });
+
     }
 
     /**
@@ -288,6 +393,20 @@ public class Partie implements Runnable{
             }
         }
         plateau.setLettresJouees(new ArrayList<>());
+
+        //Update dans la bdd : le score et la main pioche
+        this.updateInFirebase();
+    }
+
+    /**
+     * Mise à jour de la bdd en fin de tour en enregistrant le score et la main du joueur ainsi que la pioche et le nouveau joueur
+     */
+    public void updateInFirebase(){
+        partieManager.updatePioche(this.getIdPartie(), this.pioche);
+        joueurManager.updateScore(this.joueurLocal.getScore(), this.getIdPartie());
+        joueurManager.updateMain(this.joueurLocal.getMainJ().getRepMain(), this.getIdPartie());
+        partieManager.nextJoueur(this.getIdPartie());
+
     }
 
     /**
@@ -305,10 +424,12 @@ public class Partie implements Runnable{
      * @return une chaîne de caractère pouvant être lu par l'UI
      */
     public String getStringMainJoueur(){
+        System.out.println("getter");
+
         return getJoueurLocal().getMainJ().getRepMain();
     }
 
-    /**
+    /**pioche
      * Renvoie les points du joueur actuel
      * @return son score
      */
@@ -346,6 +467,7 @@ public class Partie implements Runnable{
     private String getCurrentJoueur(){
 
         // currentJoueur = "Thomas"
+
 
         return "Henry";
     }

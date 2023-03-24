@@ -1,6 +1,7 @@
 package com.packagenemo.scrabble_plus.jeu.manager;
 
 import com.google.firebase.firestore.CollectionReference;
+import com.packagenemo.scrabble_plus.jeu.callback.PartieInterface;
 import com.packagenemo.scrabble_plus.jeu.model.Joueur;
 import com.packagenemo.scrabble_plus.jeu.repository.JoueurRepository;
 import com.packagenemo.scrabble_plus.jeu.repository.PartieRepository;
@@ -21,7 +22,7 @@ public class JoueurManager {
         if (result != null) {
             return result;
         }
-        synchronized(JoueurManager.class) {
+        synchronized (JoueurManager.class) {
             if (instance == null) {
                 instance = new JoueurManager();
             }
@@ -29,11 +30,11 @@ public class JoueurManager {
         }
     }
 
-    public ArrayList<Joueur> getJoueurs(String numero_partie, int nombre_joueurs){
+    public ArrayList<Joueur> getJoueurs(String numero_partie, int nombre_joueurs) {
         return joueurRepository.getJoueursInfo(numero_partie, nombre_joueurs);
     }
 
-    public void addJoueur(String numero_partie, int nombre_joueurs, Joueur joueur){
+    public void addJoueur(String numero_partie, int nombre_joueurs, Joueur joueur) {
         joueurRepository.addJoueurs(numero_partie, nombre_joueurs, joueur);
     }
 
@@ -44,17 +45,20 @@ public class JoueurManager {
 
      */
 
-    public void deleteJoueur(String numero_partie, int nombre_joueurs, String nom){
-        joueurRepository.deleteJoueur(numero_partie,nombre_joueurs,nom);
+    public void deleteJoueur(String numero_partie, int nombre_joueurs, String nom) {
+        joueurRepository.deleteJoueur(numero_partie, nombre_joueurs, nom);
     }
 
 
-
-    public void updateScore(int score, String id_partie){
+    public void updateScore(int score, String id_partie) {
         this.joueurRepository.updateScore(score, id_partie);
     }
 
-    public void updateMain(String main, String id_partie){
+    public void updateMain(String main, String id_partie) {
         this.joueurRepository.updateMain(main, id_partie);
+    }
+
+    public void getJoueurInfo(String idPartie, PartieInterface pi) {
+        this.joueurRepository.getJoueurInfo(idPartie, pi);
     }
 }

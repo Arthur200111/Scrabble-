@@ -19,6 +19,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.packagenemo.scrabble_plus.jeu.callback.BooleanInterface;
 import com.packagenemo.scrabble_plus.jeu.callback.PartieInterface;
+import com.packagenemo.scrabble_plus.jeu.callback.PiocheInterface;
 import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
 import com.packagenemo.scrabble_plus.jeu.manager.PartieManager;
 import com.packagenemo.scrabble_plus.jeu.model.Joueur;
@@ -153,14 +154,14 @@ public class PartieRepository {
      */
     public DocumentReference createPartie(String nom_partie, String code, String plateau, Pioche pioche, Parametres parametres){
         // Crée le joueur et l'ajoute une référence vers lui dans la partei
-        DocumentReference docJoueurRef = joueurRepository.addJoueur(code, null);
+        pioche = joueurRepository.addJoueur(code, null, pioche);
 
         // Ajoute les informations sur la partie
         Map<String, Object> partie = new HashMap<>();
         partie.put("nom", nom_partie);
-        partie.put("currentJoueur", code+FirebaseAuth.getInstance().getCurrentUser().getUid());
-        partie.put("nombre de coups", 0);
-        //partie.put("nombre de joueurs", 1);
+        partie.put("currentJoueur", 0);
+        //partie.put("nombre de coups", 0);
+        partie.put("nbJoueurs", 1);
         partie.put("plateau", plateau);
         partie.put("code",code);
         partie.put("temps", FieldValue.serverTimestamp());
@@ -180,7 +181,7 @@ public class PartieRepository {
             pioche = new Pioche();
         }
 
-        Map<String, Object> piocheStr = new HashMap<>();
+        /*Map<String, Object> piocheStr = new HashMap<>();
         piocheStr.put("consonnes","");
         piocheStr.put("voyelles","");
         piocheStr.put("joker",0);
@@ -194,8 +195,9 @@ public class PartieRepository {
         }
         for (Lettre l : pioche.getVoyelles()) {
             piocheStr.put("voyelles", piocheStr.get("voyelles") + l.getLettre());
-        }
-        docRef.collection(PIOCHE_COLLECTION).document(PIOCHE_DOCUMENT).set(piocheStr);
+        }*/
+        docRef.collection(PIOCHE_COLLECTION).document(PIOCHE_DOCUMENT).set(pioche);
+
 //        docRef.collection(JOUEUR_COLLECTION).document(code + FirebaseAuth.getInstance().getCurrentUser().getUid()).set(joueur);
 
         // ajout du joueur à la collection joueurs du document
@@ -216,22 +218,58 @@ public class PartieRepository {
      * @return  retourne true si la partie a bien été trouvé
      */
     public boolean joinPartie(String codePartie){
-        boolean success = false;
-        String playerUid = codePartie + FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+        boolean success = true;
 
-        //if(this.getPartieCollection().document("U5D3217W").get().isSuccessful()){
-            success = true;
 
-            DocumentReference docJoueurRef = joueurRepository.addJoueur(codePartie, null);
+        //System.out.printf(playerUid);
+        this.getPartieCollection().document(codePartie).collection(PIOCHE_COLLECTION).get().addOnSuccessListener(
+                new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        String playerUid = codePartie + FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        playerUid = playerUid.replaceAll("\\s+", "");
 
-            HashMap<String, String> j = new HashMap<>();
+                        Pioche pioche = new Pioche();//(queryDocumentSnapshots.getDocuments().get(0).toObject(Pioche.class));
 
-            j.put("id", playerUid);
-            j.put("nom", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                        pioche = joueurRepository.addJoueur(codePartie, null, pioche);
 
-            this.getPartieCollection().document(codePartie).collection(JOUEUR_COLLECTION).document(playerUid).set(j);
-        //}
+                        HashMap<String, String> j = new HashMap<>();
+
+                        j.put("id", playerUid);
+                        j.put("nom", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
+                        getPartieCollection().document(codePartie).collection(JOUEUR_COLLECTION).document(playerUid).set(j);
+
+                        getPartieCollection().document(codePartie).collection(PIOCHE_COLLECTION).document(PIOCHE_DOCUMENT).set(pioche);
+
+
+                        getPartieCollection().document(codePartie).update("nbJoueurs", FieldValue.increment(1));
+                        //queryDocumentSnapshots.getDocuments().get(0).getDocumentReference("nbJoueur").update("nbJoueur", FieldValue.increment(1));
+                    }
+                }
+        );
         return success;
+    }
+
+    /**
+     * Méthode qui update la pioche en fin de tour
+     */
+    public void updatePioche(String idPartie, Pioche pioche){
+        getPartieCollection().document(idPartie).collection(PIOCHE_COLLECTION).document().set(pioche);
+    }
+
+    /**
+     * Méthode qui fait passer au nouveau joueur
+     */
+    public void nextJoueur(String idPartie){
+        this.getPartieCollection().document(idPartie).get().addOnSuccessListener(
+                new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        documentSnapshot.getDocumentReference("currentJoueur").set((documentSnapshot.get("currentJoueur", Integer.class) + 1)%(documentSnapshot.get("nbJoueurs", Integer.class)));
+                    }
+                }
+        );
     }
 
     /**
@@ -305,7 +343,6 @@ public class PartieRepository {
                 .document(numero_partie)
                 .collection(JOUEUR_COLLECTION);
     }
-
 
 
     public CollectionReference getAllCoups(String numero_partie){
@@ -408,7 +445,7 @@ public class PartieRepository {
     public void getPartieFromUser(PartieInterface cb) {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             System.out.println("Trying to access players by User");
-            this.getJoueurCollection().whereEqualTo("utilisateur", FirebaseAuth.getInstance().getCurrentUser()).get().addOnSuccessListener( //FirebaseAuth.getInstance().getCurrentUser()
+            this.getJoueurCollection().whereEqualTo("utilisateur", FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnSuccessListener( //FirebaseAuth.getInstance().getCurrentUser()
                     new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -416,20 +453,21 @@ public class PartieRepository {
 
                             for(DocumentSnapshot q : queryDocumentSnapshots.getDocuments()) {
 
-
-                                getPartieCollection().document(q.get("partie", DocumentReference.class).toString()).get().addOnSuccessListener(
+                                getPartieCollection().document(q.get("partie", String.class)).get().addOnSuccessListener(
                                         new OnSuccessListener<DocumentSnapshot>() {
                                             @Override
                                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                 String[] champs = {"code", "nom", "currentJoueur"};
                                                 ArrayList<String> parties = new ArrayList<>();
 
-                                                for (DocumentSnapshot q : queryDocumentSnapshots.getDocuments()) {
-                                                    for (String str : Arrays.asList(champs)) {
-                                                        System.out.println(q.get(str, String.class));
-                                                        parties.add(q.get(str, String.class));
-                                                    }
-                                                }
+                                                parties.add(documentSnapshot.get("code", String.class));
+                                                parties.add(documentSnapshot.get("nom", String.class));
+                                                parties.add(documentSnapshot.get("currentJoueur", Integer.class).toString());
+
+                                                    /*for (String str : Arrays.asList(champs)) {
+                                                        System.out.println(documentSnapshot.get(str, String.class));
+                                                        parties.add(documentSnapshot.get(str, String.class));
+                                                    }*/
                                                 cb.onCallback(parties);
                                             }
                                         }
@@ -454,6 +492,19 @@ public class PartieRepository {
         );
     }
 
+    public void getPiocheFromPartie(String idpartie, PiocheInterface pi){
+        this.getPartieCollection().document(idpartie).collection(PIOCHE_COLLECTION).get().addOnSuccessListener(
+                new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Pioche pioche = queryDocumentSnapshots.getDocuments().get(0).toObject(Pioche.class);
+                        pi.onCallback(pioche);
+                    }
+                }
+        );
+    }
+
+
     public void isPartieExisting(String idPartie, StringInterface pi) {
         this.getPartieCollection().document(idPartie).get().addOnFailureListener(
                 new OnFailureListener() {
@@ -471,14 +522,41 @@ public class PartieRepository {
     }
 
     public void isItMyTurn(String idPartie, BooleanInterface bi){
-        String currentPlayerId = idPartie + FirebaseAuth.getInstance().getCurrentUser().getUid();
+        System.out.printf("Is it my turn ??");
 
-        this.getPartieCollection().document(idPartie).get().addOnSuccessListener(
+
+        /*this.getPartieCollection().document(idPartie).get().addOnSuccessListener(
                 new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         String partiePlayer = documentSnapshot.get("currentJoueur", String.class);
                         bi.onCallback(partiePlayer.equals(currentPlayerId));
+                    }
+                }
+        );*/
+
+        this.getPartieCollection().document(idPartie).get().addOnSuccessListener(
+                new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        int indexCurrentPlayer = documentSnapshot.get("currentJoueur", Integer.class);
+                        System.out.println("currentJoueur : " + indexCurrentPlayer);
+
+                        getPartieCollection().document(idPartie).collection(JOUEUR_COLLECTION).get().addOnSuccessListener(
+                                new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        String currentPlayerId = idPartie + FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                        String playerThatHaveToPlayId = queryDocumentSnapshots.getDocuments().get(indexCurrentPlayer).getId();
+                                        System.out.println("current player : " +currentPlayerId);
+                                        System.out.println("the other : "+playerThatHaveToPlayId);
+                                        System.out.println("equal ? "+currentPlayerId.equals(playerThatHaveToPlayId));
+                                        bi.onCallback(
+                                                currentPlayerId.equals(playerThatHaveToPlayId)
+                                                );
+                                    }
+                                }
+                        );
                     }
                 }
         );

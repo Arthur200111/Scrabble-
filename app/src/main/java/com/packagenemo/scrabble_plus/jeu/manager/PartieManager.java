@@ -2,12 +2,11 @@ package com.packagenemo.scrabble_plus.jeu.manager;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.packagenemo.scrabble_plus.jeu.callback.BooleanInterface;
+import com.packagenemo.scrabble_plus.jeu.callback.PiocheInterface;
 import com.packagenemo.scrabble_plus.jeu.callback.StringInterface;
-import com.packagenemo.scrabble_plus.jeu.model.Joueur;
 import com.packagenemo.scrabble_plus.jeu.model.Parametres;
 import com.packagenemo.scrabble_plus.jeu.model.Pioche;
 import com.packagenemo.scrabble_plus.jeu.callback.PartieInterface;
@@ -38,7 +37,7 @@ public class    PartieManager {
     public CollectionReference getJoueurs(String numero_partie){
         return partieRepository.getJoueursCollection(numero_partie);
     }
-    public CollectionReference getPioche(String numero_partie){
+    public CollectionReference getPioche(String numero_partie, PiocheInterface piocheInterface){
         return partieRepository.getPiocheCollection(numero_partie);
     }
     public CollectionReference getCoups(String numero_partie){
@@ -112,6 +111,18 @@ public class    PartieManager {
     public void isItMyTurn(String idPartie, BooleanInterface bi){
         this.partieRepository.isItMyTurn(idPartie, bi);
     }
+
+    public void updatePioche(String idPartie, Pioche pioche){
+        this.partieRepository.updatePioche(idPartie, pioche);
+    }
+
+    /**
+     * Méthode qui modifie le currentPlayer
+     */
+    public void nextJoueur(String idPartie){
+        this.partieRepository.nextJoueur(idPartie);
+    }
+
 
     /*
     public HashMap partieInfo = new HashMap<>();

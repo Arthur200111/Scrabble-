@@ -4,6 +4,7 @@ import android.content.res.Resources;
 
 import androidx.annotation.NonNull;
 
+import com.google.rpc.Help;
 import com.packagenemo.scrabble_plus.R;
 
 import java.io.BufferedReader;
@@ -30,6 +31,15 @@ public class Pioche {
     public Pioche() {
         voyelles = new LinkedList<Lettre>();
         consonnes = new LinkedList<Lettre>();
+        loadPioche();
+    }
+
+    /**
+     * Constructeur de la pioche avec les données de la dtb
+     */
+    public Pioche(LinkedList<Lettre> voyelles, LinkedList<Lettre> consonnes) {
+        this.voyelles = voyelles;
+        this.consonnes = consonnes;
         loadPioche();
     }
 
@@ -240,6 +250,8 @@ public class Pioche {
     private List<Lettre> getPiocheBDD(){
 
         // Array de List<Lettre>
+
+
 
         return new ArrayList<>();
     }

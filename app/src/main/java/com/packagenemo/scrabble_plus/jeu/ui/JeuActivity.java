@@ -3,10 +3,12 @@ package com.packagenemo.scrabble_plus.jeu.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.widget.ImageView;
 
 import com.packagenemo.scrabble_plus.R;
@@ -38,6 +40,8 @@ public class JeuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         String partyId = getIntent().getStringExtra("partyId");
+        Intent intent = getIntent();
+        partyId = intent.getStringExtra("partyId");
 
         logger.info("L'id de la partie est " + partyId);
 
@@ -62,8 +66,21 @@ public class JeuActivity extends AppCompatActivity {
      */
     @Override
     protected void onResume() {
+        System.out.println("onresume");
         super.onResume();
-        mJeuView.resume();
+
+        // TODO : navré ...
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mJeuView.resume();
+            }
+        }, 2000);
+    }
+
+    public void resume(){
+
     }
 
     /**

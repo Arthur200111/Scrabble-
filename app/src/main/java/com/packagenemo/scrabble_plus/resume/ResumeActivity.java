@@ -63,7 +63,7 @@ public class ResumeActivity extends AppCompatActivity {
 
     public void redirectToPArty(String id) {
         // DONE fonction appelé lorsque l'on clique sur l'une des parties pour aller sur la gameActivity
-        partieManager.isItMyTurn(
+        /*partieManager.isItMyTurn(
                 id,
                 new BooleanInterface() {
                     @Override
@@ -81,7 +81,14 @@ public class ResumeActivity extends AppCompatActivity {
 
                     }
                 }
-        );
+        );*/
+
+        Intent startingPartieIntent;
+
+        startingPartieIntent = new Intent(ResumeActivity.this, JeuActivity.class);
+        System.out.println("L'id de la partie dans Resume Activity : " + id.toString());
+        startingPartieIntent.putExtra("partyId",id);
+        startActivity(startingPartieIntent);
     }
 
     public void displayNotMyTurnToast(){

@@ -12,23 +12,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.packagenemo.scrabble_plus.jeu.callback.PartieInterface;
 import com.packagenemo.scrabble_plus.jeu.manager.PartieManager;
 import com.packagenemo.scrabble_plus.jeu.model.Joueur;
-import com.packagenemo.scrabble_plus.jeu.model.Lettre;
 import com.packagenemo.scrabble_plus.jeu.model.MainJoueur;
+import com.packagenemo.scrabble_plus.jeu.model.Pioche;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class JoueurRepository {
 
@@ -36,7 +31,7 @@ public class JoueurRepository {
      * CONVENTION NOMMAGES DES DOCUMENTS DE LA COLLECTION JOUEUR : L'ID EST LA CONCATENATION DU CODE DELA PARTIE ET DE L'ID De l'USER
      */
     private static volatile JoueurRepository instance;
-    private static final String JOUEUR_COLLECTION = "joueurs";
+    private static final String JOUEUR_COLLECTION = "joueur";
     private static final String PIOCHE_COLLECTION = "pioche";
     private final String TAG = this.getClass().toString();
     private PartieManager partieManager = PartieManager.getInstance();
@@ -66,9 +61,28 @@ public class JoueurRepository {
      * Get the Collection Reference
      * @return
      */
-    private CollectionReference getJoueurCollection(){
+    private CollectionReference getJoueurCollection(String s){
         return getFirestoreInstance().collection(JOUEUR_COLLECTION);
     }
+
+    public void getJoueurInfo(String idPartie, PartieInterface pi){
+        this.getJoueurCollection(idPartie + FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnSuccessListener(
+                new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        ArrayList<String> toreturn = new ArrayList<>();
+                        toreturn.add(queryDocumentSnapshots.getDocuments().get(0).get("nom", String.class));
+                        toreturn.add(queryDocumentSnapshots.getDocuments().get(0).get("score", Long.class).toString());
+                        toreturn.add(queryDocumentSnapshots.getDocuments().get(0).get("main", String.class));
+
+                        pi.onCallback(toreturn);
+                    }
+                }
+        );
+    }
+
+
+
 
     /**
      * Méthode qui retourne le document lié a un joueur en fonction de l'utilsateur et de la partie dans laquelle il évolue
@@ -76,7 +90,7 @@ public class JoueurRepository {
      * @return
      */
     private DocumentReference getJoueurDocument(String codePartie){
-        return this.getJoueurCollection().document(codePartie + FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
+        return this.getJoueurCollection(codePartie + FirebaseAuth.getInstance().getCurrentUser().getUid()).document(codePartie + FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
     }
 
     //public void get
@@ -124,12 +138,12 @@ public class JoueurRepository {
      * @param codePartie
      * @param joueur
      */
-    public DocumentReference addJoueur(String codePartie, Joueur joueur){
+    public Pioche addJoueur(String codePartie, Joueur joueur, Pioche pioche){
         DocumentReference docRef = null;
 
         if (codePartie != null){
 
-            docRef = getJoueurCollection().document(codePartie + FirebaseAuth.getInstance().getCurrentUser().getUid());
+            docRef = getJoueurCollection(codePartie + FirebaseAuth.getInstance().getCurrentUser().getUid()).document(codePartie + FirebaseAuth.getInstance().getCurrentUser().getUid());
 
             String utilisateur = FirebaseAuth.getInstance().getCurrentUser().getUid();
             String partieCode = codePartie;
@@ -137,16 +151,27 @@ public class JoueurRepository {
             String nom;
             int score;
 
+
+
+
             if(joueur==null){
-                mainJoueur = new MainJoueur().getRepMain();
+                joueur = new Joueur();
                 nom = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
                 score = 0;
             }
             else{
-                mainJoueur = joueur.getMainJ().getRepMain();
                 nom = joueur.getNom();
                 score = 0;
             }
+
+            if(pioche == null){
+                pioche = new Pioche();
+            }
+
+            pioche.piocher(7,joueur.getMainJ().getCartes());
+            joueur.getMainJ().setRepMain();
+            mainJoueur = joueur.getMainJ().getRepMain();
+
 
             // Ajoute les informations sur la partie
             Map<String, Object> joueurMap = new HashMap<>();
@@ -159,7 +184,7 @@ public class JoueurRepository {
 
             docRef.set(joueurMap);
         }
-        return docRef;
+        return pioche;
     }
 
     /**
@@ -186,7 +211,7 @@ public class JoueurRepository {
     public void updateScore(int score, String id_partie){
         String id_utilisateur = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        Task<QuerySnapshot> getJoueurByIds = this.getJoueurCollection().whereEqualTo("idpartie", id_partie).whereEqualTo("idUtilisateur", id_utilisateur).get().addOnCompleteListener(
+        Task<QuerySnapshot> getJoueurByIds = this.getJoueurCollection(id_partie + FirebaseAuth.getInstance().getCurrentUser().getUid()).whereEqualTo("idpartie", id_partie).whereEqualTo("idUtilisateur", id_utilisateur).get().addOnCompleteListener(
                 new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -209,7 +234,7 @@ public class JoueurRepository {
     public void updateMain(String mainJoueur, String id_partie){
         String id_utilisateur = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        Task<QuerySnapshot> getJoueurByIds = this.getJoueurCollection().whereEqualTo("idpartie", id_partie).whereEqualTo("idUtilisateur", id_utilisateur).get().addOnCompleteListener(
+        Task<QuerySnapshot> getJoueurByIds = this.getJoueurCollection(id_partie + FirebaseAuth.getInstance().getCurrentUser().getUid()).whereEqualTo("idpartie", id_partie).whereEqualTo("idUtilisateur", id_utilisateur).get().addOnCompleteListener(
                 new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
